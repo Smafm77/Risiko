@@ -1,5 +1,5 @@
 public class Kontinente {
-    public Land imKontinent[];
+    public Land gebiete[];
     public int buff;
     public Spieler einzigerBesitzer;
 }
