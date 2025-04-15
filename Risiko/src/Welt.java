@@ -1,4 +1,4 @@
 public class Welt {
-    public Länder nachbarn[];
+    public Land nachbarn[];
 
 }

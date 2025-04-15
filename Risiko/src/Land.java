@@ -1,5 +1,5 @@
-public class Länder {
+public class Land {
     public Spieler besitzer;
     public int einheiten;
-    public Länder nachbarn[];
+    public Land nachbarn[];
 }
