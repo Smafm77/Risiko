@@ -1,11 +1,25 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Spieler {
     public String name;
+    public int id;
     public String farbe;
     public int einheiten;
     public boolean alive;
+    public Spieler(String name, int id){
+        this.name = name;
+        this.id = id;
+    }
+    private List<Land> besetzteLaender = new ArrayList<>();
+
+    public void fuegeLandHinzu(Land land) {
+        besetzteLaender.add(land);
+    }
+
     //List<Land> terretory; Liste aller besetzten Länder
 
-    public void sterben(){
+    public void sterben() {
         this.alive = false;
     }
 
