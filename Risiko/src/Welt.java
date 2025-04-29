@@ -63,7 +63,7 @@ public class Welt {
         while (!alleLaender.isEmpty()) {
             int playerIndex = spielerAnzahl - 1 - (index % spielerAnzahl);
 
-            Land aktuellesLand = alleLaender.remove(0);
+            Land aktuellesLand = alleLaender.removeFirst();
 
             Spieler aktuellerSpieler = spielerListe.get(playerIndex);
             aktuellesLand.setBesitzer(aktuellerSpieler);
