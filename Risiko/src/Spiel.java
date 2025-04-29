@@ -16,6 +16,19 @@ public class Spiel {
         Welt welt = new Welt();
         welt.verteileLaender(spielerListe);
 
+        printPlayers(spielerListe);
+    }
+
+    public static void printPlayers(ArrayList<Spieler> spielerListe){
+        for (Spieler spieler : spielerListe){
+            System.out.println(spieler.id + " - " + spieler.name + " - " + spieler.besetzteLaender.size());
+            for (Land land : spieler.besetzteLaender){
+                System.out.println(land.besitzer.id + ": " + land.name);
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println();
     }
 
 }

@@ -11,7 +11,7 @@ public class Spieler {
         this.name = name;
         this.id = id;
     }
-    private List<Land> besetzteLaender = new ArrayList<>();
+    public List<Land> besetzteLaender = new ArrayList<>();
 
     public void fuegeLandHinzu(Land land) {
         besetzteLaender.add(land);
