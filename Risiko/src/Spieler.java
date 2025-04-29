@@ -34,4 +34,12 @@ public class Spieler {
 
     // void assignTroops(int troops){Füge 'troops' von Spieler ausgewählten Ländern zu}
     // void moveTroops(int troops, Land herkunft, Land ziel){Prüfe ob Zug möglich; Herkunft - troops; ziel + troops}
+
+    @Override
+    public boolean equals(Object spieler){
+        if ((spieler instanceof Spieler) && ((Spieler) spieler).id == this.id){
+            return true;
+        }
+        return false;
+    }
 }
