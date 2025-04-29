@@ -10,7 +10,7 @@ public class Spieler {
     public List<Land> besetzteLaender = new ArrayList<>();
 
     public Spieler(String name, int id) {
-        this.name = name;
+        this.name = name.trim();
         this.id = id;
         this.einheiten = 0;
     }
@@ -22,9 +22,9 @@ public class Spieler {
 
     public void neueArmee() { //Bei neuem Spielzug dazu
         if (besetzteLaender.size() <= 9) {
-            this.einheiten = +3;
+            this.einheiten += 3;
         } else {
-            this.einheiten = +besetzteLaender.size() / 3;
+            this.einheiten += besetzteLaender.size() / 3;
         }
     }
 

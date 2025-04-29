@@ -18,7 +18,6 @@ public class Main {
             switch (auswahl) {
                 case "1":
                     Spiel spiel = new Spiel();
-                    spiel.starteSpiel();
                     break;
                 case "2":
                     System.out.println("Wird beendet");

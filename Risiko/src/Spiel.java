@@ -2,7 +2,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Spiel {
-    ArrayList<Spieler> spielerListe = new ArrayList<Spieler>();
+    ArrayList<Spieler> spielerListe = new ArrayList<>();
+
+    public Spiel() {
+        starteSpiel();
+    }
 
     public void starteSpiel() {
         Scanner scanner = new Scanner(System.in);

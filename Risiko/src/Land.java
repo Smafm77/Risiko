@@ -13,8 +13,6 @@ public class Land {
     //Wir brauchen wahrscheinlich erstmal unsere Map damit wir wissen welches Land welchen Nachbarn hat.
     public void setBesitzer(Spieler spieler) {
         this.besitzer = spieler;
-
-
     }
 
 }
