@@ -20,7 +20,7 @@ public class Spieler {
         this.einheiten++;
     }
 
-    public void neueArmee(Spieler spieler) { //Bei neuem Spielzug dazu
+    public void neueArmee() { //Bei neuem Spielzug dazu
         if (besetzteLaender.size() <= 9) {
             this.einheiten = +3;
         } else {
