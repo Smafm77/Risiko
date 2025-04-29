@@ -67,7 +67,7 @@ public class Welt {
 
             Spieler aktuellerSpieler = spielerListe.get(playerIndex);
             aktuellesLand.setBesitzer(aktuellerSpieler);
-            aktuellerSpieler.fuegeLandHinzu(aktuellesLand);
+            aktuellerSpieler.fuegeLandHinzu(aktuellesLand, 2); //ToDO anpassen, dass Einheiten wie im Spiel variieren & updaten von Spieler.einheiten
 
             index++;
         }

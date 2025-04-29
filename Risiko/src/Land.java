@@ -15,4 +15,7 @@ public class Land {
         this.besitzer = spieler;
     }
 
+    //ToDo schreib eine Methode die Checkt ob es eine nutzbare verbindung mit einem anderen Land über bereits besetzte Länder gibt
+    // --> separiert ob ziel eigenes, oder benachbartes fremdes Terretorium ist
+
 }

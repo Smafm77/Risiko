@@ -15,9 +15,14 @@ public class Spieler {
         this.einheiten = 0;
     }
 
-    public void fuegeLandHinzu(Land land) {
+    public void fuegeLandHinzu(Land land, int soldaten) {
         besetzteLaender.add(land);
-        this.einheiten++;
+        einheiten += soldaten;
+    }
+
+    public void verliereLand(Land land){
+        einheiten -= land.einheiten; //Kann Probleme machen, falls Einheitenzahl schon mit Gegner ersetzt wurde
+        besetzteLaender.remove(land);
     }
 
     public void neueArmee() { //Bei neuem Spielzug dazu
@@ -28,18 +33,34 @@ public class Spieler {
         }
     }
 
+    //ToDo check every instance if einheiten being used if they need to be assigned to a post as well
+    public void assignTroops(int troops){
+        for (int t = 1; t <= troops; t++){
+            //ToDO choose an owned country to put the unit in. > add 1 to einheiten here and in chosen land
+        }
+    }
+
+    public void moveTroops(int troops, Land herkunft, Land ziel){
+        //ToDO throw error if either Land is not in possession of the player, they're not connected or herkunft doesn't have enough troops
+        herkunft.einheiten -= troops;
+        ziel.einheiten += troops;
+    }
+
     public void sterben() {
             this.alive = false;
     }
 
-    // void assignTroops(int troops){Füge 'troops' von Spieler ausgewählten Ländern zu}
-    // void moveTroops(int troops, Land herkunft, Land ziel){Prüfe ob Zug möglich; Herkunft - troops; ziel + troops}
+    public void countTroops(){
+        int soldaten = 0;
+        for (Land land : besetzteLaender){
+            soldaten += land.einheiten;
+        }
+        //Todo throw Error if soldaten don't match with this.einheiten
+        einheiten = soldaten;
+    }
 
     @Override
     public boolean equals(Object spieler){
-        if ((spieler instanceof Spieler) && ((Spieler) spieler).id == this.id){
-            return true;
-        }
-        return false;
+        return (spieler instanceof Spieler) && ((Spieler) spieler).id == this.id;
     }
 }
