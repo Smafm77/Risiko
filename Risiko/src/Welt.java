@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 public class Welt {
     public ArrayList<Land> alleLaender;
+    public ArrayList<Kontinent> alleKontinente;
 
     public Welt() {
         alleLaender = new ArrayList<>();
@@ -101,6 +102,8 @@ public class Welt {
         for (int i = 0; i < diplomatischeBeziehungen.length; i++){
             alleLaender.get(i).addNachbarn(diplomatischeBeziehungen[i]);
         }
+
+        //Todo Kontinente erstellen & Länder zuweisen mit alleKontinente.add(new Kontinent(...))
     }
 
     public Collection<Karte> createCardStack(){

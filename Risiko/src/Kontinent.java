@@ -3,7 +3,11 @@ public class Kontinent {
     public int buff;
     public Spieler einzigerBesitzer; //Kann null sein, falls Kontinent mehrere Besatzer hat
 
-    //Todo Länder den Kontinenten zuweisen
+    public Kontinent(Land[] gebiete, int buff) {
+        this.gebiete = gebiete;
+        this.buff = buff;
+    }
+
 
     public void checkBesitzer(){
         boolean isSame = true;

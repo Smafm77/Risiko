@@ -1,8 +1,10 @@
 import java.util.*;
 
 public class Spiel {
+    Welt welt = new Welt();
     ArrayList<Spieler> spielerListe = new ArrayList<>();
     HashSet<Karte> kartenStapel = new HashSet<>();
+
 
     public Spiel() {
         starteSpiel();
@@ -21,7 +23,6 @@ public class Spiel {
         }
 
         //Create board
-        Welt welt = new Welt();
         welt.printWorldMap();
         welt.verteileLaender(spielerListe);
         kartenStapel.addAll(welt.createCardStack());
@@ -32,7 +33,7 @@ public class Spiel {
     public void spielRunde() {
         for (Spieler spieler : spielerListe) {
             //Truppen erhalten
-            spieler.neueArmee();
+            spieler.neueArmee(welt.alleKontinente);
             if (!spieler.karten.isEmpty()){
                 peruseCards(spieler);
             }

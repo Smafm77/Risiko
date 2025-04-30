@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public class Spieler {
     //region Basics
@@ -41,7 +43,7 @@ public class Spieler {
     //endregion
 
     //region Einheiten
-    public void neueArmee() { //Bei neuem Spielzug dazu
+    public void neueArmee(ArrayList<Kontinent> alleKontinente) { //Bei neuem Spielzug dazu
         int neueEinheiten = 3;
 
         //Zuschuss besetzte Länder
@@ -52,7 +54,6 @@ public class Spieler {
         } else if (besetzteLaender.size() >=12) {
             neueEinheiten += (besetzteLaender.size() - 9) / 3;
         }
-        //ToDo addiere Kontinent Bonus
 
         /*if (besetzteLaender.size() <= 9) {
             this.einheiten += 3;
@@ -60,6 +61,12 @@ public class Spieler {
             this.einheiten += besetzteLaender.size() / 3;
         }*/
         //ToDo Hannah, du scheinst den Bonus anders gerechnet zu haben als ich, dass müssten wir mal vergleichen
+
+        //Zuschuss Kontinente
+        Kontinent[] reiche = (Kontinent[]) alleKontinente.stream().filter(kontinent -> kontinent.einzigerBesitzer == this).toArray();
+        if (reiche.length > 0){
+            neueEinheiten += Arrays.stream(reiche).mapToInt(kontinent -> kontinent.buff).sum();
+        }
 
         assignTroops(neueEinheiten);
     }
