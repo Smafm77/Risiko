@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 public class Spieler {
     public String name;
@@ -8,7 +8,7 @@ public class Spieler {
     public int einheiten;
     public boolean alive;
     public ArrayList<Land> besetzteLaender = new ArrayList<>();
-    public ArrayList<Karte> karten = new ArrayList<>();
+    public HashSet<Karte> karten = new HashSet<>();
 
     public Spieler(String name, int id) {
         this.name = name.trim();

@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 
 public class Spiel {
     ArrayList<Spieler> spielerListe = new ArrayList<>();
@@ -32,6 +30,20 @@ public class Spiel {
             spielerListe.get(j).neueArmee();
             //Todo abfrage was getan werden soll
         }
+    }
+
+    public void drawCard(Spieler spieler) throws NoSuchElementException {//ToDo catch exception from orElseThrow
+        Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
+        Karte card = optionalCard.orElseThrow();
+        spieler.karten.add(card);
+    }
+
+    public void playCard(Spieler spieler, Karte card){
+        if (!spieler.karten.contains(card)){
+            //Todo Test if player owns card (should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry)
+        }
+        spieler.karten.remove(card);
+        kartenStapel.add(card);
     }
 
     public int rollDice6(){
