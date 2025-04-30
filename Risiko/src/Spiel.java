@@ -17,10 +17,11 @@ public class Spiel {
         for (int i = 1; i <= anzahlSpieler; i++) {
             System.out.println("Bitte Namen des Spielers eingeben Spieler Nr. " + i + " :");
             Spieler spieler = new Spieler(scanner.nextLine(), i);
-            spielerListe.add(spieler);
+            spielerListe.add(spieler); //ToDO Spieler unterscheiden (z.B. Farben aus einem Array/Enum zuordnen)
         }
         Welt welt = new Welt();
-        kartenStapel = (HashSet<Karte>) welt.verteileLaender(spielerListe);
+        welt.verteileLaender(spielerListe);
+        kartenStapel = (HashSet<Karte>) welt.createCardStack();
 
         printPlayers(spielerListe);
     }
@@ -32,6 +33,7 @@ public class Spiel {
         }
     }
 
+    //region playing Cards
     public void drawCard(Spieler spieler) throws NoSuchElementException {//ToDo catch exception from orElseThrow
         Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
         Karte card = optionalCard.orElseThrow();
@@ -45,6 +47,7 @@ public class Spiel {
         spieler.karten.remove(card);
         kartenStapel.add(card);
     }
+    //endregion
 
     public int rollDice6(){
         return (int) (Math.random() * 6);

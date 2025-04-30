@@ -50,10 +50,17 @@ public class Welt {
         alleLaender.add(new Land(2,"Land42"));
     }
 
-
-    public Collection<Karte> verteileLaender(List<Spieler> spielerListe) {
-
+    public Collection<Karte> createCardStack(){
         Collection<Karte> stapel = new ArrayList<>();
+        for (Land land : alleLaender){
+            stapel.add(new Karte(land));
+        }
+        return stapel;
+    }
+
+
+    public void verteileLaender(List<Spieler> spielerListe) {
+
         Collections.shuffle(alleLaender);
 
         int spielerAnzahl = spielerListe.size();
@@ -66,12 +73,10 @@ public class Welt {
 
             Spieler aktuellerSpieler = spielerListe.get(playerIndex);
             aktuellesLand.setBesitzer(aktuellerSpieler);
-            stapel.add(new Karte(aktuellesLand));
             aktuellerSpieler.fuegeLandHinzu(aktuellesLand, aktuellesLand.strength);
 
             index++;
         }
-        return stapel;
     }
 
 }
