@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Spiel {
     ArrayList<Spieler> spielerListe = new ArrayList<>();
-    HashSet<Karte> kartenStapel;
+    HashSet<Karte> kartenStapel = new HashSet<>();
 
     public Spiel() {
         starteSpiel();
@@ -22,18 +22,25 @@ public class Spiel {
 
         //Create board
         Welt welt = new Welt();
+        welt.printWorldMap();
         welt.verteileLaender(spielerListe);
-        kartenStapel = (HashSet<Karte>) welt.createCardStack();
+        kartenStapel.addAll(welt.createCardStack());
 
         printPlayers(spielerListe);
     }
 
     public void spielRunde() {
         for (Spieler spieler : spielerListe) {
+            //Truppen erhalten
             spieler.neueArmee();
             if (!spieler.karten.isEmpty()){
                 peruseCards(spieler);
             }
+            //Optional: Kampf
+            //Ich würde Karte ziehen schon hier mit einbinden
+
+            //Optional: Truppen bewegen
+
             //Todo abfrage was getan werden soll
         }
     }
