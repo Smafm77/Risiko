@@ -7,7 +7,8 @@ public class Spieler {
     public String farbe;
     public int einheiten;
     public boolean alive;
-    public List<Land> besetzteLaender = new ArrayList<>();
+    public ArrayList<Land> besetzteLaender = new ArrayList<>();
+    public ArrayList<Karte> karten = new ArrayList<>();
 
     public Spieler(String name, int id) {
         this.name = name.trim();
@@ -17,7 +18,7 @@ public class Spieler {
 
     public void fuegeLandHinzu(Land land, int soldaten) {
         besetzteLaender.add(land);
-        einheiten += soldaten;
+        einheiten += soldaten; //ToDo checke ob es mit Kampf kompatibel ist soldaten mit land.strength zu ersetzen
     }
 
     public void verliereLand(Land land){

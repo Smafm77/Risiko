@@ -2,9 +2,11 @@ public class Land {
     public String name;
     public Spieler besitzer;
     public int einheiten;
+    public int strength;
     public String[] nachbarn;
 
-    public Land(String name, String... nachbarn) {
+    public Land(int strength, String name, String... nachbarn) {
+        this.strength = strength;
         this.name = name;
         this.nachbarn = nachbarn;
     }

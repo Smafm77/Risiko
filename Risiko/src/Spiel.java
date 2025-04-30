@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class Spiel {
     ArrayList<Spieler> spielerListe = new ArrayList<>();
+    HashSet<Karte> kartenStapel;
 
     public Spiel() {
         starteSpiel();
@@ -20,7 +22,7 @@ public class Spiel {
             spielerListe.add(spieler);
         }
         Welt welt = new Welt();
-        welt.verteileLaender(spielerListe);
+        kartenStapel = (HashSet<Karte>) welt.verteileLaender(spielerListe);
 
         printPlayers(spielerListe);
     }
