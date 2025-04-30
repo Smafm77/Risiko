@@ -5,7 +5,7 @@ public class Spieler {
     public String name;
     public int id;
     public String farbe;
-    public int einheiten;
+    public int einheiten;    //ToDo check every instance if einheiten being used, if it needs to impact a Land as well
     public boolean alive;
     public ArrayList<Land> besetzteLaender = new ArrayList<>();
     public HashSet<Karte> karten = new HashSet<>();
@@ -37,16 +37,22 @@ public class Spieler {
         } else if (besetzteLaender.size() >=12) {
             neueEinheiten += (besetzteLaender.size() - 9) / 3;
         }
+        //ToDo addiere Kontinent Bonus
+
         /*if (besetzteLaender.size() <= 9) {
             this.einheiten += 3;
         } else {
             this.einheiten += besetzteLaender.size() / 3;
         }*/
-        //ToDo addiere Kontinent Bonus
         //ToDo Hannah, du scheinst den Bonus anders gerechnet zu haben als ich, dass müssten wir mal vergleichen
+
+        assignTroops(neueEinheiten);
     }
 
-    //ToDo check every instance if einheiten being used if they need to be assigned to a post as well
+    /**
+     * Eine Methode die neue Truppen ihre Länder zuweist
+     * @param troops Anzahl Truppen die stationiert werden
+     */
     public void assignTroops(int troops){
         for (int t = 1; t <= troops; t++){
             //ToDO choose an owned country to put the unit in. > add 1 to einheiten here and in chosen land
