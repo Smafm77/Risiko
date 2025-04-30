@@ -32,6 +32,10 @@ public class Spiel {
         }
     }
 
+    public int rollDice6(){
+        return (int) (Math.random() * 6);
+    }
+
     public void printPlayers(ArrayList<Spieler> spielerListe) {
         for (Spieler spieler : spielerListe) {
             System.out.println(spieler.id + " - " + spieler.name + " - " + spieler.besetzteLaender.size());
