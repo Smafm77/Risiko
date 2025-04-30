@@ -19,6 +19,16 @@ public class Spieler {
     //endregion
 
     //region Land Methoden
+
+    //Todo Test this
+    public HashSet<Land> getFeinde() {
+        HashSet<Land> feinde = new HashSet<>();
+        for (Land kolonie : besetzteLaender){
+            feinde.addAll(kolonie.getFeindlicheNachbarn());
+        }
+        return feinde;
+    }
+
     public void fuegeLandHinzu(Land land, int soldaten) {
         besetzteLaender.add(land);
         einheiten += soldaten; //ToDo checke ob es mit Kampf kompatibel ist soldaten mit land.strength zu ersetzen
