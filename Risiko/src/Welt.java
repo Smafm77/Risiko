@@ -1,16 +1,17 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Welt {
-    public List<Land> alleLaender;
+    public ArrayList<Land> alleLaender;
 
     public Welt() {
         alleLaender = new ArrayList<>();
-        alleLaender.add(new Land(2,"Land1", "Land2"));
-        alleLaender.add(new Land(2,"Land2", "Land1", "Land3"));
-        alleLaender.add(new Land(2,"Land3", "Land2", "Land4", "Land5"));
-        alleLaender.add(new Land(2,"Land4", "Land3"));
-        alleLaender.add(new Land(2,"Land5", "Land3"));
+        alleLaender.add(new Land(2,"Land1"));
+        alleLaender.add(new Land(2,"Land2"));
+        alleLaender.add(new Land(2,"Land3"));
+        alleLaender.add(new Land(2,"Land4"));
+        alleLaender.add(new Land(2,"Land5"));
         alleLaender.add(new Land(2,"Land6"));
         alleLaender.add(new Land(2,"Land7"));
         alleLaender.add(new Land(2,"Land8"));
@@ -48,6 +49,58 @@ public class Welt {
         alleLaender.add(new Land(2,"Land40"));
         alleLaender.add(new Land(2,"Land41"));
         alleLaender.add(new Land(2,"Land42"));
+
+
+        //füge in dieses Array die Nachbarn ein
+        Land[][] diplomatischeBeziehungen= {
+            {alleLaender.get(1)},
+            {alleLaender.get(0), alleLaender.get(2)},
+            {alleLaender.get(1), alleLaender.get(3), alleLaender.get(4)},
+            {alleLaender.get(2)},
+            {alleLaender.get(27)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+            {alleLaender.get(0)},
+        };
+
+
+        for (int i = 0; i < diplomatischeBeziehungen.length; i++){
+            alleLaender.get(i).addNachbarn(diplomatischeBeziehungen[i]);
+        }
     }
 
     public Collection<Karte> createCardStack(){
@@ -66,10 +119,10 @@ public class Welt {
         int spielerAnzahl = spielerListe.size();
         int index = 0;
 
-        while (!alleLaender.isEmpty()) {
+        while (index < alleLaender.size()) {
             int playerIndex = spielerAnzahl - 1 - (index % spielerAnzahl);
 
-            Land aktuellesLand = alleLaender.removeFirst();
+            Land aktuellesLand = alleLaender.get(index);
 
             Spieler aktuellerSpieler = spielerListe.get(playerIndex);
             aktuellesLand.setBesitzer(aktuellerSpieler);
@@ -78,5 +131,17 @@ public class Welt {
             index++;
         }
     }
+
+    //region Description
+    public void printWorldMap(){
+        System.out.println("Worldmap:");
+        System.out.println();
+        for (Land land : alleLaender){
+            String nachbarn = land.nachbarn.stream().map(land1 -> land1.name + ", ").collect(Collectors.joining());
+            System.out.println(land.name + " | Next to:" + nachbarn);
+        }
+        System.out.println();
+    }
+    //endregion
 
 }
