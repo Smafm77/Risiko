@@ -29,8 +29,11 @@ public class Spiel {
     }
 
     public void spielRunde() {
-        for (int j = 1; j <=spielerListe.size() ; j++) {
-            spielerListe.get(j).neueArmee();
+        for (Spieler spieler : spielerListe) {
+            spieler.neueArmee();
+            if (!spieler.karten.isEmpty()){
+                peruseCards(spieler);
+            }
             //Todo abfrage was getan werden soll
         }
     }
@@ -44,15 +47,41 @@ public class Spiel {
 
     public void playCard(Spieler spieler, Karte card){
         if (!spieler.karten.contains(card)){
-            //Todo Test if player owns card (should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry)
+            spieler.karten.remove(card);
+            kartenStapel.add(card);
+        } else {
+            //ToDo throw Error that Player doesn't own the card. This should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry
         }
-        spieler.karten.remove(card);
-        kartenStapel.add(card);
     }
     //endregion
 
     public int rollDice6(){
         return (int) (Math.random() * 6);
+    }
+
+    //region temporary Visualisation
+    public void peruseCards(Spieler spieler) throws NoSuchElementException{ //ToDO catch exception
+        //Name Options
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Choose any card you want to play by Name");
+        printYourTerretorries(spieler);
+        System.out.println("N to leave");
+
+        while (!spieler.karten.isEmpty()){
+            String input = scanner.next();
+            if (input.equals("N")){break;}
+            Karte chosenCard = spieler.karten.stream().filter(c -> c.land.name.equals(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
+            playCard(spieler, chosenCard);
+        }
+    }
+
+
+    public void printYourTerretorries(Spieler spieler){
+        System.out.println("All deine Gebiete:");
+        //Wenn es möglich ist Nachbarn zu erörtern auch diese hinzufügen (anzahl angrenzender Gebiete und Einheiten)
+        for (Land land : spieler.besetzteLaender){
+            System.out.println(spieler.id + " - " + land.name + ": " + land.einheiten + " | ");
+        }
     }
 
     public void printPlayers(ArrayList<Spieler> spielerListe) {
@@ -66,5 +95,6 @@ public class Spiel {
         System.out.println();
         System.out.println();
     }
+    //endregion
 
 }
