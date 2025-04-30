@@ -27,11 +27,23 @@ public class Spieler {
     }
 
     public void neueArmee() { //Bei neuem Spielzug dazu
-        if (besetzteLaender.size() <= 9) {
+        int neueEinheiten = 3;
+
+        //Zuschuss besetzte Länder
+        if (besetzteLaender.size() >= 40){
+            neueEinheiten += 10;
+        } else if (besetzteLaender.size() >= 36) {
+            neueEinheiten += 9;
+        } else if (besetzteLaender.size() >=12) {
+            neueEinheiten += (besetzteLaender.size() - 9) / 3;
+        }
+        /*if (besetzteLaender.size() <= 9) {
             this.einheiten += 3;
         } else {
             this.einheiten += besetzteLaender.size() / 3;
-        }
+        }*/
+        //ToDo addiere Kontinent Bonus
+        //ToDo Hannah, du scheinst den Bonus anders gerechnet zu haben als ich, dass müssten wir mal vergleichen
     }
 
     //ToDo check every instance if einheiten being used if they need to be assigned to a post as well

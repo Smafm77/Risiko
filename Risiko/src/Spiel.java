@@ -9,16 +9,18 @@ public class Spiel {
     }
 
     public void starteSpiel() {
+        //Create Players
         Scanner scanner = new Scanner(System.in);
         System.out.println("Bitte die Anzahl an Spielern eingeben:");
         int anzahlSpieler = scanner.nextInt();
         scanner.nextLine(); //Weil scanner.nextInt immer mucken macht einfach nochmal nextLine "einlesen"
-
         for (int i = 1; i <= anzahlSpieler; i++) {
             System.out.println("Bitte Namen des Spielers eingeben Spieler Nr. " + i + " :");
             Spieler spieler = new Spieler(scanner.nextLine(), i);
             spielerListe.add(spieler); //ToDO Spieler unterscheiden (z.B. Farben aus einem Array/Enum zuordnen)
         }
+
+        //Create board
         Welt welt = new Welt();
         welt.verteileLaender(spielerListe);
         kartenStapel = (HashSet<Karte>) welt.createCardStack();
