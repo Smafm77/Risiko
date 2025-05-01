@@ -135,7 +135,7 @@ public class Welt {
         }
     }
 
-    //region Description
+    //region temporary Visualisation
     public void printWorldMap(){
         System.out.println("Worldmap:");
         System.out.println();

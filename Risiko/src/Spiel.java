@@ -63,6 +63,22 @@ public class Spiel {
     }
     //endregion
 
+    //ToDo write Errors
+    public void einheitenBewegen(Spieler spieler, Land herkunft, Land ziel, int truppen){
+        if (herkunft.besitzer != spieler){
+            //trow Error (Diese Truppen gehören dir nicht)
+        }
+        if (herkunft.einheiten <= truppen){
+            //throw Error (zu wenig Einheiten auf dem Feld vorhanden)
+        }
+        if (!herkunft.connectionPossible(ziel)){
+            //throw error (Die Länder sind nicht verbunden)
+        }
+
+        herkunft.einheiten -= truppen;
+        ziel.einheiten += truppen;
+    }
+
     public int rollDice6(){
         return (int) (Math.random() * 6);
     }
@@ -80,6 +96,30 @@ public class Spiel {
             if (input.equals("N")){break;}
             Karte chosenCard = spieler.karten.stream().filter(c -> c.land.name.equals(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
             playCard(spieler, chosenCard);
+        }
+    }
+    public void moveTroopsInterface(Spieler spieler){
+        Scanner scanner = new Scanner(System.in);
+
+        while (true){
+            printYourTerretorries(spieler);
+            System.out.println("Do you wish to continue? (Y/N)");
+            char cont = scanner.next().trim().toUpperCase().charAt(0);
+
+            //Todo check if break works as intended & catch Errors
+            if (cont == 'N'){
+                break;
+            } else if (cont == 'Y') {
+                System.out.println("From where?");
+                Land her = spieler.besetzteLaender.stream().filter(land -> land.isName(scanner.next())).findFirst().orElseThrow(); //catch orElseThrow
+                System.out.println("To where?");
+                Land ziel = spieler.besetzteLaender.stream().filter(land -> land.isName(scanner.next())).findFirst().orElseThrow(); //catch orElseThrow
+                System.out.println("How many?");
+                int troops = scanner.nextInt();
+                einheitenBewegen(spieler, her, ziel, troops);
+            } else {
+                System.out.println("Ungültige Eingabe");
+            }
         }
     }
 

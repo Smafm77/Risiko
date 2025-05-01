@@ -66,7 +66,11 @@ public class Land {
     }
     //endregion
 
-    //ToDo schreib eine Methode die Checkt ob es eine nutzbare verbindung mit einem anderen Land über bereits besetzte Länder gibt
-    // --> separiert ob ziel eigenes, oder benachbartes fremdes Terretorium ist
-
+    @Override
+    public boolean equals (Object land){
+        return (land instanceof Land) && (((Land) land).name.equals(this.name));
+    }
+    public boolean isName (String name){
+        return this.name.equals(name);
+    }
 }
