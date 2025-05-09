@@ -58,7 +58,7 @@ public class Spieler {
     }
 
     public void verliereLand(Land land){
-        einheiten -= land.einheiten; //Kann Probleme machen, falls Einheitenzahl schon mit Gegner ersetzt wurde
+        einheiten -= land.getEinheiten(); //Kann Probleme machen, falls Einheitenzahl schon mit Gegner ersetzt wurde
         besetzteLaender.remove(land);
     }
     //endregion
@@ -84,9 +84,9 @@ public class Spieler {
         //ToDo Hannah, du scheinst den Bonus anders gerechnet zu haben als ich, dass müssten wir mal vergleichen
 
         //Zuschuss Kontinente
-        Kontinent[] reiche = (Kontinent[]) alleKontinente.stream().filter(kontinent -> kontinent.einzigerBesitzer == this).toArray();
+        Kontinent[] reiche = (Kontinent[]) alleKontinente.stream().filter(kontinent -> kontinent.getEinzigerBesitzer() == this).toArray();
         if (reiche.length > 0){
-            neueEinheiten += Arrays.stream(reiche).mapToInt(kontinent -> kontinent.buff).sum();
+            neueEinheiten += Arrays.stream(reiche).mapToInt(Kontinent::getBuff).sum();
         }
 
         assignTroops(neueEinheiten);
@@ -102,10 +102,12 @@ public class Spieler {
         }
     }
 
-    public void moveTroops(int troops, Land herkunft, Land ziel){
+    public void moveTroops(int troops, Land herkunft, Land ziel){ //ToDo Wieso gibt es moveTroops sowohl in Spieler als auch in Spiel?
         //ToDO throw error if either Land is not in possession of the player, they're not connected or herkunft doesn't have enough troops
-        herkunft.einheiten -= troops;
-        ziel.einheiten += troops;
+        int herkunftEinheiten = herkunft.getEinheiten();
+        herkunft.setEinheiten(herkunftEinheiten - troops);
+        int zielEinheiten = ziel.getEinheiten();
+        ziel.setEinheiten(zielEinheiten + troops);
     }
     //endregion
 
@@ -117,7 +119,8 @@ public class Spieler {
     public void countTroops(){
         int soldaten = 0;
         for (Land land : besetzteLaender){
-            soldaten += land.einheiten;
+
+            soldaten += land.getEinheiten();
         }
         //Todo throw Error if soldaten don't match with this.einheiten
         einheiten = soldaten;

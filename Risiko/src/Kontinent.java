@@ -20,13 +20,13 @@ public class Kontinent {
     public void checkBesitzer(){
         boolean isSame = true;
         for (int i = 1; i < gebiete.length; i++){
-            if (!gebiete[i].besitzer.equals(gebiete[0].besitzer)) {
+            if (!gebiete[i].getBesitzer().equals(gebiete[0].getBesitzer())) {
                 isSame = false;
                 break;
             }
         }
         if (isSame){
-            einzigerBesitzer = gebiete[0].besitzer;
+            einzigerBesitzer = gebiete[0].getBesitzer();
         } else {
             einzigerBesitzer = null;
         }

@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.*;
 
 public class Spiel {
@@ -6,7 +7,7 @@ public class Spiel {
     HashSet<Karte> kartenStapel = new HashSet<>();
 
 
-    public Spiel() {
+    public Spiel() throws IOException {
         starteSpiel();
     }
 
@@ -34,7 +35,7 @@ public class Spiel {
         for (Spieler spieler : spielerListe) {
             //Truppen erhalten
             spieler.neueArmee(welt.alleKontinente);
-            if (!spieler.karten.isEmpty()){
+            if (!spieler.getKarten().isEmpty()){
                 peruseCards(spieler);
             }
             //Optional: Kampf
@@ -50,12 +51,12 @@ public class Spiel {
     public void drawCard(Spieler spieler) throws NoSuchElementException {//ToDo catch exception from orElseThrow
         Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
         Karte card = optionalCard.orElseThrow();
-        spieler.karten.add(card);
+        spieler.getKarten().add(card);
     }
 
     public void playCard(Spieler spieler, Karte card){
-        if (!spieler.karten.contains(card)){
-            spieler.karten.remove(card);
+        if (!spieler.getKarten().contains(card)){
+            spieler.getKarten().remove(card);
             kartenStapel.add(card);
         } else {
             //ToDo throw Error that Player doesn't own the card. This should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry
@@ -64,19 +65,21 @@ public class Spiel {
     //endregion
 
     //ToDo write Errors
-    public void einheitenBewegen(Spieler spieler, Land herkunft, Land ziel, int truppen){
-        if (herkunft.besitzer != spieler){
+    public void einheitenBewegen(Spieler spieler, Land herkunft, Land ziel, int truppen){//ToDo Wieso gibt es moveTroops sowohl in Spieler als auch in Spiel?
+        if (herkunft.getBesitzer() != spieler){
             //trow Error (Diese Truppen gehören dir nicht)
         }
-        if (herkunft.einheiten <= truppen){
+        if (herkunft.getEinheiten() <= truppen){
             //throw Error (zu wenig Einheiten auf dem Feld vorhanden)
         }
         if (!herkunft.connectionPossible(ziel)){
             //throw error (Die Länder sind nicht verbunden)
         }
+        int herkunftEinheiten = herkunft.getEinheiten();
+        herkunft.setEinheiten(herkunftEinheiten - truppen);
+        int zielEinheiten = ziel.getEinheiten();
+        ziel.setEinheiten(zielEinheiten + truppen);
 
-        herkunft.einheiten -= truppen;
-        ziel.einheiten += truppen;
     }
 
     public int rollDice6(){
@@ -91,10 +94,10 @@ public class Spiel {
         printYourTerretorries(spieler);
         System.out.println("N to leave");
 
-        while (!spieler.karten.isEmpty()){
+        while (!spieler.getKarten().isEmpty()){
             String input = scanner.next();
             if (input.equals("N")){break;}
-            Karte chosenCard = spieler.karten.stream().filter(c -> c.land.name.equals(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
+            Karte chosenCard = spieler.getKarten().stream().filter(c -> c.land.getName().equals(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
             playCard(spieler, chosenCard);
         }
     }
@@ -111,9 +114,9 @@ public class Spiel {
                 break;
             } else if (cont == 'Y') {
                 System.out.println("From where?");
-                Land her = spieler.besetzteLaender.stream().filter(land -> land.isName(scanner.next())).findFirst().orElseThrow(); //catch orElseThrow
+                Land her = spieler.getBesetzteLaender().stream().filter(land -> land.isName(scanner.next())).findFirst().orElseThrow(); //catch orElseThrow
                 System.out.println("To where?");
-                Land ziel = spieler.besetzteLaender.stream().filter(land -> land.isName(scanner.next())).findFirst().orElseThrow(); //catch orElseThrow
+                Land ziel = spieler.getBesetzteLaender().stream().filter(land -> land.isName(scanner.next())).findFirst().orElseThrow(); //catch orElseThrow
                 System.out.println("How many?");
                 int troops = scanner.nextInt();
                 einheitenBewegen(spieler, her, ziel, troops);
@@ -127,16 +130,16 @@ public class Spiel {
     public void printYourTerretorries(Spieler spieler){
         System.out.println("All deine Gebiete:");
         //Wenn es möglich ist Nachbarn zu erörtern auch diese hinzufügen (anzahl angrenzender Gebiete und Einheiten)
-        for (Land land : spieler.besetzteLaender){
-            System.out.println(spieler.id + " - " + land.name + ": " + land.einheiten + " | ");
+        for (Land land : spieler.getBesetzteLaender()){
+            System.out.println(spieler.getId() + " - " + land.getName() + ": " + land.getEinheiten() + " | ");
         }
     }
 
     public void printPlayers(ArrayList<Spieler> spielerListe) {
         for (Spieler spieler : spielerListe) {
-            System.out.println(spieler.id + " - " + spieler.name + " - " + spieler.besetzteLaender.size());
-            for (Land land : spieler.besetzteLaender) {
-                System.out.println(land.besitzer.id + ": " + land.name);
+            System.out.println(spieler.getId() + " - " + spieler.getName() + " - " + spieler.getBesetzteLaender().size());
+            for (Land land : spieler.getBesetzteLaender()) {
+                System.out.println(land.getBesitzer().getId() + ": " + land.getName());
             }
             System.out.println();
         }
