@@ -5,13 +5,13 @@ import java.util.stream.Collectors;
 
 public class Spieler {
     //region Basics
-    public String name;
-    public int id;
-    public String farbe;
-    public int einheiten;    //ToDo check every instance if einheiten being used, if it needs to impact a Land as well
-    public boolean alive;
-    public ArrayList<Land> besetzteLaender = new ArrayList<>();
-    public HashSet<Karte> karten = new HashSet<>();
+    private String name;
+    private int id;
+    private String farbe;
+    private int einheiten;    //ToDo check every instance if einheiten being used, if it needs to impact a Land as well
+    private boolean alive;
+    private ArrayList<Land> besetzteLaender = new ArrayList<>();
+    private HashSet<Karte> karten = new HashSet<>();
 
     public Spieler(String name, int id) {
         this.name = name.trim();
@@ -19,6 +19,27 @@ public class Spieler {
         this.einheiten = 0;
     }
     //endregion
+    public String getName() {
+        return name;
+    }
+    public int getId() {
+        return id;
+    }
+    public String getFarbe() {
+        return farbe;
+    }
+    public int getEinheiten() {
+        return einheiten;
+    }
+    public boolean isAlive() {
+        return alive;
+    }
+    public ArrayList<Land> getBesetzteLaender() {
+        return besetzteLaender;
+    }
+    public HashSet<Karte> getKarten() {
+        return karten;
+    }
 
     //region Land Methoden
 
