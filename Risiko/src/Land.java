@@ -4,32 +4,33 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 
 public class Land {
-    public String name;
-    public Spieler besitzer;
-    public int einheiten;
-    public int strength;
-    public HashSet<Land> nachbarn = new HashSet<>();
+    private String name;
+    private Spieler besitzer;
+    private int einheiten;
+    private final int strength; //ToDo check mal bitte kopftechnisch ob wir wirklich eine eigene Variable dafür brauchen oder aber ob das nicht auch anders geht, irgwndwie finde ich die hässlich
+    private HashSet<Land> nachbarn = new HashSet<>();
 
-    public Land(int strength, String name, Land... nachbarn) {
-        this.strength = strength;
+    public Land(int strength, String name) {
+        this.strength = strength; //ToDo kann man das nicht hier ersetzen mit this.einheiten = 2; Bzw wieso überhaupt 2? Ich finde in den Regeln nichts dazu
         this.name = name;
-        this.nachbarn.addAll(Arrays.asList(nachbarn));
     }
 
     //ToDo Teste ob connectionOptions & directNeighbors funktioniert, sobald Karte feststeht (sorge um Beibehalten von Veränderungen der Sets)
-    public boolean connectionPossible(Land ziel){
+    public boolean connectionPossible(Land ziel) {
         return connectionOptions().contains(ziel);
     }
-    public HashSet<Land> connectionOptions(){
+
+    public HashSet<Land> connectionOptions() {
         HashSet<Land> neighborhood = new HashSet<>();
         HashSet<Land> barbarians = new HashSet<>();
         directNeighbors(this, neighborhood, barbarians);
         return neighborhood;
     }
-    private void directNeighbors(Land currentStation, HashSet<Land> neighborhood, HashSet<Land> barbarians){
-        for (Land land : currentStation.nachbarn){
-            if (!neighborhood.contains(land) && !barbarians.contains(land)){
-                if (land.besitzer == currentStation.besitzer){
+
+    private void directNeighbors(Land currentStation, HashSet<Land> neighborhood, HashSet<Land> barbarians) {
+        for (Land land : currentStation.nachbarn) {
+            if (!neighborhood.contains(land) && !barbarians.contains(land)) {
+                if (land.besitzer == currentStation.besitzer) {
                     neighborhood.add(land);
                     directNeighbors(land, neighborhood, barbarians);
                 } else {
@@ -40,37 +41,67 @@ public class Land {
     }
 
     //region Getters and Setters
+
+    public String getName() {
+        return name;
+    }
+
+    public Spieler getBesitzer() {
+        return besitzer;
+    }
+
+    public int getEinheiten() {
+        return einheiten;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public HashSet<Land> getNachbarn() {
+        return nachbarn;
+    }
+
+    public void setBesitzer(Spieler spieler) {
+        this.besitzer = spieler;
+    }
+
+    public void setEinheiten(int einheiten) {
+        this.einheiten = einheiten; //ToDo Das überschreibt ja jetzt nur die Einheitenzahl. Theoretisch wenn wir verschieben, addieren/subtrahieren wir aber Einheiten von der bestehenden Anzahl. Wie machen wir das?
+    }
+
     public void setNachbarn(Collection<Land> nachbarn) {
         this.nachbarn = null;
         addNachbarn(nachbarn);
     }
-    public void addNachbarn(Land[] nachbarn){
+
+    public void addNachbarn(Land[] nachbarn) {
         addNachbarn(Arrays.asList(nachbarn));
     }
+
     public void addNachbarn(Collection<Land> nachbarn) {
-        for (Land nachbar : nachbarn){
+        for (Land nachbar : nachbarn) {
             nachbar.addNachbar(this);
         }
         this.nachbarn.addAll(nachbarn);
     }
-    public void addNachbar(Land nachbar){
+
+    public void addNachbar(Land nachbar) {
         nachbarn.add(nachbar);
     }
-    public HashSet<Land> getFeindlicheNachbarn(){//Todo Test this
-        return (HashSet<Land>) nachbarn.stream().filter(l -> l.besitzer != this.besitzer).collect(Collectors.toSet());
-    }
 
-    //Wir brauchen wahrscheinlich erstmal unsere Map damit wir wissen welches Land welchen Nachbarn hat.
-    public void setBesitzer(Spieler spieler) {
-        this.besitzer = spieler;
+    public HashSet<Land> getFeindlicheNachbarn() {//Todo Test this
+        return (HashSet<Land>) nachbarn.stream().filter(l -> l.besitzer != this.besitzer).collect(Collectors.toSet());
     }
     //endregion
 
+
     @Override
-    public boolean equals (Object land){
+    public boolean equals(Object land) {
         return (land instanceof Land) && (((Land) land).name.equals(this.name));
     }
-    public boolean isName (String name){
+
+    public boolean isName(String name) {
         return this.name.equals(name);
     }
 }
