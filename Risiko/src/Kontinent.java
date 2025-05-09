@@ -1,13 +1,21 @@
 public class Kontinent {
-    public Land[] gebiete;
-    public int buff;
-    public Spieler einzigerBesitzer; //Kann null sein, falls Kontinent mehrere Besatzer hat
+    private Land[] gebiete;
+    private int buff;
+    private Spieler einzigerBesitzer; //Kann null sein, falls Kontinent mehrere Besatzer hat
 
     public Kontinent(Land[] gebiete, int buff) {
         this.gebiete = gebiete;
         this.buff = buff;
     }
-
+    public Land[] getGebiete() {
+        return gebiete;
+    }
+    public int getBuff() {
+        return buff;
+    }
+    public Spieler getEinzigerBesitzer() {
+        return einzigerBesitzer;
+    }
 
     public void checkBesitzer(){
         boolean isSame = true;
