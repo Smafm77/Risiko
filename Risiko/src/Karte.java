@@ -4,6 +4,6 @@ public class Karte {
 
     public Karte(Land land) {
         this.land = land;
-        this.strength = land.strength;
+        this.strength = land.getStrength();
     }
 }
