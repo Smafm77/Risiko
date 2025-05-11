@@ -27,7 +27,7 @@ public class Spiel {
         welt.printWorldMap();
         welt.verteileLaender(spielerListe);
         kartenStapel.addAll(welt.createCardStack());
-        printPlayers(spielerListe);
+        zeigeSpieler(spielerListe);
         do {
             spielRunde();
         } while (spielRunde());
@@ -55,7 +55,7 @@ public class Spiel {
                 scanner.nextLine();
                 switch (auswahl) {
                     case 1:
-                        drawCard(spieler);
+                        zieheKarte(spieler);
                         break;
                     case 2:
                         //Angreifen
@@ -76,25 +76,25 @@ public class Spiel {
     }
 
     //region playing Cards
-    public void drawCard(Spieler spieler) throws NoSuchElementException {//ToDo catch exception from orElseThrow @Maj: Nein
+    public void zieheKarte(Spieler spieler) throws NoSuchElementException {//ToDo catch exception from orElseThrow @Maj: Nein
         Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
-        Karte card = optionalCard.orElseThrow();
-        spieler.getKarten().add(card);
+        Karte karte = optionalCard.orElseThrow();
+        spieler.getKarten().add(karte);
     }
 
-    public void playCard(Spieler spieler, Karte card) {
-        if (!spieler.getKarten().contains(card)) {
-            spieler.getKarten().remove(card);
-            kartenStapel.add(card);
+    public void spieleKarte(Spieler spieler, Karte karte) {
+        if (!spieler.getKarten().contains(karte)) {
+            spieler.getKarten().remove(karte);
+            kartenStapel.add(karte);
         } else {
-            //ToDo throw Error that Player doesn't own the card. This should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry
+            //ToDo throw Error that Player doesn't own the karte. This should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry
             //ToDo @majbritt: Nein
 
         }
     }
     //endregion
 
-    public int rollDice6() {
+    public int rolleWuerfel() {
         return (int) (Math.random() * 6);
     }
 
@@ -103,7 +103,7 @@ public class Spiel {
         //Name Options
         Scanner scanner = new Scanner(System.in);
         System.out.println("Choose any card you want to play by Name");
-        printYourTerretorries(spieler);
+        zeigeEigeneGebiete(spieler);
         System.out.println("N to leave");
 
         while (!spieler.getKarten().isEmpty()) {
@@ -112,7 +112,7 @@ public class Spiel {
                 break;
             }
             Karte chosenCard = spieler.getKarten().stream().filter(c -> c.land.getName().equals(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
-            playCard(spieler, chosenCard);
+            spieleKarte(spieler, chosenCard);
         }
     }
 
@@ -120,7 +120,7 @@ public class Spiel {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            printYourTerretorries(spieler);
+            zeigeEigeneGebiete(spieler);
             System.out.println("Do you wish to continue? (Y/N)");
             char cont = scanner.next().trim().toUpperCase().charAt(0);
 
@@ -142,7 +142,7 @@ public class Spiel {
     }
 
 
-    public void printYourTerretorries(Spieler spieler) {
+    public void zeigeEigeneGebiete(Spieler spieler) {
         System.out.println("All deine Gebiete:");
         //Wenn es möglich ist Nachbarn zu erörtern auch diese hinzufügen (anzahl angrenzender Gebiete und Einheiten)
         for (Land land : spieler.getBesetzteLaender()) {
@@ -150,7 +150,7 @@ public class Spiel {
         }
     }
 
-    public void printPlayers(ArrayList<Spieler> spielerListe) {
+    public void zeigeSpieler(ArrayList<Spieler> spielerListe) {
         for (Spieler spieler : spielerListe) {
             System.out.println(spieler.getId() + " - " + spieler.getName() + " - " + spieler.getBesetzteLaender().size());
             for (Land land : spieler.getBesetzteLaender()) {

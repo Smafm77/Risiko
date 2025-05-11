@@ -7,7 +7,6 @@ public class Spieler {
     //region Basics
     private String name;
     private int id;
-    private String farbe;
     private int einheiten;    //ToDo check every instance if einheiten being used, if it needs to impact a Land as well
     private boolean alive;
     private ArrayList<Land> besetzteLaender = new ArrayList<>();
@@ -26,10 +25,6 @@ public class Spieler {
 
     public int getId() {
         return id;
-    }
-
-    public String getFarbe() {
-        return farbe;
     }
 
     public int getEinheiten() {
@@ -88,11 +83,6 @@ public class Spieler {
         zuweisungEinheiten(neueEinheiten);
     }
 
-    /**
-     * Eine Methode die neue Truppen ihre Länder zuweist
-     *
-     * @param truppen Anzahl Truppen die stationiert werden
-     */
     public void zuweisungEinheiten(int truppen) {
         for (int t = 1; t <= truppen; t++) {
             //ToDO choose an owned country to put the unit in. > add 1 to einheiten here and in chosen land
