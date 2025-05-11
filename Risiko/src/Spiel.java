@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 
@@ -83,44 +84,46 @@ public class Spiel {
 
     public void infoAuswahl() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Über welches Land möchtest du Informationen erhalten?");
+        System.out.println("Über welches Land möchtest du Informationen erhalten? - Abbrechen mit Enter");
         String eingabe = scanner.nextLine();
-        Land auswahlLand = welt.findeLand(eingabe);
-        if (auswahlLand == null) {
-            System.out.println("Fehlerhafte Eingabe: " + eingabe + " ist kein Land.");
-            infoAuswahl();
-            return;
-        }
-        boolean zurueck = false;
-        while (!zurueck) {
-            System.out.println("Welche Informationen möchtest du über " + eingabe + " erhalten?");
-            System.out.println("1: Besitzer");
-            System.out.println("2: Einheiten auf Land");
-            System.out.println("3: Nachbarländer von " + eingabe);
-            System.out.println("666: Zurück");
+        if (!Objects.equals(eingabe, "")) {
+            Land auswahlLand = welt.findeLand(eingabe);
+            if (auswahlLand == null) {
+                System.out.println("Fehlerhafte Eingabe: " + eingabe + " ist kein Land.");
+                infoAuswahl();
+                return;
+            }
+            boolean zurueck = false;
+            while (!zurueck) {
+                System.out.println("Welche Informationen möchtest du über " + eingabe + " erhalten?");
+                System.out.println("1: Besitzer");
+                System.out.println("2: Einheiten auf Land");
+                System.out.println("3: Nachbarländer von " + eingabe);
+                System.out.println("666: Zurück");
 
-            int auswahl = scanner.nextInt();
-            scanner.nextLine();
+                int auswahl = scanner.nextInt();
+                scanner.nextLine();
 
-            switch (auswahl) {
-                case 1:
-                    System.out.println(auswahlLand.getName() + " befindet sich in " + auswahlLand.getBesitzer().getName() + "'s Besitz.");
-                    break;
-                case 2:
-                    System.out.println("In " + auswahlLand.getName() + " befinden sich aktuell " + auswahlLand.getEinheiten() + " Einheiten.");
-                    break;
-                case 3:
-                    System.out.println("Die Nachbarländer von " + auswahlLand.getName() + " sind: ");
-                    for (Land nachbar : auswahlLand.getNachbarn()) {
-                        System.out.println(nachbar.getName());
-                    }
-                    break;
-                case 666:
-                    zurueck = true;
-                    break;
-                default:
-                    System.out.println("Fehlerhafte Eingabe.");
-                    break;
+                switch (auswahl) {
+                    case 1:
+                        System.out.println(auswahlLand.getName() + " befindet sich in " + auswahlLand.getBesitzer().getName() + "'s Besitz.");
+                        break;
+                    case 2:
+                        System.out.println("In " + auswahlLand.getName() + " befinden sich aktuell " + auswahlLand.getEinheiten() + " Einheiten.");
+                        break;
+                    case 3:
+                        System.out.println("Die Nachbarländer von " + auswahlLand.getName() + " sind: ");
+                        for (Land nachbar : auswahlLand.getNachbarn()) {
+                            System.out.println(nachbar.getName());
+                        }
+                        break;
+                    case 666:
+                        zurueck = true;
+                        break;
+                    default:
+                        System.out.println("Fehlerhafte Eingabe.");
+                        break;
+                }
             }
         }
     }
@@ -166,28 +169,45 @@ public class Spiel {
         }
     }
 
-    public void moveTroopsInterface(Spieler spieler) { //Todo Wieso Interface?
+    public void moveTroopsInterface(Spieler spieler) {
         Scanner scanner = new Scanner(System.in);
-
+        zeigeEigeneGebiete(spieler);
+        System.out.println("Aus welchem Land sollen Einheiten entzogen werden?");
+        String herkunft = scanner.nextLine();
+        Land herLand = welt.findeLand(herkunft);
         while (true) {
-            zeigeEigeneGebiete(spieler);
-            System.out.println("Do you wish to continue? (Y/N)");
-            char cont = scanner.next().trim().toUpperCase().charAt(0);
-
-            //Todo check if break works as intended & catch Errors @maj nein!
-            if (cont == 'N') {
+            if (herLand.getBesitzer() != spieler) {
+                System.out.println("Du bist nicht der Besitzer von " + herLand.getName());
                 break;
-            } else if (cont == 'Y') {
-                System.out.println("From where?");
-                Land her = spieler.getBesetzteLaender().stream().filter(land -> land.isName(scanner.next())).findFirst().orElseThrow(); //catch orElseThrow
-                System.out.println("To where?");
-                Land ziel = spieler.getBesetzteLaender().stream().filter(land -> land.isName(scanner.next())).findFirst().orElseThrow(); //catch orElseThrow
-                System.out.println("How many?");
-                int troops = scanner.nextInt();
-                spieler.bewegeEinheiten(troops, her, ziel);
-            } else {
-                System.out.println("Ungültige Eingabe");
             }
+            System.out.println("In welches Land sollen die Einheiten geschickt werden?");
+            String ziel = scanner.nextLine();
+            Land zielLand = welt.findeLand(ziel);
+            if (zielLand.getBesitzer() != spieler) {
+                System.out.println("Du bist nicht der Besitzer von " + zielLand.getName());
+                break;
+            }
+            boolean istNachbar = false;
+            for (Land land : zielLand.getNachbarn()) {
+                if (land == herLand) {
+                    istNachbar = true;
+                    break;
+                }
+            }
+            if(!istNachbar) {
+                System.out.println(herLand.getName() + " ist kein Nachbar von " + zielLand.getName());
+                break;
+            }
+
+            System.out.println("Wie viele der " + herLand.getEinheiten() + " Einheiten aus " + herLand.getName() + " sollen nach " + zielLand.getName() + " entsendet werden?");
+            int anzahl = scanner.nextInt();
+            if (herLand.getEinheiten() - anzahl < 1) {
+                System.out.println("Du hast nicht genug Einheiten in " + herLand.getName() + " für diese Aktion. Es muss immer mindestens 1 Einheit im Herkunftsland verbleiben.");
+                break;
+            }
+            spieler.bewegeEinheiten(anzahl, herLand, zielLand);
+
+            break;
         }
     }
 
@@ -196,7 +216,11 @@ public class Spiel {
         System.out.println("All deine Gebiete:");
         //Wenn es möglich ist Nachbarn zu erörtern auch diese hinzufügen (anzahl angrenzender Gebiete und Einheiten)
         for (Land land : spieler.getBesetzteLaender()) {
-            System.out.println(spieler.getId() + " - " + land.getName() + ": " + land.getEinheiten() + " | ");
+            System.out.print(spieler.getId() + " - " + land.getName() + ": " + land.getEinheiten() + " | ");
+            for(Land nachbar : land.getNachbarn()) {
+                System.out.print(nachbar.getName() + " ");
+            }
+            System.out.println();
         }
     }
 
@@ -211,6 +235,6 @@ public class Spiel {
         System.out.println();
         System.out.println();
     }
-    //endregion
+//endregion
 
 }

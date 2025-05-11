@@ -12,7 +12,7 @@ public class Main {
 
         while (running) {
             System.out.println("1. Spiel starten");
-            System.out.println("2. Beenden");
+            System.out.println("666. Beenden");
             System.out.println("Bitte eine Option auswählen");
             String auswahl = scanner.nextLine();
 
@@ -20,7 +20,7 @@ public class Main {
                 case "1":
                     Spiel spiel = new Spiel();
                     break;
-                case "2":
+                case "666":
                     System.out.println("Wird beendet");
                     running = false;
                     break;

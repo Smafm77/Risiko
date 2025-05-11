@@ -13,6 +13,7 @@ public class Land {
     public Land(int strength, String name) {
         this.strength = strength;
         this.name = name;
+        this.einheiten = strength;
     }
 
     //ToDo Teste ob connectionOptions & directNeighbors funktioniert, sobald Karte feststeht (sorge um Beibehalten von Veränderungen der Sets)
