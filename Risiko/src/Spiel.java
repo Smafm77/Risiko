@@ -64,24 +64,6 @@ public class Spiel {
     }
     //endregion
 
-    //ToDo write Errors
-    public void einheitenBewegen(Spieler spieler, Land herkunft, Land ziel, int truppen){//ToDo Wieso gibt es moveTroops sowohl in Spieler als auch in Spiel?
-        if (herkunft.getBesitzer() != spieler){
-            //trow Error (Diese Truppen gehören dir nicht)
-        }
-        if (herkunft.getEinheiten() <= truppen){
-            //throw Error (zu wenig Einheiten auf dem Feld vorhanden)
-        }
-        if (!herkunft.connectionPossible(ziel)){
-            //throw error (Die Länder sind nicht verbunden)
-        }
-        int herkunftEinheiten = herkunft.getEinheiten();
-        herkunft.setEinheiten(herkunftEinheiten - truppen);
-        int zielEinheiten = ziel.getEinheiten();
-        ziel.setEinheiten(zielEinheiten + truppen);
-
-    }
-
     public int rollDice6(){
         return (int) (Math.random() * 6);
     }
