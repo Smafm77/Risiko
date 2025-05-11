@@ -89,25 +89,34 @@ public class Spieler {
             neueEinheiten += Arrays.stream(reiche).mapToInt(Kontinent::getBuff).sum();
         }
 
-        assignTroops(neueEinheiten);
+        zuweisungEinheiten(neueEinheiten);
     }
 
     /**
      * Eine Methode die neue Truppen ihre Länder zuweist
-     * @param troops Anzahl Truppen die stationiert werden
+     * @param truppen Anzahl Truppen die stationiert werden
      */
-    public void assignTroops(int troops){
-        for (int t = 1; t <= troops; t++){
+    public void zuweisungEinheiten(int truppen){
+        for (int t = 1; t <= truppen; t++){
             //ToDO choose an owned country to put the unit in. > add 1 to einheiten here and in chosen land
         }
     }
 
-    public void moveTroops(int troops, Land herkunft, Land ziel){ //ToDo Wieso gibt es moveTroops sowohl in Spieler als auch in Spiel?
-        //ToDO throw error if either Land is not in possession of the player, they're not connected or herkunft doesn't have enough troops
+    public void bewegeEinheiten(int truppen, Land herkunft, Land ziel){ //ToDo Wieso gibt es moveTroops sowohl in Spieler als auch in Spiel?
+        //ToDO throw error
+        if(herkunft.getBesitzer() != this) {
+            //throw error (Diese Truppen gehören dir nicht!)
+        }
+        if(herkunft.getEinheiten() <= truppen) {
+            //throw error (Es befinden sich zu wenig Einheiten auf diesem Feld!)
+        }
+        if(!herkunft.connectionPossible(ziel)) {
+            //throw error (Die Länder sind nicht verbunden!)
+        }
         int herkunftEinheiten = herkunft.getEinheiten();
-        herkunft.setEinheiten(herkunftEinheiten - troops);
+        herkunft.setEinheiten(herkunftEinheiten - truppen);
         int zielEinheiten = ziel.getEinheiten();
-        ziel.setEinheiten(zielEinheiten + troops);
+        ziel.setEinheiten(zielEinheiten + truppen);
     }
     //endregion
 
@@ -116,7 +125,7 @@ public class Spieler {
     }
 
     //ToDO implement everytime Einheiten get changed
-    public void countTroops(){
+    public void zaehleEinheiten(){
         int soldaten = 0;
         for (Land land : besetzteLaender){
 
