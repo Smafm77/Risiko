@@ -1,42 +1,42 @@
-Nordafrika: Brasilien, Aegypten, Ostafrika, Congo, Westeuropa, Suedeuropa
-Brasilien: Nordafrika, Argentinien, Peru, Venezuela
-China: Mongolei, Suedostasien, Indien, Sibirien, Afghanistan, Ural
-Mittlerer-Osten: Indien, Afghanistan, Ostafrika, Aegypten, Suedeuropa, Russland
-Ostafrika: Mittlerer-Osten, Aegypten, Nordafrika, Kongo, Suedafrika, Madagaskar
-Suedafrika: Madagaskar, Ostafrika, Kongo
-Russland: Skandinavien, Nordeuropa, Suedeuropa, Mittlerer-Osten, Afghanistan, Ural
-Indien: Mittlerer-Osten, Afghanistan, China, Suedostasien
-Oststaaten: Ostkanada, Ontario, Weststaaten, Mittelamerika
-Ostaustralien: Neuguinea, Westaustralien
-Afghanistan: Russland, Mittlerer-Osten, Indien, China, Ural
-Zentralafrika: Ostafrika, Nordafrika, Suedafrika
-Weststaaten: Alberta, Ontario, Oststaaten, Mittelamerika
-Mongolei: Japan, Kamtschatka, Irkutsk, Sibirien, China
-Argentinien: Peru, Brasilien
-Westaustralien: Indonesien, Neuguinea, Ostaustralien
-Nordwest-Territorium: Alaska, Groenland, Alberta, Ontario
-Jakutien: Sibirien, Irkutsk, Kamtschatka
-Peru: Argentinien, Brasilien, Venezuela
-Ural: Sibirien, China, Afghanistan, Russland
-Aegypten: Suedeuropa, Mittlerer Osten, Ostafrika, Nordafrika
-Kamtschatka: Yakutsk, Irkutsk, Mongolei, Japan, Alaska
-Mittelamerika: Weststaaten, Oststaaten, Venezuela
-Venezuela: Mittelamerika, Brasilien, Peru
-Sibirien: Ural, China, Mongolei, Irkutsk, Yakutsk
-Groenland: Nordwest-Territorium, Ontario, Ostkanada, Island
-Alberta: Alaska, Ontario, Weststaaten
-Irkutsk: Yakutsk, Sibirien, Mongolei, Kamtschatka
-Suedostasien: China, Indien, Indonesien
-Indonesien: Suedostasien, Neuguinea, Westaustralien
-Ostkanada: Groenland, Ontario, Oststaaten
-Alaska: Nordwest-Territorium, Alberta, Kamtschatka
-Ontario: Alberta, Nordwest-Territorium, Groenland, Ostkanada, Oststaaten, Weststaaten
-Suedeuropa: Russland, Mittlerer-Osten, Aegypten, Nordafrika, Westeuropa, Nordeuropa
-Westeuropa: Grossbritannien, Nordeuropa, Suedeuropa, Nordafrika
-Skandinavien: Island, Grossbritannien, Nordeuropa, Russland
-Nordeuropa: Skandinavien, Russland, Suedeuropa, Westeuropa, Grossbritannien
-Neuguinea: Indonesien, Westaustralien, Ostaustralien
-Madagaskar: Suedafrika, Ostafrika
-Japan: Kamtschatka, Mongolei
-Grossbritannien: Island, Skandinavien, Nordeuropa, Westeuropa
-Island: Groenland, Skandinavien, Grossbritannien
+Nordafrika: 1 20 4 11 34 33
+Brasilien: 0 14 18 23
+China: 13 28 7 24 10 19
+Mittlerer-Osten: 7 10 4 20 33 6
+Ostafrika: 3 20 0 11 5 38
+Suedafrika: 38 4 11
+Russland: 35 36 33 3 10 19
+Indien: 3 10 2 28
+Oststaaten: 30 32 12 22
+Ostaustralien: 37 15
+Afghanistan: 6 3 7 2 19
+Zentralafrika: 4 0 5
+Weststaaten: 26 32 8 22
+Mongolei: 39 21 27 24 2
+Argentinien: 18 1
+Westaustralien: 29 37 9
+Nordwest-Territorium: 31 25 26 32
+Jakutien: 24 27 21
+Peru: 14 1 23
+Ural: 24 2 10 6
+Aegypten: 33 3 4 0
+Kamtschatka: 17 27 13 39 31
+Mittelamerika: 12 8 23
+Venezuela: 22 1 18
+Sibirien: 19 2 13 27 17
+Groenland: 16 32 30 41
+Alberta: 31 32 12 16
+Irkutsk: 17 24 13 21
+Suedostasien: 2 7 29
+Indonesien: 28 37 15
+Ostkanada: 25 32 8
+Alaska: 16 26 21
+Ontario: 26 16 25 30 8 12
+Suedeuropa: 6 3 20 0 34 36
+Westeuropa: 40 36 33 0
+Skandinavien: 41 40 36 6
+Nordeuropa: 35 6 33 34 40
+Neuguinea: 29 15 9
+Madagaskar: 5 4
+Japan: 21 13
+Grossbritannien: 41 35 36 34
+Island: 25 35 40
