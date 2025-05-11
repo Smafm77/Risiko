@@ -20,79 +20,112 @@ public class Spiel {
         for (int i = 1; i <= anzahlSpieler; i++) {
             System.out.println("Bitte Namen des Spielers eingeben Spieler Nr. " + i + " :");
             Spieler spieler = new Spieler(scanner.nextLine(), i);
-            spielerListe.add(spieler); //ToDO Spieler unterscheiden (z.B. Farben aus einem Array/Enum zuordnen)
+            spielerListe.add(spieler);
         }
 
         //Create board
         welt.printWorldMap();
         welt.verteileLaender(spielerListe);
         kartenStapel.addAll(welt.createCardStack());
-
         printPlayers(spielerListe);
+        do {
+            spielRunde();
+        } while (spielRunde());
+
     }
 
-    public void spielRunde() {
+    public boolean spielRunde() {
         for (Spieler spieler : spielerListe) {
             //Truppen erhalten
             spieler.neueArmee(welt.alleKontinente);
-            if (!spieler.getKarten().isEmpty()){
+            if (!spieler.getKarten().isEmpty()) {
                 peruseCards(spieler);
             }
-            //Optional: Kampf
-            //Ich würde Karte ziehen schon hier mit einbinden
+            boolean amZug = true;
+            while (amZug) {
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Du bist am Zug :" + spieler.getName());
+                System.out.println("Was willst du tun? ");
+                System.out.println("1: Karte ziehen");
+                System.out.println("2: Angreifen");
+                System.out.println("3: Truppen bewegen");
+                System.out.println("4: Zug beenden");
+                System.out.println("666: Spiel beenden");
+                int auswahl = scanner.nextInt();
+                scanner.nextLine();
+                switch (auswahl) {
+                    case 1:
+                        drawCard(spieler);
+                        break;
+                    case 2:
+                        //Angreifen
+                        break;
+                    case 3:
+                        moveTroopsInterface(spieler);
+                        break;
+                    case 4:
+                        amZug = false;
+                        break;
+                    case 666:
+                        return false;
+                }
+            }
 
-            //Optional: Truppen bewegen
-
-            //Todo abfrage was getan werden soll
         }
+        return true;
     }
 
     //region playing Cards
-    public void drawCard(Spieler spieler) throws NoSuchElementException {//ToDo catch exception from orElseThrow
+    public void drawCard(Spieler spieler) throws NoSuchElementException {//ToDo catch exception from orElseThrow @Maj: Nein
         Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
         Karte card = optionalCard.orElseThrow();
         spieler.getKarten().add(card);
     }
 
-    public void playCard(Spieler spieler, Karte card){
-        if (!spieler.getKarten().contains(card)){
+    public void playCard(Spieler spieler, Karte card) {
+        if (!spieler.getKarten().contains(card)) {
             spieler.getKarten().remove(card);
             kartenStapel.add(card);
         } else {
             //ToDo throw Error that Player doesn't own the card. This should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry
+            //ToDo @majbritt: Nein
+
         }
     }
     //endregion
 
-    public int rollDice6(){
+    public int rollDice6() {
         return (int) (Math.random() * 6);
     }
 
     //region temporary Visualisation
-    public void peruseCards(Spieler spieler) throws NoSuchElementException{ //ToDO catch exception
+    public void peruseCards(Spieler spieler) throws NoSuchElementException { //ToDO catch exception  (@maj nein, kein ToDo exceptions bisher!)
         //Name Options
         Scanner scanner = new Scanner(System.in);
         System.out.println("Choose any card you want to play by Name");
         printYourTerretorries(spieler);
         System.out.println("N to leave");
 
-        while (!spieler.getKarten().isEmpty()){
+        while (!spieler.getKarten().isEmpty()) {
             String input = scanner.next();
-            if (input.equals("N")){break;}
+            if (input.equals("N")) {
+                break;
+            }
             Karte chosenCard = spieler.getKarten().stream().filter(c -> c.land.getName().equals(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
             playCard(spieler, chosenCard);
         }
     }
-    public void moveTroopsInterface(Spieler spieler){
+
+    public void moveTroopsInterface(Spieler spieler) { //Todo Wieso Interface?
         Scanner scanner = new Scanner(System.in);
 
-        while (true){
+        while (true) {
             printYourTerretorries(spieler);
             System.out.println("Do you wish to continue? (Y/N)");
             char cont = scanner.next().trim().toUpperCase().charAt(0);
 
-            //Todo check if break works as intended & catch Errors
-            if (cont == 'N'){
+            //Todo check if break works as intended & catch Errors @maj nein!
+            if (cont == 'N') {
                 break;
             } else if (cont == 'Y') {
                 System.out.println("From where?");
@@ -101,7 +134,7 @@ public class Spiel {
                 Land ziel = spieler.getBesetzteLaender().stream().filter(land -> land.isName(scanner.next())).findFirst().orElseThrow(); //catch orElseThrow
                 System.out.println("How many?");
                 int troops = scanner.nextInt();
-                einheitenBewegen(spieler, her, ziel, troops);
+                spieler.bewegeEinheiten(troops, her, ziel);
             } else {
                 System.out.println("Ungültige Eingabe");
             }
@@ -109,10 +142,10 @@ public class Spiel {
     }
 
 
-    public void printYourTerretorries(Spieler spieler){
+    public void printYourTerretorries(Spieler spieler) {
         System.out.println("All deine Gebiete:");
         //Wenn es möglich ist Nachbarn zu erörtern auch diese hinzufügen (anzahl angrenzender Gebiete und Einheiten)
-        for (Land land : spieler.getBesetzteLaender()){
+        for (Land land : spieler.getBesetzteLaender()) {
             System.out.println(spieler.getId() + " - " + land.getName() + ": " + land.getEinheiten() + " | ");
         }
     }

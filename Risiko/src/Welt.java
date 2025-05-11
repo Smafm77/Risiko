@@ -25,17 +25,19 @@ public class Welt {
 
         //Einlesen der Nachbarn
         BufferedReader brnl = new BufferedReader (new FileReader("Nachbarliste.txt"));
-        for (int l = 1; l <= 42; l++) {
-            String inputnl = brnl.readLine();
+        String inputnl = brnl.readLine();
+        int index = 0;
+        while ((inputnl = brnl.readLine()) != null){
             String[] values = inputnl.trim().split(" "); //same same siehe oberhalb
             Land[] nachbarn = new Land[values.length - 1];
             for (int i = 0; i < nachbarn.length; i++) {
                 nachbarn[i] = alleLaender.get(Integer.parseInt(values[i + 1])); //NumberFormatException
             }
-            alleLaender.get(l).addNachbarn(nachbarn);
+            alleLaender.get(index++).addNachbarn(nachbarn);
         }
 
         //Kontinente erstellen+Länder zuweisen; Hinweis: Falls Probleme, Zahlen checken
+        alleKontinente = new ArrayList<>();
         Land[] europaL = {
                 alleLaender.get(6),
                 alleLaender.get(33),
@@ -97,7 +99,7 @@ public class Welt {
         alleKontinente.add(new Kontinent("Süd-Amerika", suedAmerikaL, 2));
         alleKontinente.add(new Kontinent("Afrika", afrikaL, 3));
         alleKontinente.add(new Kontinent("Asien", asienL, 7));
-        alleKontinente.add(new Kontinent("Australien", austalienL, 2));
+        alleKontinente.add(new Kontinent("Australien", australienL, 2));
     }
 
     public Collection<Karte> createCardStack(){
@@ -134,7 +136,7 @@ public class Welt {
         System.out.println("Weltkarte:");
         System.out.println();
         for (Land land : alleLaender){
-            String nachbarn = land.getNachbarn().stream().map(land1 -> land1.getNachbarn() + ", ").collect(Collectors.joining());
+            String nachbarn = land.getNachbarn().stream().map(n -> n.getName()).collect(Collectors.joining( ", "));
             System.out.println(land.getName() + " | Angrenzend:" + nachbarn);
         }
         System.out.println();
