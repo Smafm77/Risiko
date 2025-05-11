@@ -7,11 +7,11 @@ public class Land {
     private String name;
     private Spieler besitzer;
     private int einheiten;
-    private final int strength; //ToDo check mal bitte kopftechnisch ob wir wirklich eine eigene Variable dafür brauchen oder aber ob das nicht auch anders geht, irgwndwie finde ich die hässlich
+    private final int strength;
     private HashSet<Land> nachbarn = new HashSet<>();
 
     public Land(int strength, String name) {
-        this.strength = strength; //ToDo kann man das nicht hier ersetzen mit this.einheiten = 2; Bzw wieso überhaupt 2? Ich finde in den Regeln nichts dazu
+        this.strength = strength;
         this.name = name;
     }
 

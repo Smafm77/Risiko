@@ -49,7 +49,8 @@ public class Spiel {
                 System.out.println("1: Karte ziehen");
                 System.out.println("2: Angreifen");
                 System.out.println("3: Truppen bewegen");
-                System.out.println("4: Zug beenden");
+                System.out.println("4: Infos über...");
+                System.out.println("5: Zug beenden");
                 System.out.println("666: Spiel beenden");
                 int auswahl = scanner.nextInt();
                 scanner.nextLine();
@@ -64,15 +65,64 @@ public class Spiel {
                         moveTroopsInterface(spieler);
                         break;
                     case 4:
+                        infoAuswahl();
+                        break;
+                    case 5:
                         amZug = false;
                         break;
                     case 666:
                         return false;
+                    default:
+                        System.out.println("Fehlerhafte Eingabe");
                 }
             }
 
         }
         return true;
+    }
+
+    public void infoAuswahl() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Über welches Land möchtest du Informationen erhalten?");
+        String eingabe = scanner.nextLine();
+        Land auswahlLand = welt.findeLand(eingabe);
+        if (auswahlLand == null) {
+            System.out.println("Fehlerhafte Eingabe: " + eingabe + " ist kein Land.");
+            infoAuswahl();
+            return;
+        }
+        boolean zurueck = false;
+        while (!zurueck) {
+            System.out.println("Welche Informationen möchtest du über " + eingabe + " erhalten?");
+            System.out.println("1: Besitzer");
+            System.out.println("2: Einheiten auf Land");
+            System.out.println("3: Nachbarländer von " + eingabe);
+            System.out.println("666: Zurück");
+
+            int auswahl = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (auswahl) {
+                case 1:
+                    System.out.println(auswahlLand.getName() + " befindet sich in " + auswahlLand.getBesitzer().getName() + "'s Besitz.");
+                    break;
+                case 2:
+                    System.out.println("In " + auswahlLand.getName() + " befinden sich aktuell " + auswahlLand.getEinheiten() + " Einheiten.");
+                    break;
+                case 3:
+                    System.out.println("Die Nachbarländer von " + auswahlLand.getName() + " sind: ");
+                    for (Land nachbar : auswahlLand.getNachbarn()) {
+                        System.out.println(nachbar.getName());
+                    }
+                    break;
+                case 666:
+                    zurueck = true;
+                    break;
+                default:
+                    System.out.println("Fehlerhafte Eingabe.");
+                    break;
+            }
+        }
     }
 
     //region playing Cards

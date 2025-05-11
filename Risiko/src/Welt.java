@@ -14,20 +14,20 @@ public class Welt {
         //Einlesen der Länder
         BufferedReader brsl = new BufferedReader(new FileReader("Staatenliste.txt")); //ToDo Kontrolle ob relative Pfade funktionieren
         String inputsl;
-        while((inputsl = brsl.readLine()) != null) {
+        while ((inputsl = brsl.readLine()) != null) {
             String[] values = inputsl.trim().split(" "); //Array der Werte einer Zeile - müssen durch exakt ein Leerzeichen getrennt sein
             String landName = values[0];
             int staerke = Integer.parseInt(values[1]); //NumberFormatException
-            if(!inputsl.isEmpty()){
-                alleLaender.add(new Land(staerke, inputsl));
+            if (!inputsl.isEmpty()) {
+                alleLaender.add(new Land(staerke, landName));
             }
         }
 
         //Einlesen der Nachbarn
-        BufferedReader brnl = new BufferedReader (new FileReader("Nachbarliste.txt"));
+        BufferedReader brnl = new BufferedReader(new FileReader("Nachbarliste.txt"));
         String inputnl = brnl.readLine();
         int index = 0;
-        while ((inputnl = brnl.readLine()) != null){
+        while ((inputnl = brnl.readLine()) != null) {
             String[] values = inputnl.trim().split(" "); //same same siehe oberhalb
             Land[] nachbarn = new Land[values.length - 1];
             for (int i = 0; i < nachbarn.length; i++) {
@@ -102,9 +102,9 @@ public class Welt {
         alleKontinente.add(new Kontinent("Australien", australienL, 2));
     }
 
-    public Collection<Karte> createCardStack(){
+    public Collection<Karte> createCardStack() {
         Collection<Karte> stapel = new ArrayList<>();
-        for (Land land : alleLaender){
+        for (Land land : alleLaender) {
             stapel.add(new Karte(land));
         }
         return stapel;
@@ -132,15 +132,25 @@ public class Welt {
     }
 
     //region temporary Visualisation
-    public void printWorldMap(){
+    public void printWorldMap() {
         System.out.println("Weltkarte:");
         System.out.println();
-        for (Land land : alleLaender){
-            String nachbarn = land.getNachbarn().stream().map(n -> n.getName()).collect(Collectors.joining( ", "));
+        for (Land land : alleLaender) {
+            String nachbarn = land.getNachbarn().stream().map(n -> n.getName()).collect(Collectors.joining(", "));
             System.out.println(land.getName() + " | Angrenzend:" + nachbarn);
         }
         System.out.println();
     }
+
     //endregion
+    public Land findeLand(String name) {
+        String suche = name.trim().toLowerCase();
+        for (Land land : alleLaender) {
+            if (land.getName().toLowerCase().equals(suche)) {
+                return land;
+            }
+        }
+        return null;
+    }
 
 }
