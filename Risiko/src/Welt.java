@@ -24,7 +24,7 @@ public class Welt {
         }
 
         //Einlesen der Nachbarn
-        BufferedReader brnl = new BufferedReader (new FileReader("Nachbarnliste.txt"));
+        BufferedReader brnl = new BufferedReader (new FileReader("Nachbarliste.txt"));
         for (int l = 1; l <= 42; l++) {
             String inputnl = brnl.readLine();
             String[] values = inputnl.trim().split(" "); //same same siehe oberhalb
