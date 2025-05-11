@@ -66,23 +66,12 @@ public class Spieler {
     //region Einheiten
     public void neueArmee(ArrayList<Kontinent> alleKontinente) { //Bei neuem Spielzug dazu
         int neueEinheiten = 3;
-
         //Zuschuss besetzte Länder
-        if (besetzteLaender.size() >= 40){
-            neueEinheiten += 10;
-        } else if (besetzteLaender.size() >= 36) {
-            neueEinheiten += 9;
-        } else if (besetzteLaender.size() >=12) {
-            neueEinheiten += (besetzteLaender.size() - 9) / 3;
-        }
-
-        /*if (besetzteLaender.size() <= 9) {
+        if (besetzteLaender.size() <= 9) {
             this.einheiten += 3;
         } else {
             this.einheiten += besetzteLaender.size() / 3;
-        }*/
-        //ToDo Hannah, du scheinst den Bonus anders gerechnet zu haben als ich, dass müssten wir mal vergleichen
-
+        }
         //Zuschuss Kontinente
         Kontinent[] reiche = (Kontinent[]) alleKontinente.stream().filter(kontinent -> kontinent.getEinzigerBesitzer() == this).toArray();
         if (reiche.length > 0){
