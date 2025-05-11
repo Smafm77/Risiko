@@ -1,31 +1,103 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 public class Welt {
     public ArrayList<Land> alleLaender;
     public ArrayList<Kontinent> alleKontinente;
 
-
     public Welt() throws IOException {
         alleLaender = new ArrayList<>();
-        BufferedReader br = new BufferedReader(new FileReader("Staatenliste.txt"));
-        String input;
-        while((input = br.readLine()) != null){
-            input = input.trim();
-            if(!input.isEmpty()){
-                alleLaender.add(new Land(2, input));
+
+        //Einlesen der Länder
+        BufferedReader brsl = new BufferedReader(new FileReader("Staatenliste.txt")); //ToDo Kontrolle ob relative Pfade funktionieren
+        String inputsl;
+        while((inputsl = brsl.readLine()) != null) {
+            String[] values = inputsl.trim().split(" "); //Array der Werte einer Zeile - müssen durch exakt ein Leerzeichen getrennt sein
+            String landName = values[0];
+            int staerke = Integer.parseInt(values[1]); //NumberFormatException
+            if(!inputsl.isEmpty()){
+                alleLaender.add(new Land(staerke, inputsl));
             }
         }
 
+        //Einlesen der Nachbarn
+        BufferedReader brnl = new BufferedReader (new FileReader("Nachbarnliste.txt"));
+        for (int l = 1; l <= 42; l++) {
+            String inputnl = brnl.readLine();
+            String[] values = inputnl.trim().split(" "); //same same siehe oberhalb
+            Land[] nachbarn = new Land[values.length - 1];
+            for (int i = 0; i < nachbarn.length; i++) {
+                nachbarn[i] = alleLaender.get(Integer.parseInt(values[i + 1])); //NumberFormatException
+            }
+            alleLaender.get(l).addNachbarn(nachbarn);
+        }
 
-        //ToDO Nachbarn.txt einlesen
+        //Kontinente erstellen+Länder zuweisen; Hinweis: Falls Probleme, Zahlen checken
+        Land[] europaL = {
+                alleLaender.get(6),
+                alleLaender.get(33),
+                alleLaender.get(34),
+                alleLaender.get(35),
+                alleLaender.get(36),
+                alleLaender.get(40),
+                alleLaender.get(41),
+        };
+        Land[] nordAmerikaL = {
+                alleLaender.get(8),
+                alleLaender.get(12),
+                alleLaender.get(16),
+                alleLaender.get(22),
+                alleLaender.get(25),
+                alleLaender.get(26),
+                alleLaender.get(30),
+                alleLaender.get(31),
+                alleLaender.get(32),
+        };
+        Land[] suedAmerikaL = {
+                alleLaender.get(1),
+                alleLaender.get(14),
+                alleLaender.get(18),
+                alleLaender.get(23),
+        };
+        Land[] afrikaL = {
+                alleLaender.get(0),
+                alleLaender.get(4),
+                alleLaender.get(5),
+                alleLaender.get(11),
+                alleLaender.get(20),
+                alleLaender.get(38),
+        };
+        Land[] asienL = {
+                alleLaender.get(2),
+                alleLaender.get(3),
+                alleLaender.get(7),
+                alleLaender.get(10),
+                alleLaender.get(13),
+                alleLaender.get(17),
+                alleLaender.get(19),
+                alleLaender.get(21),
+                alleLaender.get(24),
+                alleLaender.get(27),
+                alleLaender.get(28),
+                alleLaender.get(39),
+        };
+        Land[] australienL = {
+                alleLaender.get(9),
+                alleLaender.get(15),
+                alleLaender.get(29),
+                alleLaender.get(37),
+        };
 
-        //Todo Kontinente erstellen & Länder zuweisen mit alleKontinente.add(new Kontinent(...))
+        //Kontinente erstellen (Zahlen = Boni)
+        alleKontinente.add(new Kontinent("Europa", europaL, 5));
+        alleKontinente.add(new Kontinent("Nord-Amerika", nordAmerikaL, 5));
+        alleKontinente.add(new Kontinent("Süd-Amerika", suedAmerikaL, 2));
+        alleKontinente.add(new Kontinent("Afrika", afrikaL, 3));
+        alleKontinente.add(new Kontinent("Asien", asienL, 7));
+        alleKontinente.add(new Kontinent("Australien", austalienL, 2));
     }
 
     public Collection<Karte> createCardStack(){
