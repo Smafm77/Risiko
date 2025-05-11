@@ -47,28 +47,24 @@ public class Spiel {
                 Scanner scanner = new Scanner(System.in);
                 System.out.println("Du bist am Zug :" + spieler.getName());
                 System.out.println("Was willst du tun? ");
-                System.out.println("1: Karte ziehen");
-                System.out.println("2: Angreifen");
-                System.out.println("3: Truppen bewegen");
-                System.out.println("4: Infos über...");
-                System.out.println("5: Zug beenden");
+                System.out.println("1: Angreifen");
+                System.out.println("2: Truppen bewegen");
+                System.out.println("3: Infos über...");
+                System.out.println("4: Zug beenden");
                 System.out.println("666: Spiel beenden");
                 int auswahl = scanner.nextInt();
                 scanner.nextLine();
                 switch (auswahl) {
                     case 1:
-                        zieheKarte(spieler);
-                        break;
-                    case 2:
                         //Angreifen
                         break;
-                    case 3:
+                    case 2:
                         moveTroopsInterface(spieler);
                         break;
-                    case 4:
+                    case 3:
                         infoAuswahl();
                         break;
-                    case 5:
+                    case 4:
                         amZug = false;
                         break;
                     case 666:
