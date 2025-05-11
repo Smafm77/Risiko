@@ -1,11 +1,14 @@
 public class Kontinent {
+    private String name;
     private Land[] gebiete;
     private int buff;
     private Spieler einzigerBesitzer; //Kann null sein, falls Kontinent mehrere Besatzer hat
 
-    public Kontinent(Land[] gebiete, int buff) {
+    public Kontinent(String name, Land[] gebiete, int buff) {
+        this.name = name;
         this.gebiete = gebiete;
         this.buff = buff;
+        einzigerBesitzer = null;
     }
     public Land[] getGebiete() {
         return gebiete;
@@ -15,6 +18,9 @@ public class Kontinent {
     }
     public Spieler getEinzigerBesitzer() {
         return einzigerBesitzer;
+    }
+    public String getName() {
+        return name;
     }
 
     public void checkBesitzer(){
