@@ -80,7 +80,7 @@ public class Spieler {
             this.einheiten += besetzteLaender.size() / 3;
         }
         //Zuschuss Kontinente
-        Kontinent[] reiche = (Kontinent[]) alleKontinente.stream().filter(kontinent -> kontinent.getEinzigerBesitzer() == this).toArray();
+        Kontinent[] reiche = (Kontinent[]) alleKontinente.stream().filter(kontinent -> kontinent.getEinzigerBesitzer() == this).toArray(Kontinent[]::new);
         if (reiche.length > 0) {
             neueEinheiten += Arrays.stream(reiche).mapToInt(Kontinent::getBuff).sum();
         }
