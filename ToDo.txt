@@ -3,3 +3,5 @@ ToDo final cleanup:
  - check how private we can make everything
  - refactor everything away from denglish
  - delete unneccessaryly complicated stuff
+
+- eine Menue Klasse erstellen, damit weniger in der Main steht?
