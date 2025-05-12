@@ -142,6 +142,20 @@ public class Welt {
         System.out.println();
     }
 
+    public void printTheseLaender(Collection<Land> laender){
+        for (Land land : laender){
+            String fNachbarn = "";
+            for (Land fLand : land.getFeindlicheNachbarn()){
+                fNachbarn += " [" + fLand.getName() + " - " + fLand.getBesitzer().getName() + "(" + fLand.getEinheiten() + ")]";
+            }
+            System.out.println(land.getName() + " ist im Besitz von " + land.getBesitzer().getName() + "(" + land.getEinheiten() + ") und bedroht von " + fNachbarn);
+        }
+    }
+    public void printTheseLaenderNamen(Collection<Land> laender){
+        for (Land land : laender){
+            System.out.println(land.getName() + " ist im Besitz von " + land.getBesitzer().getName() + "(" + land.getEinheiten() + ")");
+        }
+    }
     //endregion
     public Land findeLand(String name) {
         String suche = name.trim().toLowerCase();

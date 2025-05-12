@@ -42,6 +42,7 @@ public class Spiel {
                 peruseCards(spieler);
             }
             boolean amZug = true;
+            boolean schonErobert = false;
             while (amZug) {
                 Scanner scanner = new Scanner(System.in);
                 System.out.println("Du bist am Zug :" + spieler.getName());
@@ -55,7 +56,11 @@ public class Spiel {
                 scanner.nextLine();
                 switch (auswahl) {
                     case 1:
-                        //Angreifen
+                        boolean ergebnis = kampfInterface(spieler);
+                        if (ergebnis && !schonErobert){
+                            zieheKarte(spieler);
+                            schonErobert = true;
+                        }
                         break;
                     case 2:
                         moveTroopsInterface(spieler);
@@ -143,18 +148,66 @@ public class Spiel {
     //endregion
 
     //region kampf
-    private boolean kampf(Spieler angreifer, Land herkunft, Land ziel, int truppenA){
-        int truppenV = Math.min(2, ziel.getEinheiten()); //ToDo erfragen wie viele Truppen Verteidiger senden will. Momentan werden einfach nur so viele wie möglich geschickt
-        if (!moeglicherKampf(angreifer, herkunft, ziel, truppenA, truppenV)){
-            return false;
-        }
-        int ueberlebende = schlacht(angreifer, herkunft, ziel, truppenA, truppenV);
-        if (ueberlebende == -1) {return false;} //Verteidiger hat gewonnen
+    public boolean kampfInterface(Spieler angreifer){
+        Scanner scanner = new Scanner(System.in);
+        welt.printTheseLaender(angreifer.getBesetzteLaender());
+        ArrayList<Land> relevanteLaender= new ArrayList<>();
 
+        while (true){
+            System.out.println("Aus welchem Land willst du angreifen?");
+            Land herkunft = welt.findeLand(scanner.nextLine());
+            if (!herkunft.getBesitzer().equals(angreifer)){
+                System.out.println("Das Land " + herkunft.getName() + "gehört dir nicht und kann somit nicht als Angriffsbasis genutzt werden");
+                break;
+            }
+            relevanteLaender.add(herkunft);
+
+            System.out.println();
+            welt.printTheseLaenderNamen(herkunft.getFeindlicheNachbarn());
+            System.out.println("Welches Land möchtest du angreifen?");
+            Land ziel = welt.findeLand(scanner.nextLine());
+            if(!herkunft.getFeindlicheNachbarn().contains(ziel)){
+                System.out.println("Das Lander " + ziel.getName() + " ist von " + herkunft.getName() + " aus nicht angreifbar");
+                break;
+            }
+            relevanteLaender.add(ziel);
+            Spieler verteidiger = ziel.getBesitzer();
+
+            System.out.println();
+            System.out.println("Mit wie vielen Truppen möchtest du angreifen (1 - "+ Math.min((herkunft.getEinheiten()-1), 3) +")?");
+            int truppenA = Integer.parseInt(scanner.nextLine());
+            if (truppenA >= herkunft.getEinheiten() || !(truppenA > 0 && truppenA <=3)){
+                System.out.println(truppenA + "ist eine ungeeignete Anzahl an Truppen in den Agriff zu senden");
+                break;
+            }
+
+            System.out.println();
+            System.out.println(verteidiger.getName() + " mit wie vielen Truppen möchtest du dich verteidigen (1 - " + Math.min((ziel.getEinheiten()), 2) + ")?");
+            int truppenV = Integer.parseInt(scanner.nextLine());
+            if (truppenV > ziel.getEinheiten() || !(truppenV > 0 && truppenV <=2)){
+                System.out.println(truppenV + "ist eine ungeeignete Anzahl an Truppen für die Verteidigung zu stationieren.");
+                break;
+            }
+
+            System.out.println();
+            boolean ergebnis = kampf(herkunft, ziel, truppenA, truppenV);
+            String sieger = ergebnis ? angreifer.getName() : verteidiger.getName();
+            System.out.println(sieger + " hat gewonnen:");
+            welt.printTheseLaender(relevanteLaender);
+
+            return ergebnis;
+        }
+        return false;
+    }
+
+    private boolean kampf(Land herkunft, Land ziel, int truppenA, int truppenV){
+        int ueberlebende = schlacht(herkunft, ziel, truppenA, truppenV);
+        if (ueberlebende == -1) {return false;} //Verteidiger hat gewonnen
+        erobern(herkunft, ziel, truppenA);
         return true;
     }
 
-    private int schlacht(Spieler angreifer, Land herkunft, Land ziel, int truppenA, int truppenV){
+    private int schlacht(Land herkunft, Land ziel, int truppenA, int truppenV){
         Integer[] angriff = new Integer[truppenA];
         Integer[] verteidigung = new Integer[truppenV];
         for (int wert : angriff){wert = rolleWuerfel();}
@@ -173,35 +226,15 @@ public class Spiel {
         return ziel.getEinheiten() > 0 ? -1 : truppenA;
     }
 
-    public void erobern(Spieler angreifer, Land herkunft, Land ziel, int besatzer){
+    public void erobern(Land herkunft, Land ziel, int besatzer){
         Spieler verteidiger = ziel.getBesitzer();
         ziel.wechselBesitzer(herkunft.getBesitzer());
         herkunft.getBesitzer().bewegeEinheiten(besatzer, herkunft, ziel);
-
         welt.findeKontinentenzugehoerigkeit(ziel).checkBesitzer();
+
         if (verteidiger.getBesetzteLaender().isEmpty()){
             verteidiger.sterben(); //ToDO schreibe sterben
         }
-    }
-
-    private boolean moeglicherKampf(Spieler angreifer, Land herkunft, Land ziel, int truppenA, int truppenV){
-        if (!herkunft.getBesitzer().equals(angreifer)){
-            System.out.println("Das Land " + herkunft.getName() + "gehört dir nicht und kann somit nicht als Angriffsbasis genutzt werden");
-            return false;
-        }
-        if (!herkunft.getFeindlicheNachbarn().contains(ziel)){
-            System.out.println("Das Lander " + ziel.getName() + " ist von " + herkunft.getName() + " aus nicht angreifbar");
-            return false;
-        }
-        if (truppenA >= herkunft.getEinheiten() || !(truppenA > 0 && truppenA <=3)){
-            System.out.println(truppenA + "ist eine ungeeignete Anzahl an Truppen in den Agriff zu senden");
-            return false;
-        }
-        if (truppenV > ziel.getEinheiten() || !(truppenV > 0 && truppenV <=2)){
-            System.out.println(truppenV + "ist eine ungeeignete Anzahl an Truppen für die Verteidigung zu stationieren.");
-            return false;
-        }
-        return true;
     }
     //endregion
 
