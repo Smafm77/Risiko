@@ -53,7 +53,8 @@ public class Spiel {
                 System.out.println("1: Angreifen");
                 System.out.println("2: Truppen bewegen");
                 System.out.println("3: Infos über...");
-                System.out.println("4: Zug beenden");
+                System.out.println("4: Übersicht meiner Gebiete");
+                System.out.println("5: Zug beenden");
                 System.out.println("666: Spiel beenden");
                 int auswahl = scanner.nextInt();
                 scanner.nextLine();
@@ -72,6 +73,9 @@ public class Spiel {
                         infoAuswahl();
                         break;
                     case 4:
+                        welt.printTheseLaender(spieler.getBesetzteLaender());
+                        break;
+                    case 5:
                         amZug = false;
                         break;
                     case 666:
@@ -250,17 +254,23 @@ public class Spiel {
     public void peruseCards(Spieler spieler) throws NoSuchElementException { //ToDO catch exception  (@maj nein, kein ToDo exceptions bisher!)
         //Name Options
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose any card you want to play by Name");
-        zeigeEigeneGebiete(spieler);
-        System.out.println("N to leave");
-
         while (!spieler.getKarten().isEmpty()) {
+            welt.printTheseLaender(spieler.getBesetzteLaender());
+            System.out.println();
+            System.out.println("Karten:");
+            System.out.println(spieler.eigeneKartenToString());
+            System.out.println("Choose any card you want to play by Name");
+            System.out.println("N to leave");
+
             String input = scanner.next();
             if (input.equals("N")) {
                 break;
             }
-            Karte chosenCard = spieler.getKarten().stream().filter(c -> c.getLand().getName().equalsIgnoreCase(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
-            spieleKarte(spieler, chosenCard);
+            Optional<Karte> optChosenCard = spieler.getKarten().stream().filter(c -> c.getLand().getName().equalsIgnoreCase(input.trim())).findFirst(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
+            if (optChosenCard.isPresent()){
+                Karte chosenCard = optChosenCard.orElseThrow();
+                spieleKarte(spieler, chosenCard);
+            }
         }
     }
 

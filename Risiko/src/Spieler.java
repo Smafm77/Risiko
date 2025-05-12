@@ -92,7 +92,7 @@ public class Spieler {
         for (int t = 1; t <= truppen; t++) {
             Scanner scanner = new Scanner(System.in);
             while(true){
-                System.out.println("Wohin soll diese Einheit gesetzt werden?");
+                System.out.println("("+ t +"/"+ truppen +")Wohin soll diese Einheit gesetzt werden "+ name +"?");
                 System.out.println();
                 zeigeSpieler();
 
@@ -170,5 +170,12 @@ public class Spieler {
         }
         System.out.println("Das Land "+ name +" existiert nicht");
         return null;
+    }
+    public String eigeneKartenToString(){
+        String kartenTxt = "";
+        for (Karte karte : karten){
+            kartenTxt += "["+ karte.getStrength() + " - "+ karte.getLand().getName() +"]  ";
+        }
+        return kartenTxt;
     }
 }
