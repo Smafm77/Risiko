@@ -55,7 +55,7 @@ public class Spiel {
                 scanner.nextLine();
                 switch (auswahl) {
                     case 1:
-                        //Angreifen
+
                         break;
                     case 2:
                         moveTroopsInterface(spieler);
@@ -124,7 +124,7 @@ public class Spiel {
     }
 
     //region playing Cards
-    public void zieheKarte(Spieler spieler) throws NoSuchElementException {//ToDo catch exception from orElseThrow @Maj: Nein
+    public void zieheKarte(Spieler spieler) throws NoSuchElementException {
         Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
         Karte karte = optionalCard.orElseThrow();
         spieler.getKarten().add(karte);
@@ -173,7 +173,7 @@ public class Spiel {
         return ziel.getEinheiten() > 0 ? -1 : truppenA;
     }
 
-    public void erobern(Spieler angreifer, Land herkunft, Land ziel, int besatzer){
+    /*public void erobern(Spieler angreifer, Land herkunft, Land ziel, int besatzer){
         Spieler verteidiger = ziel.getBesitzer();
         ziel.wechselBesitzer(herkunft.getBesitzer());
         herkunft.getBesitzer().bewegeEinheiten(besatzer, herkunft, ziel);
@@ -183,22 +183,22 @@ public class Spiel {
             verteidiger.sterben(); //ToDO schreibe sterben
         }
     }
-
+*/
     private boolean moeglicherKampf(Spieler angreifer, Land herkunft, Land ziel, int truppenA, int truppenV){
         if (!herkunft.getBesitzer().equals(angreifer)){
-            System.out.println("Das Land " + herkunft.getName() + "gehört dir nicht und kann somit nicht als Angriffsbasis genutzt werden");
+            System.out.println("Das Land " + herkunft.getName() + " gehört dir nicht und kann somit nicht als Angriffsbasis genutzt werden.");
             return false;
         }
         if (!herkunft.getFeindlicheNachbarn().contains(ziel)){
-            System.out.println("Das Lander " + ziel.getName() + " ist von " + herkunft.getName() + " aus nicht angreifbar");
+            System.out.println("Das Lander " + ziel.getName() + " ist von " + herkunft.getName() + " aus nicht angreifbar.");
             return false;
         }
         if (truppenA >= herkunft.getEinheiten() || !(truppenA > 0 && truppenA <=3)){
-            System.out.println(truppenA + "ist eine ungeeignete Anzahl an Truppen in den Agriff zu senden");
+            System.out.println(truppenA + " ist eine ungeeignete Anzahl an Truppen in den Agriff zu senden.");
             return false;
         }
         if (truppenV > ziel.getEinheiten() || !(truppenV > 0 && truppenV <=2)){
-            System.out.println(truppenV + "ist eine ungeeignete Anzahl an Truppen für die Verteidigung zu stationieren.");
+            System.out.println(truppenV + " ist eine ungeeignete Anzahl an Truppen für die Verteidigung zu stationieren.");
             return false;
         }
         return true;
@@ -264,7 +264,7 @@ public class Spiel {
                 break;
             }
             spieler.bewegeEinheiten(anzahl, herLand, zielLand);
-
+            System.out.println("Neue Anzahl Einheiten: " + herLand.getName() + ": " + herLand.getEinheiten() + " , " + zielLand.getName() + ": " + zielLand.getEinheiten());
             break;
         }
     }
@@ -276,7 +276,11 @@ public class Spiel {
         for (Land land : spieler.getBesetzteLaender()) {
             System.out.print(spieler.getId() + " - " + land.getName() + ": " + land.getEinheiten() + " | ");
             for(Land nachbar : land.getNachbarn()) {
-                System.out.print(nachbar.getName() + " ");
+                for (Land besetzt : spieler.getBesetzteLaender()) {
+                    if (besetzt == nachbar) {
+                        System.out.print(nachbar.getName() + " ");
+                    }
+                }
             }
             System.out.println();
         }
