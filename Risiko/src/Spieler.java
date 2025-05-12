@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 public class Spieler {
     //region Basics
@@ -59,8 +58,12 @@ public class Spieler {
         einheiten += soldaten; //ToDo checke ob es mit Kampf kompatibel ist soldaten mit land.strength zu ersetzen
     }
 
+    public void fuegeLandHinzu(Land land){
+        besetzteLaender.add(land);
+    }
+
     public void verliereLand(Land land) {
-        einheiten -= land.getEinheiten(); //Kann Probleme machen, falls Einheitenzahl schon mit Gegner ersetzt wurde
+        einheiten -= land.getEinheiten();
         besetzteLaender.remove(land);
     }
     //endregion
@@ -125,5 +128,9 @@ public class Spieler {
     @Override
     public boolean equals(Object spieler) {
         return (spieler instanceof Spieler) && ((Spieler) spieler).id == this.id;
+    }
+
+    public void verliere1Einheit(){
+        einheiten--;
     }
 }

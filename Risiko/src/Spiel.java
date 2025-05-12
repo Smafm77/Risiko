@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 
@@ -140,6 +139,69 @@ public class Spiel {
             //ToDo @majbritt: Nein
 
         }
+    }
+    //endregion
+
+    //region kampf
+    private boolean kampf(Spieler angreifer, Land herkunft, Land ziel, int truppenA){
+        int truppenV = Math.min(2, ziel.getEinheiten()); //ToDo erfragen wie viele Truppen Verteidiger senden will. Momentan werden einfach nur so viele wie möglich geschickt
+        if (!moeglicherKampf(angreifer, herkunft, ziel, truppenA, truppenV)){
+            return false;
+        }
+        int ueberlebende = schlacht(angreifer, herkunft, ziel, truppenA, truppenV);
+        if (ueberlebende == -1) {return false;} //Verteidiger hat gewonnen
+
+        return true;
+    }
+
+    private int schlacht(Spieler angreifer, Land herkunft, Land ziel, int truppenA, int truppenV){
+        Integer[] angriff = new Integer[truppenA];
+        Integer[] verteidigung = new Integer[truppenV];
+        for (int wert : angriff){wert = rolleWuerfel();}
+        for (int wert : verteidigung){wert = rolleWuerfel();}
+        Arrays.sort(angriff, Collections.reverseOrder());
+        Arrays.sort(verteidigung, Collections.reverseOrder());
+
+        for (int i = 0; i < Math.min(truppenA, truppenV); i++){
+            if (angriff[i] > verteidigung[i]) {
+                ziel.einheitGestorben();
+            } else {
+                herkunft.einheitGestorben();
+            }
+        }
+
+        return ziel.getEinheiten() > 0 ? -1 : truppenA;
+    }
+
+    public void erobern(Spieler angreifer, Land herkunft, Land ziel, int besatzer){
+        Spieler verteidiger = ziel.getBesitzer();
+        ziel.wechselBesitzer(herkunft.getBesitzer());
+        herkunft.getBesitzer().bewegeEinheiten(besatzer, herkunft, ziel);
+
+        welt.findeKontinentenzugehoerigkeit(ziel).checkBesitzer();
+        if (verteidiger.getBesetzteLaender().isEmpty()){
+            verteidiger.sterben(); //ToDO schreibe sterben
+        }
+    }
+
+    private boolean moeglicherKampf(Spieler angreifer, Land herkunft, Land ziel, int truppenA, int truppenV){
+        if (!herkunft.getBesitzer().equals(angreifer)){
+            System.out.println("Das Land " + herkunft.getName() + "gehört dir nicht und kann somit nicht als Angriffsbasis genutzt werden");
+            return false;
+        }
+        if (!herkunft.getFeindlicheNachbarn().contains(ziel)){
+            System.out.println("Das Lander " + ziel.getName() + " ist von " + herkunft.getName() + " aus nicht angreifbar");
+            return false;
+        }
+        if (truppenA >= herkunft.getEinheiten() || !(truppenA > 0 && truppenA <=3)){
+            System.out.println(truppenA + "ist eine ungeeignete Anzahl an Truppen in den Agriff zu senden");
+            return false;
+        }
+        if (truppenV > ziel.getEinheiten() || !(truppenV > 0 && truppenV <=2)){
+            System.out.println(truppenV + "ist eine ungeeignete Anzahl an Truppen für die Verteidigung zu stationieren.");
+            return false;
+        }
+        return true;
     }
     //endregion
 

@@ -23,6 +23,15 @@ public class Kontinent {
         return name;
     }
 
+    public boolean beinhaltetLand(Land land){
+        for (Land landK : gebiete){
+            if (landK.equals(land)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void checkBesitzer(){
         boolean isSame = true;
         for (int i = 1; i < gebiete.length; i++){
