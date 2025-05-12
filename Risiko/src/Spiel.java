@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Spiel {
     Welt welt = new Welt();
@@ -56,7 +57,7 @@ public class Spiel {
                 System.out.println("4: Übersicht meiner Gebiete");
                 System.out.println("5: Zug beenden");
                 System.out.println("666: Spiel beenden");
-                int auswahl = scanner.nextInt();
+                int auswahl = scanner.nextInt();//throws InputMismatchException, wenn eingabe nicht in Integer wandelbar ist.
                 scanner.nextLine();
                 switch (auswahl) {
                     case 1:
@@ -154,14 +155,16 @@ public class Spiel {
     //region kampf
     public boolean kampfInterface(Spieler angreifer){
         Scanner scanner = new Scanner(System.in);
-        welt.printTheseLaender(angreifer.getBesetzteLaender());
-        ArrayList<Land> relevanteLaender= new ArrayList<>();
+        HashSet<Land> volleKasernen = angreifer.getBesetzteLaender().stream().filter(land -> land.getEinheiten() > 1).collect(Collectors.toCollection(HashSet::new));
 
-        while (true){
+        while (!volleKasernen.isEmpty()){
+            welt.printTheseLaender(volleKasernen);
+            ArrayList<Land> relevanteLaender= new ArrayList<>();
+
             System.out.println("Aus welchem Land willst du angreifen?");
             Land herkunft = welt.findeLand(scanner.nextLine());
-            if (!herkunft.getBesitzer().equals(angreifer)){
-                System.out.println("Das Land " + herkunft.getName() + "gehört dir nicht und kann somit nicht als Angriffsbasis genutzt werden");
+            if (!volleKasernen.contains(herkunft)){
+                System.out.println("Das Land " + herkunft.getName() + "gehört dir nicht und oder hat zu wenig stationierte Soldaten, kann somit nicht als Angriffsbasis genutzt werden");
                 break;
             }
             relevanteLaender.add(herkunft);
