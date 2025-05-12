@@ -15,6 +15,7 @@ public class Spieler {
         this.name = name.trim();
         this.id = id;
         this.einheiten = 0;
+        alive = true;
     }
 
     //endregion

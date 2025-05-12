@@ -214,8 +214,8 @@ public class Spiel {
     private int schlacht(Land herkunft, Land ziel, int truppenA, int truppenV){
         Integer[] angriff = new Integer[truppenA];
         Integer[] verteidigung = new Integer[truppenV];
-        for (int wert : angriff){wert = rolleWuerfel();}
-        for (int wert : verteidigung){wert = rolleWuerfel();}
+        for(int i = 0; i < angriff.length; i++){angriff[i] = rolleWuerfel();}
+        for(int i = 0; i < verteidigung.length; i++){verteidigung[i] = rolleWuerfel();}
         Arrays.sort(angriff, Collections.reverseOrder());
         Arrays.sort(verteidigung, Collections.reverseOrder());
 
