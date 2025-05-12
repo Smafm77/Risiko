@@ -45,6 +45,10 @@ public class Land {
         einheiten--;
         besitzer.verliere1Einheit();
     }
+    public void einheitRekrutiert(){
+        einheiten++;
+        besitzer.rekrutierung1Einheit();
+    }
     public void wechselBesitzer(Spieler neuerBesitzer){
         besitzer.verliereLand(this);
         besitzer = neuerBesitzer;

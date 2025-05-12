@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Scanner;
 
 public class Spieler {
     //region Basics
@@ -89,7 +90,20 @@ public class Spieler {
 
     public void zuweisungEinheiten(int truppen) {
         for (int t = 1; t <= truppen; t++) {
-            //ToDO choose an owned country to put the unit in. > add 1 to einheiten here and in chosen land
+            Scanner scanner = new Scanner(System.in);
+            while(true){
+                System.out.println("Wohin soll diese Einheit gesetzt werden?");
+                System.out.println();
+                zeigeSpieler();
+
+                Land basis = findeEigenesLand(scanner.nextLine());
+                if (basis == null){
+                    continue;
+                }
+
+                basis.einheitRekrutiert();
+                break;
+            }
         }
     }
 
@@ -111,7 +125,9 @@ public class Spieler {
     }
     //endregion
 
-    public void sterben() {
+    public void sterben(Spieler moerder) {
+        moerder.getKarten().addAll(this.karten);
+        karten.removeAll(karten);
         this.alive = false;
     }
 
@@ -133,5 +149,26 @@ public class Spieler {
 
     public void verliere1Einheit(){
         einheiten--;
+    }
+    public void rekrutierung1Einheit(){
+        einheiten++;
+    }
+
+    public void zeigeSpieler(){
+        System.out.println(id + " - " + name + " - " + besetzteLaender.size());
+        for (Land land : besetzteLaender) {
+            System.out.println(land.getBesitzer().getId() + ": " + land.getName() + " ("+ land.getEinheiten() +")");
+        }
+        System.out.println();
+    }
+    public Land findeEigenesLand(String name){
+        String suche = name.trim().toLowerCase();
+        for (Land land : besetzteLaender) {
+            if (land.getName().toLowerCase().equals(suche)) {
+                return land;
+            }
+        }
+        System.out.println("Das Land "+ name +" existiert nicht");
+        return null;
     }
 }

@@ -27,7 +27,7 @@ public class Spiel {
         welt.printWorldMap();
         welt.verteileLaender(spielerListe);
         kartenStapel.addAll(welt.createCardStack());
-        zeigeSpieler(spielerListe);
+        zeigeAlleSpieler(spielerListe);
         do {
             spielRunde();
         } while (spielRunde());
@@ -141,7 +141,7 @@ public class Spiel {
     public void spieleKarte(Spieler spieler, Karte karte) {
         if (!spieler.getKarten().contains(karte)) {
             spieler.getKarten().remove(karte);
-            spieler.zuweisungEinheiten(karte.strength);
+            spieler.zuweisungEinheiten(karte.getStrength());
             kartenStapel.add(karte);
         } else {
             //ToDo throw Error that Player doesn't own the karte. This should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry
@@ -237,7 +237,7 @@ public class Spiel {
         welt.findeKontinentenzugehoerigkeit(ziel).checkBesitzer();
 
         if (verteidiger.getBesetzteLaender().isEmpty()){
-            verteidiger.sterben(); //ToDO schreibe sterben
+            verteidiger.sterben(herkunft.getBesitzer());
         }
     }
     //endregion
@@ -259,7 +259,7 @@ public class Spiel {
             if (input.equals("N")) {
                 break;
             }
-            Karte chosenCard = spieler.getKarten().stream().filter(c -> c.land.getName().equalsIgnoreCase(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
+            Karte chosenCard = spieler.getKarten().stream().filter(c -> c.getLand().getName().equalsIgnoreCase(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
             spieleKarte(spieler, chosenCard);
         }
     }
@@ -323,13 +323,9 @@ public class Spiel {
         }
     }
 
-    public void zeigeSpieler(ArrayList<Spieler> spielerListe) {
+    public void zeigeAlleSpieler(ArrayList<Spieler> spielerListe) {
         for (Spieler spieler : spielerListe) {
-            System.out.println(spieler.getId() + " - " + spieler.getName() + " - " + spieler.getBesetzteLaender().size());
-            for (Land land : spieler.getBesetzteLaender()) {
-                System.out.println(land.getBesitzer().getId() + ": " + land.getName());
-            }
-            System.out.println();
+            spieler.zeigeSpieler();
         }
         System.out.println();
         System.out.println();
