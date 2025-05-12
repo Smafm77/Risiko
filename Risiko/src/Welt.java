@@ -10,7 +10,7 @@ public class Welt {
 
     public Welt() throws IOException {
         alleLaender = new ArrayList<>();
-
+        alleKontinente = new ArrayList<>();
         //Einlesen der Länder
         BufferedReader brsl = new BufferedReader(new FileReader("Staatenliste.txt")); //ToDo Kontrolle ob relative Pfade funktionieren
         String inputsl;
@@ -34,6 +34,25 @@ public class Welt {
                 nachbarn[i] = alleLaender.get(Integer.parseInt(values[i + 1])); //NumberFormatException
             }
             alleLaender.get(index++).addNachbarn(nachbarn);
+        }
+
+        //Einlesen der Kontinente
+        BufferedReader brk = new BufferedReader(new FileReader("Kontinentenliste.txt"));
+        String inputk;
+        int index = 0;
+        while ((inputk = brk.readLine()) != null) {
+            String[] values = inputsl.trim().split(" ")
+                    String kontinentName = values[0];
+            Land[] gebiete = new Land[values.length -1];
+            for (int i = 0; i < gebiete.length; i++){
+                gebiete[i] = alleLaender.get(Integer.parseInt(values[i + 1]));
+            }
+            Kontinent[] kontinent = new Kontinent[values.length - 1];
+            for (int i = 0; i < kontinent.length; i++) {
+                kontinent[i] = alleKontinente.get(Integer.parseInt(values[i + 1])); //NumberFormatException
+            }
+            //ToDo int für buff aus datei auslesen
+            alleKontinente.add(new Kontinent(kontinentName, gebiete, buff));
         }
 
         //Kontinente erstellen+Länder zuweisen; Hinweis: Falls Probleme, Zahlen checken
