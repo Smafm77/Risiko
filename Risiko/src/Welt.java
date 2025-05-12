@@ -25,10 +25,10 @@ public class Welt {
 
         //Einlesen der Nachbarn
         BufferedReader brnl = new BufferedReader(new FileReader("Nachbarliste.txt"));
-        String inputnl = brnl.readLine();
+        String inputnl;
         int index = 0;
         while ((inputnl = brnl.readLine()) != null) {
-            String[] values = inputnl.trim().split(" "); //same same siehe oberhalb
+            String[] values = inputnl.trim().split(" "); //inputnl beginnt in Zeile 2
             Land[] nachbarn = new Land[values.length - 1];
             for (int i = 0; i < nachbarn.length; i++) {
                 nachbarn[i] = alleLaender.get(Integer.parseInt(values[i + 1])); //NumberFormatException
@@ -151,6 +151,14 @@ public class Welt {
             }
         }
         return null;
+    }
+    public Kontinent findeKontinentenzugehoerigkeit(Land land){
+        for (Kontinent kontinent : alleKontinente){
+            if (kontinent.beinhaltetLand(land)){
+                return kontinent;
+            }
+        }
+        return null; //sollte nie vorkommen
     }
 
 }
