@@ -36,6 +36,9 @@ public class Spiel {
 
     public boolean spielRunde() {
         for (Spieler spieler : spielerListe) {
+            if (!spieler.isAlive()){
+                continue;
+            }
             //Truppen erhalten
             spieler.neueArmee(welt.alleKontinente);
             if (!spieler.getKarten().isEmpty()) {
@@ -138,6 +141,7 @@ public class Spiel {
     public void spieleKarte(Spieler spieler, Karte karte) {
         if (!spieler.getKarten().contains(karte)) {
             spieler.getKarten().remove(karte);
+            spieler.zuweisungEinheiten(karte.strength);
             kartenStapel.add(karte);
         } else {
             //ToDo throw Error that Player doesn't own the karte. This should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry
@@ -255,7 +259,7 @@ public class Spiel {
             if (input.equals("N")) {
                 break;
             }
-            Karte chosenCard = spieler.getKarten().stream().filter(c -> c.land.getName().equals(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
+            Karte chosenCard = spieler.getKarten().stream().filter(c -> c.land.getName().equalsIgnoreCase(input.trim())).findFirst().orElseThrow(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
             spieleKarte(spieler, chosenCard);
         }
     }
