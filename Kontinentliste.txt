@@ -1,6 +1,6 @@
-Europa: 6 33 34 35 36 40 41
-Nord-Amerika: 8 12 16 22 25 26 30 31 32
-Süd-Amerika: 1 14 18 23
-Afrika: 0 4 5 11 20 38
-Asien: 2 3 7 10 13 17 19 21 24 27 28 39
-Australien: 9 15 29 37
+5 Europa 6 33 34 35 36 40 41
+5 Nordamerika 8 12 16 22 25 26 30 31 32
+2 Südamerika 1 14 18 23
+3 Afrika 0 4 5 11 20 38
+7 Asien 2 3 7 10 13 17 19 21 24 27 28 39
+2 Australien 9 15 29 37

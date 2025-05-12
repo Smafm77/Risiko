@@ -37,23 +37,19 @@ public class Welt {
         }
 
         //Einlesen der Kontinente
-        BufferedReader brk = new BufferedReader(new FileReader("Kontinentenliste.txt"));
+        BufferedReader brk = new BufferedReader(new FileReader("Kontinentliste.txt"));
         String inputk;
-        int index = 0;
         while ((inputk = brk.readLine()) != null) {
-            String[] values = inputsl.trim().split(" ")
-                    String kontinentName = values[0];
-            Land[] gebiete = new Land[values.length -1];
-            for (int i = 0; i < gebiete.length; i++){
-                gebiete[i] = alleLaender.get(Integer.parseInt(values[i + 1]));
+            String[] values = inputk.trim().split(" ");
+            int buff = Integer.parseInt(values[0]);
+            String kontinentName = values[1];
+            Land[] gebiete = new Land[values.length - 2];
+            for (int i = 0; i < gebiete.length; i++) {
+                gebiete[i] = alleLaender.get(Integer.parseInt(values[i + 2]));
             }
-            Kontinent[] kontinent = new Kontinent[values.length - 1];
-            for (int i = 0; i < kontinent.length; i++) {
-                kontinent[i] = alleKontinente.get(Integer.parseInt(values[i + 1])); //NumberFormatException
-            }
-            //ToDo int für buff aus datei auslesen
             alleKontinente.add(new Kontinent(kontinentName, gebiete, buff));
         }
+    }
 
     public Collection<Karte> createCardStack() {
         Collection<Karte> stapel = new ArrayList<>();
