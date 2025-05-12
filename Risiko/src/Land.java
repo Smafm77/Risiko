@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 
 public class Land {
-    private String name;
+    private final String name;
     private Spieler besitzer;
     private int einheiten;
     private final int strength;

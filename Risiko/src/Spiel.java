@@ -147,10 +147,6 @@ public class Spiel {
             spieler.getKarten().remove(karte);
             spieler.zuweisungEinheiten(karte.getStrength());
             kartenStapel.add(karte);
-        } else {
-            //ToDo throw Error that Player doesn't own the karte. This should not happen because player should only be able to choose from their own already owned cards, but better safe than sorry
-            //ToDo @majbritt: Nein
-
         }
     }
     //endregion

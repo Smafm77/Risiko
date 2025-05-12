@@ -136,7 +136,7 @@ public class Welt {
         System.out.println("Weltkarte:");
         System.out.println();
         for (Land land : alleLaender) {
-            String nachbarn = land.getNachbarn().stream().map(n -> n.getName()).collect(Collectors.joining(", "));
+            String nachbarn = land.getNachbarn().stream().map(Land::getName).collect(Collectors.joining(", "));
             System.out.println(land.getName() + " | Angrenzend:" + nachbarn);
         }
         System.out.println();

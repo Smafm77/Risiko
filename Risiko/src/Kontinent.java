@@ -1,7 +1,7 @@
 public class Kontinent {
-    private String name;
-    private Land[] gebiete;
-    private int buff;
+    private final String name;
+    private final Land[] gebiete;
+    private final int buff;
     private Spieler einzigerBesitzer; //Kann null sein, falls Kontinent mehrere Besatzer hat
 
     public Kontinent(String name, Land[] gebiete, int buff) {
@@ -46,6 +46,4 @@ public class Kontinent {
             einzigerBesitzer = null;
         }
     }
-    //ToDO Update Kontinentbesitzer bei jedem Besitzwechsel von zugehörigem Land
-    // -->boolenrückgabe bei Änderung möglich einzufügen
 }

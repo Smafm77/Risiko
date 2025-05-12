@@ -5,8 +5,8 @@ import java.util.Scanner;
 
 public class Spieler {
     //region Basics
-    private String name;
-    private int id;
+    private final String name;
+    private final int id;
     private int einheiten;    //ToDo check every instance if einheiten being used, if it needs to impact a Land as well
     private boolean alive;
     private ArrayList<Land> besetzteLaender = new ArrayList<>();
@@ -80,7 +80,7 @@ public class Spieler {
             this.einheiten += besetzteLaender.size() / 3;
         }
         //Zuschuss Kontinente
-        Kontinent[] reiche = (Kontinent[]) alleKontinente.stream().filter(kontinent -> kontinent.getEinzigerBesitzer() == this).toArray(Kontinent[]::new);
+        Kontinent[] reiche = alleKontinente.stream().filter(kontinent -> kontinent.getEinzigerBesitzer() == this).toArray(Kontinent[]::new);
         if (reiche.length > 0) {
             neueEinheiten += Arrays.stream(reiche).mapToInt(Kontinent::getBuff).sum();
         }
@@ -109,7 +109,7 @@ public class Spieler {
 
     public void bewegeEinheiten(int truppen, Land herkunft, Land ziel) { //ToDo Wieso gibt es moveTroops sowohl in Spieler als auch in Spiel?
         //ToDO throw error
-        if (herkunft.getBesitzer() != this) {
+        /*if (herkunft.getBesitzer() != this) {
             //throw error (Diese Truppen gehören dir nicht!)
         }
         if (herkunft.getEinheiten() <= truppen) {
@@ -117,7 +117,7 @@ public class Spieler {
         }
         if (!herkunft.connectionPossible(ziel)) {
             //throw error (Die Länder sind nicht verbunden!)
-        }
+        }*/
         int herkunftEinheiten = herkunft.getEinheiten();
         herkunft.setEinheiten(herkunftEinheiten - truppen);
         int zielEinheiten = ziel.getEinheiten();
