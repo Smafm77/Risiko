@@ -3,10 +3,17 @@ import java.util.Scanner;
 public class Menue {
     Scanner scanner = new Scanner(System.in);
     private Spieler aktuellerSpieler;
+    private Land auswahlLand;
 
-    public Menue(Spieler spieler){
+
+    public void setSpieler(Spieler spieler) {
         this.aktuellerSpieler = spieler;
     }
+
+    public void setLand(Land auswahlLand) {
+        this.auswahlLand = auswahlLand;
+    }
+
     public enum Befehl {
         ANGRIFF(1),
         BEWEGEN(2),
@@ -34,15 +41,17 @@ public class Menue {
             return null;
         }
     }
+
     public Befehl eingabeEinlesen() {
         while (true) {
-            menueAnzeigen();
+            hauptMenue();
             int auswahl = scanner.nextInt();
             scanner.nextLine();
             return Befehl.fromInt(auswahl);
         }
     }
-    public void menueAnzeigen() {
+
+    private void hauptMenue() {
         System.out.println("Du bist am Zug : " + aktuellerSpieler.getName());
         System.out.println("Was willst du tun? ");
         System.out.println("1: Angreifen");
@@ -50,7 +59,49 @@ public class Menue {
         System.out.println("3: Infos über...");
         System.out.println("4: Übersicht meiner Gebiete");
         System.out.println("5: Zug beenden");
-
         System.out.println("666: Spiel beenden");
+    }
+
+    public enum Infos {
+        BESITZER(1),
+        EINHEITEN(2),
+        NACHBARN(3),
+        ZURUECK(666);
+
+        private final int auswahl;
+
+        Infos(int auswahl) {
+            this.auswahl = auswahl;
+        }
+
+        public int getAuswahl() {
+            return auswahl;
+        }
+
+        public static Infos fromInt(int auswahl) {
+            for (Infos i : values()) {
+                if (i.getAuswahl() == auswahl) {
+                    return i;
+                }
+            }
+            return null;
+        }
+    }
+
+    public Infos infoAbfrage() {
+        while (true) {
+            infoMenue();
+            int auswahl = scanner.nextInt();
+            scanner.nextLine();
+            return Infos.fromInt(auswahl);
+        }
+    }
+
+    private void infoMenue() {
+        System.out.println("Welche Informationen möchtest du über " + auswahlLand + " erhalten?");
+        System.out.println("1: Besitzer");
+        System.out.println("2: Einheiten auf Land");
+        System.out.println("3: Nachbarländer von " + auswahlLand);
+        System.out.println("666: Zurück");
     }
 }

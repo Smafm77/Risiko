@@ -5,13 +5,13 @@ import java.util.stream.Collectors;
 public class Spiel {
 
     public enum Spielphase {
-        VERTEILEN,
-        ANGRIFF,
-        VERSCHIEBEN;
+        VERTEILEN, ANGRIFF, VERSCHIEBEN;
     }
+
     Welt welt = new Welt();
     ArrayList<Spieler> spielerListe = new ArrayList<>();
     HashSet<Karte> kartenStapel = new HashSet<>();
+    Menue menue = new Menue();
 
     public Spiel() throws IOException {
         starteSpiel();
@@ -42,7 +42,7 @@ public class Spiel {
     public boolean spielRunde() {
 
         for (Spieler spieler : spielerListe) {
-            Menue menue = new Menue(spieler);
+            menue.setSpieler(spieler);
 
             if (!spieler.isAlive()) {
                 continue;
@@ -81,7 +81,6 @@ public class Spiel {
                         System.out.println("Fehlerhafte Eingabe");
                 }
             }
-
         }
         return true;
     }
@@ -97,37 +96,25 @@ public class Spiel {
                 infoAuswahl();
                 return;
             }
-            boolean zurueck = false;
-            while (!zurueck) {
-                System.out.println("Welche Informationen möchtest du über " + eingabe + " erhalten?");
-                System.out.println("1: Besitzer");
-                System.out.println("2: Einheiten auf Land");
-                System.out.println("3: Nachbarländer von " + eingabe);
-                System.out.println("666: Zurück");
 
-                int auswahl = scanner.nextInt();
-                scanner.nextLine();
-
-                switch (auswahl) {
-                    case 1:
-                        System.out.println(auswahlLand.getName() + " befindet sich in " + auswahlLand.getBesitzer().getName() + "'s Besitz.");
-                        break;
-                    case 2:
-                        System.out.println("In " + auswahlLand.getName() + " befinden sich aktuell " + auswahlLand.getEinheiten() + " Einheiten.");
-                        break;
-                    case 3:
-                        System.out.println("Die Nachbarländer von " + auswahlLand.getName() + " sind: ");
-                        for (Land nachbar : auswahlLand.getNachbarn()) {
-                            System.out.println(nachbar.getName());
-                        }
-                        break;
-                    case 666:
-                        zurueck = true;
-                        break;
-                    default:
-                        System.out.println("Fehlerhafte Eingabe.");
-                        break;
-                }
+            switch (menue.infoAbfrage()) {
+                case BESITZER:
+                    System.out.println(auswahlLand.getName() + " befindet sich in " + auswahlLand.getBesitzer().getName() + "'s Besitz.");
+                    break;
+                case EINHEITEN:
+                    System.out.println("In " + auswahlLand.getName() + " befinden sich aktuell " + auswahlLand.getEinheiten() + " Einheiten.");
+                    break;
+                case NACHBARN:
+                    System.out.println("Die Nachbarländer von " + auswahlLand.getName() + " sind: ");
+                    for (Land nachbar : auswahlLand.getNachbarn()) {
+                        System.out.println(nachbar.getName());
+                    }
+                    break;
+                case ZURUECK:
+                    return;
+                default:
+                    System.out.println("Fehlerhafte Eingabe.");
+                    break;
             }
         }
     }
