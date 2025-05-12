@@ -297,7 +297,7 @@ public class Spiel {
                 break;
             }
             spieler.bewegeEinheiten(anzahl, herLand, zielLand);
-
+            System.out.println("Neue Anzahl Einheiten: " + herLand.getName() + ": " + herLand.getEinheiten() + " , " + zielLand.getName() + ": " + zielLand.getEinheiten());
             break;
         }
     }
@@ -309,7 +309,11 @@ public class Spiel {
         for (Land land : spieler.getBesetzteLaender()) {
             System.out.print(spieler.getId() + " - " + land.getName() + ": " + land.getEinheiten() + " | ");
             for(Land nachbar : land.getNachbarn()) {
-                System.out.print(nachbar.getName() + " ");
+                for (Land besetzt : spieler.getBesetzteLaender()) {
+                    if (besetzt == nachbar) {
+                        System.out.print(nachbar.getName() + " ");
+                    }
+                }
             }
             System.out.println();
         }
