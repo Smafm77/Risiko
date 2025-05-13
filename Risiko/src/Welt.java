@@ -74,7 +74,7 @@ public class Welt {
 
             Spieler aktuellerSpieler = spielerListe.get(playerIndex);
             aktuellesLand.setBesitzer(aktuellerSpieler);
-            aktuellerSpieler.fuegeLandHinzu(aktuellesLand, aktuellesLand.getStrength());
+            aktuellerSpieler.fuegeLandHinzu(aktuellesLand);
 
             index++;
         }

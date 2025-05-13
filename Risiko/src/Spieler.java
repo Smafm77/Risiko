@@ -7,7 +7,6 @@ public class Spieler {
     //region Basics
     private final String name;
     private final int id;
-    private int einheiten;    //ToDo check every instance if einheiten being used, if it needs to impact a Land as well
     private boolean alive;
     private ArrayList<Land> besetzteLaender = new ArrayList<>();
     private HashSet<Karte> karten = new HashSet<>();
@@ -15,7 +14,6 @@ public class Spieler {
     public Spieler(String name, int id) {
         this.name = name.trim();
         this.id = id;
-        this.einheiten = 0;
         alive = true;
     }
 
@@ -26,10 +24,6 @@ public class Spieler {
 
     public int getId() {
         return id;
-    }
-
-    public int getEinheiten() {
-        return einheiten;
     }
 
     public boolean isAlive() {
@@ -55,29 +49,23 @@ public class Spieler {
         return feinde;
     }
 
-    public void fuegeLandHinzu(Land land, int soldaten) {
-        besetzteLaender.add(land);
-        einheiten += soldaten; //ToDo checke ob es mit Kampf kompatibel ist soldaten mit land.strength zu ersetzen
-    }
-
     public void fuegeLandHinzu(Land land){
         besetzteLaender.add(land);
     }
 
     public void verliereLand(Land land) {
-        einheiten -= land.getEinheiten();
         besetzteLaender.remove(land);
     }
     //endregion
 
     //region Einheiten
     public void neueArmee(ArrayList<Kontinent> alleKontinente) { //Bei neuem Spielzug dazu
-        int neueEinheiten = 3;
+        int neueEinheiten = 0;
         //Zuschuss besetzte Länder
         if (besetzteLaender.size() <= 9) {
-            this.einheiten += 3;
+            neueEinheiten += 3;
         } else {
-            this.einheiten += besetzteLaender.size() / 3;
+            neueEinheiten += (besetzteLaender.size() / 3);
         }
         //Zuschuss Kontinente
         Kontinent[] reiche = alleKontinente.stream().filter(kontinent -> kontinent.getEinzigerBesitzer() == this).toArray(Kontinent[]::new);
@@ -131,27 +119,17 @@ public class Spieler {
         this.alive = false;
     }
 
-    //ToDO implement everytime Einheiten get changed
-    public void zaehleEinheiten() {
+    public int zaehleEinheiten() {
         int soldaten = 0;
         for (Land land : besetzteLaender) {
-
             soldaten += land.getEinheiten();
         }
-        //Todo throw Error if soldaten don't match with this.einheiten
-        einheiten = soldaten;
+        return soldaten;
     }
 
     @Override
     public boolean equals(Object spieler) {
         return (spieler instanceof Spieler) && ((Spieler) spieler).id == this.id;
-    }
-
-    public void verliere1Einheit(){
-        einheiten--;
-    }
-    public void rekrutierung1Einheit(){
-        einheiten++;
     }
 
     public void zeigeSpieler(){

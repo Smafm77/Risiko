@@ -43,11 +43,9 @@ public class Land {
 
     public void einheitGestorben(){ //Nur dann nutzen, wenn garantiert ist das einheiten > 0
         einheiten--;
-        besitzer.verliere1Einheit();
     }
     public void einheitRekrutiert(){
         einheiten++;
-        besitzer.rekrutierung1Einheit();
     }
     public void wechselBesitzer(Spieler neuerBesitzer){
         besitzer.verliereLand(this);
