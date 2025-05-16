@@ -14,7 +14,7 @@ public class Menue {
         this.auswahlLand = auswahlLand;
     }
 
-    public enum Befehl {
+    public enum Befehl { //Eigenes Enum
         ANGRIFF(1),
         BEWEGEN(2),
         INFO(3),
@@ -60,7 +60,7 @@ public class Menue {
         System.out.println("666: Spiel beenden");
     }
 
-    public enum Infos {
+    public enum Infos { //Eigenes Enum
         BESITZER(1),
         EINHEITEN(2),
         NACHBARN(3),

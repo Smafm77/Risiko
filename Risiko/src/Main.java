@@ -10,7 +10,7 @@ public class Main {
         boolean running = true;
         System.out.println("Willkommen zu Risiko");
 
-        while (running) {
+        while (running) {       //Inhalt der schleife ins Menue?
             System.out.println("1. Spiel starten");
             System.out.println("666. Beenden");
             System.out.println("Bitte eine Option auswählen");

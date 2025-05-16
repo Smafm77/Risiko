@@ -11,7 +11,7 @@ public class Welt {
     public Welt() throws IOException {
         alleLaender = new ArrayList<>();
         alleKontinente = new ArrayList<>();
-        //Einlesen der Länder
+        //Einlesen der Länder  -- das in persistence?
         BufferedReader brsl = new BufferedReader(new FileReader("Staatenliste.txt")); //ToDo Kontrolle ob relative Pfade funktionieren
         String inputsl;
         while ((inputsl = brsl.readLine()) != null) {
@@ -23,7 +23,7 @@ public class Welt {
             }
         }
 
-        //Einlesen der Nachbarn
+        //Einlesen der Nachbarn -- das in persistence?
         BufferedReader brnl = new BufferedReader(new FileReader("Nachbarliste.txt"));
         String inputnl;
         int index = 0;
@@ -36,7 +36,7 @@ public class Welt {
             alleLaender.get(index++).addNachbarn(nachbarn);
         }
 
-        //Einlesen der Kontinente
+        //Einlesen der Kontinente -- das in persistence?
         BufferedReader brk = new BufferedReader(new FileReader("Kontinentliste.txt"));
         String inputk;
         while ((inputk = brk.readLine()) != null) {
@@ -51,7 +51,7 @@ public class Welt {
         }
     }
 
-    public Collection<Karte> createCardStack() {
+    public Collection<Karte> createCardStack() { //Warum hier und nicht in Karte?
         Collection<Karte> stapel = new ArrayList<>();
         for (Land land : alleLaender) {
             stapel.add(new Karte(land));
@@ -60,7 +60,7 @@ public class Welt {
     }
 
 
-    public void verteileLaender(List<Spieler> spielerListe) {
+    public void verteileLaender(List<Spieler> spielerListe) {  //Vielleicht eher in Spiel? Ist so glaube ich auch auf deiner Zeichnung wenn ich das richtig sehe :)
 
         Collections.shuffle(alleLaender);
 
@@ -80,7 +80,7 @@ public class Welt {
         }
     }
 
-    //region temporary Visualisation
+    //region temporary Visualisation -- UI?
     public void printWorldMap() {
         System.out.println("Weltkarte:");
         System.out.println();

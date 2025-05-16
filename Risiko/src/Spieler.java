@@ -41,7 +41,7 @@ public class Spieler {
     //region Land Methoden
 
     //Todo Test this
-    public HashSet<Land> getFeinde() {
+    public HashSet<Land> getFeinde() {  //todo wird nie genutzt! Nochmal in gruen
         HashSet<Land> feinde = new HashSet<>();
         for (Land kolonie : besetzteLaender) {
             feinde.addAll(kolonie.getFeindlicheNachbarn());
@@ -113,13 +113,13 @@ public class Spieler {
     }
     //endregion
 
-    public void sterben(Spieler moerder) {
+    public void sterben(Spieler moerder) {  //brauche nochmal erklärung hierzu
         moerder.getKarten().addAll(this.karten);
         karten.removeAll(karten);
         this.alive = false;
     }
 
-    public int zaehleEinheiten() {
+    public int zaehleEinheiten() { //Wird das je in Zukunft benötigt? Für sterben vllt?
         int soldaten = 0;
         for (Land land : besetzteLaender) {
             soldaten += land.getEinheiten();
@@ -132,7 +132,7 @@ public class Spieler {
         return (spieler instanceof Spieler) && ((Spieler) spieler).id == this.id;
     }
 
-    public void zeigeSpieler(){
+    public void zeigeSpieler(){ //gilt das als Print, ergo UI?
         System.out.println(id + " - " + name + " - " + besetzteLaender.size());
         for (Land land : besetzteLaender) {
             System.out.println(land.getBesitzer().getId() + ": " + land.getName() + " ("+ land.getEinheiten() +")");
@@ -149,7 +149,7 @@ public class Spieler {
         System.out.println("Das Land "+ name +" existiert nicht");
         return null;
     }
-    public String eigeneKartenToString(){
+    public String eigeneKartenToString(){ //Print? UI?
         String kartenTxt = "";
         for (Karte karte : karten){
             kartenTxt += "["+ karte.getStrength() + " - "+ karte.getLand().getName() +"]  ";

@@ -4,11 +4,11 @@ import java.util.stream.Collectors;
 
 public class Spiel {
 
-    public enum Spielphase {
+    public enum Spielphase {    //Eigene Enum Spielphasen?
         VERTEILEN, ANGRIFF, VERSCHIEBEN;
     }
 
-    Welt welt = new Welt();
+    Welt welt = new Welt();     //@Maj, das meintest du soll in persistence, oder?
     ArrayList<Spieler> spielerListe = new ArrayList<>();
     HashSet<Karte> kartenStapel = new HashSet<>();
     Menue menue = new Menue();
@@ -20,7 +20,7 @@ public class Spiel {
     public void starteSpiel() {
         //Create Players
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Bitte die Anzahl an Spielern eingeben:");
+        System.out.println("Bitte die Anzahl an Spielern eingeben:");       //Spielerabfrage in Menue
         int anzahlSpieler = scanner.nextInt();
         scanner.nextLine(); //Weil scanner.nextInt immer mucken macht einfach nochmal nextLine "einlesen"
         for (int i = 1; i <= anzahlSpieler; i++) {
@@ -29,7 +29,7 @@ public class Spiel {
             spielerListe.add(spieler);
         }
 
-        //Create board
+        //Create board -- Soll das auch in persistence
         welt.printWorldMap();
         welt.verteileLaender(spielerListe);
         kartenStapel.addAll(welt.createCardStack());
@@ -85,7 +85,7 @@ public class Spiel {
         return true;
     }
 
-    public void infoAuswahl() {
+    public void infoAuswahl() { //In menue
         Scanner scanner = new Scanner(System.in);
         System.out.println("Über welches Land möchtest du Informationen erhalten? - Abbrechen mit Enter");
         String eingabe = scanner.nextLine();
@@ -136,7 +136,7 @@ public class Spiel {
     //endregion
 
     //region kampf
-    public boolean kampfInterface(Spieler angreifer) {
+    public boolean kampfInterface(Spieler angreifer) { //Interface = ins Menue? oder UI? oder beides?
         Scanner scanner = new Scanner(System.in);
         HashSet<Land> volleKasernen = angreifer.getBesetzteLaender().stream().filter(land -> land.getEinheiten() > 1).collect(Collectors.toCollection(HashSet::new));
 
@@ -238,8 +238,8 @@ public class Spiel {
         return (int) (Math.random() * 6) + 1;
     }
 
-    //region temporary Visualisation
-    public void peruseCards(Spieler spieler) throws NoSuchElementException { //ToDO catch exception  (@maj nein, kein ToDo exceptions bisher!)
+    //region temporary Visualisation  -- eindeutschen und UI?
+    public void peruseCards(Spieler spieler) throws NoSuchElementException { //ToDO catch exception
         //Name Options
         Scanner scanner = new Scanner(System.in);
         while (!spieler.getKarten().isEmpty()) {
@@ -262,7 +262,7 @@ public class Spiel {
         }
     }
 
-    public void moveTroopsInterface(Spieler spieler) {
+    public void moveTroopsInterface(Spieler spieler) { //Mix aus Menue und UI?
         Scanner scanner = new Scanner(System.in);
         zeigeEigeneGebiete(spieler);
         System.out.println("Aus welchem Land sollen Einheiten entzogen werden?");
@@ -305,7 +305,7 @@ public class Spiel {
     }
 
 
-    public void zeigeEigeneGebiete(Spieler spieler) {
+    public void zeigeEigeneGebiete(Spieler spieler) {  //UI?
         System.out.println("All deine Gebiete:");
         //Wenn es möglich ist Nachbarn zu erörtern auch diese hinzufügen (anzahl angrenzender Gebiete und Einheiten)
         for (Land land : spieler.getBesetzteLaender()) {

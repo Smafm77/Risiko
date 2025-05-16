@@ -114,7 +114,7 @@ public class Land {
         return (land instanceof Land) && (((Land) land).name.equals(this.name));
     }
 
-    public boolean isName(String name) {
+    public boolean isName(String name) { //todo nie benutzt nochmal in gruen
         return this.name.equals(name);
     }
 }
