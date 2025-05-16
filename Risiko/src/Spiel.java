@@ -127,7 +127,7 @@ public class Spiel {
     }
 
     public void spieleKarte(Spieler spieler, Karte karte) {
-        if (!spieler.getKarten().contains(karte)) {
+        if (spieler.getKarten().contains(karte)) {
             spieler.getKarten().remove(karte);
             spieler.zuweisungEinheiten(karte.getStrength());
             kartenStapel.add(karte);

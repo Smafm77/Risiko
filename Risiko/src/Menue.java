@@ -43,12 +43,10 @@ public class Menue {
     }
 
     public Befehl eingabeEinlesen() {
-        while (true) {
             hauptMenue();
             int auswahl = scanner.nextInt();
             scanner.nextLine();
             return Befehl.fromInt(auswahl);
-        }
     }
 
     private void hauptMenue() {
@@ -89,12 +87,10 @@ public class Menue {
     }
 
     public Infos infoAbfrage() {
-        while (true) {
             infoMenue();
             int auswahl = scanner.nextInt();
             scanner.nextLine();
             return Infos.fromInt(auswahl);
-        }
     }
 
     private void infoMenue() {
