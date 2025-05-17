@@ -1,3 +1,9 @@
+package domain;
+
+import ui.cui.Menue;
+import valueobjects.Karte;
+import valueobjects.Land;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,11 +26,11 @@ public class Spiel {
     public void starteSpiel() {
         //Create Players
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Bitte die Anzahl an Spielern eingeben:");       //Spielerabfrage in Menue
+        System.out.println("Bitte die Anzahl an Spielern eingeben:");       //Spielerabfrage in ui.cui.Menue
         int anzahlSpieler = scanner.nextInt();
         scanner.nextLine(); //Weil scanner.nextInt immer mucken macht einfach nochmal nextLine "einlesen"
         for (int i = 1; i <= anzahlSpieler; i++) {
-            System.out.println("Bitte Namen des Spielers eingeben Spieler Nr. " + i + " :");
+            System.out.println("Bitte Namen des Spielers eingeben valueobjects.Spieler Nr. " + i + " :");
             Spieler spieler = new Spieler(scanner.nextLine(), i);
             spielerListe.add(spieler);
         }
@@ -87,12 +93,12 @@ public class Spiel {
 
     public void infoAuswahl() { //In menue
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Über welches Land möchtest du Informationen erhalten? - Abbrechen mit Enter");
+        System.out.println("Über welches valueobjects.Land möchtest du Informationen erhalten? - Abbrechen mit Enter");
         String eingabe = scanner.nextLine();
         if (!Objects.equals(eingabe, "")) {
             Land auswahlLand = welt.findeLand(eingabe);
             if (auswahlLand == null) {
-                System.out.println("Fehlerhafte Eingabe: " + eingabe + " ist kein Land.");
+                System.out.println("Fehlerhafte Eingabe: " + eingabe + " ist kein valueobjects.Land.");
                 infoAuswahl();
                 return;
             }
@@ -136,7 +142,7 @@ public class Spiel {
     //endregion
 
     //region kampf
-    public boolean kampfInterface(Spieler angreifer) { //Interface = ins Menue? oder UI? oder beides?
+    public boolean kampfInterface(Spieler angreifer) { //Interface = ins ui.cui.Menue? oder UI? oder beides?
         Scanner scanner = new Scanner(System.in);
         HashSet<Land> volleKasernen = angreifer.getBesetzteLaender().stream().filter(land -> land.getEinheiten() > 1).collect(Collectors.toCollection(HashSet::new));
 
@@ -144,17 +150,17 @@ public class Spiel {
             welt.printTheseLaender(volleKasernen);
             ArrayList<Land> relevanteLaender = new ArrayList<>();
 
-            System.out.println("Aus welchem Land willst du angreifen?");
+            System.out.println("Aus welchem valueobjects.Land willst du angreifen?");
             Land herkunft = welt.findeLand(scanner.nextLine());
             if (!volleKasernen.contains(herkunft)) {
-                System.out.println("Das Land " + herkunft.getName() + "gehört dir nicht und oder hat zu wenig stationierte Soldaten, kann somit nicht als Angriffsbasis genutzt werden");
+                System.out.println("Das valueobjects.Land " + herkunft.getName() + "gehört dir nicht und oder hat zu wenig stationierte Soldaten, kann somit nicht als Angriffsbasis genutzt werden");
                 break;
             }
             relevanteLaender.add(herkunft);
 
             System.out.println();
             welt.printTheseLaenderNamen(herkunft.getFeindlicheNachbarn());
-            System.out.println("Welches Land möchtest du angreifen?");
+            System.out.println("Welches valueobjects.Land möchtest du angreifen?");
             Land ziel = welt.findeLand(scanner.nextLine());
             if (!herkunft.getFeindlicheNachbarn().contains(ziel)) {
                 System.out.println("Das Lander " + ziel.getName() + " ist von " + herkunft.getName() + " aus nicht angreifbar");
@@ -213,9 +219,9 @@ public class Spiel {
 
         for (int i = 0; i < Math.min(truppenA, truppenV); i++) {
             if (angriff[i] > verteidigung[i]) {
-                ziel.einheitGestorben();
+                ziel.einheitenEntfernen(1);
             } else {
-                herkunft.einheitGestorben();
+                herkunft.einheitenEntfernen(1);
             }
         }
 
@@ -262,10 +268,10 @@ public class Spiel {
         }
     }
 
-    public void moveTroopsInterface(Spieler spieler) { //Mix aus Menue und UI?
+    public void moveTroopsInterface(Spieler spieler) { //Mix aus ui.cui.Menue und UI?
         Scanner scanner = new Scanner(System.in);
         zeigeEigeneGebiete(spieler);
-        System.out.println("Aus welchem Land sollen Einheiten entzogen werden?");
+        System.out.println("Aus welchem valueobjects.Land sollen Einheiten entzogen werden?");
         String herkunft = scanner.nextLine();
         Land herLand = welt.findeLand(herkunft);
         while (true) {
@@ -273,7 +279,7 @@ public class Spiel {
                 System.out.println("Du bist nicht der Besitzer von " + herLand.getName());
                 break;
             }
-            System.out.println("In welches Land sollen die Einheiten geschickt werden?");
+            System.out.println("In welches valueobjects.Land sollen die Einheiten geschickt werden?");
             String ziel = scanner.nextLine();
             Land zielLand = welt.findeLand(ziel);
             if (zielLand.getBesitzer() != spieler) {

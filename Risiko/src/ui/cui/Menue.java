@@ -1,3 +1,7 @@
+package ui.cui;
+
+import valueobjects.Land;
+
 import java.util.Scanner;
 
 public class Menue {
@@ -57,7 +61,7 @@ public class Menue {
         System.out.println("3: Infos über...");
         System.out.println("4: Übersicht meiner Gebiete");
         System.out.println("5: Zug beenden");
-        System.out.println("666: Spiel beenden");
+        System.out.println("666: domain.Spiel beenden");
     }
 
     public enum Infos { //Eigenes Enum
@@ -96,7 +100,7 @@ public class Menue {
     private void infoMenue() {
         System.out.println("Welche Informationen möchtest du über " + auswahlLand + " erhalten?");
         System.out.println("1: Besitzer");
-        System.out.println("2: Einheiten auf Land");
+        System.out.println("2: Einheiten auf valueobjects.Land");
         System.out.println("3: Nachbarländer von " + auswahlLand);
         System.out.println("666: Zurück");
     }

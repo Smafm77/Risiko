@@ -1,10 +1,11 @@
+package valueobjects;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 
 public class Spieler {
-    //region Basics
     private final String name;
     private final int id;
     private boolean alive;
@@ -17,14 +18,14 @@ public class Spieler {
         alive = true;
     }
 
-    //endregion
+    //region getters
     public String getName() {
         return name;
     }
 
     public int getId() {
         return id;
-    }
+    } //Wird das irgendwo außerhalb von Spieler genutzt?
 
     public boolean isAlive() {
         return alive;
@@ -38,10 +39,11 @@ public class Spieler {
         return karten;
     }
 
+    //endregion
+
     //region Land Methoden
 
-    //Todo Test this
-    public HashSet<Land> getFeinde() {  //todo wird nie genutzt! Nochmal in gruen
+    public HashSet<Land> getFeinde() {  //todo wird nie genutzt! Nochmal in gruen //Kann gelöscht werden. Momentan brauchen wir es nicht und notfalls können wir es neu schreiben
         HashSet<Land> feinde = new HashSet<>();
         for (Land kolonie : besetzteLaender) {
             feinde.addAll(kolonie.getFeindlicheNachbarn());
@@ -59,7 +61,7 @@ public class Spieler {
     //endregion
 
     //region Einheiten
-    public void neueArmee(ArrayList<Kontinent> alleKontinente) { //Bei neuem Spielzug dazu
+    public void neueArmee(ArrayList<Kontinent> alleKontinente) { //Int zurückgeben? Wenn zuweisungEinheiten in die Domain wandern muss kann es von hier nicht aufgerufen werden. Bei neuem Spielzug dazu
         int neueEinheiten = 0;
         //Zuschuss besetzte Länder
         if (besetzteLaender.size() <= 9) {
@@ -76,7 +78,7 @@ public class Spieler {
         zuweisungEinheiten(neueEinheiten);
     }
 
-    public void zuweisungEinheiten(int truppen) {
+    public void zuweisungEinheiten(int truppen) {//Domain & UI
         for (int t = 1; t <= truppen; t++) {
             Scanner scanner = new Scanner(System.in);
             while(true){
@@ -89,14 +91,14 @@ public class Spieler {
                     continue;
                 }
 
-                basis.einheitRekrutiert();
+                basis.einheitenHinzufuegen(1);
                 break;
             }
         }
     }
 
-    public void bewegeEinheiten(int truppen, Land herkunft, Land ziel) { //ToDo Wieso gibt es moveTroops sowohl in Spieler als auch in Spiel?
-        //ToDO throw error
+    public void bewegeEinheiten(int truppen, Land herkunft, Land ziel) { //Domain - Interface in UI
+        //ToDO throw errors
         /*if (herkunft.getBesitzer() != this) {
             //throw error (Diese Truppen gehören dir nicht!)
         }
@@ -106,20 +108,18 @@ public class Spieler {
         if (!herkunft.connectionPossible(ziel)) {
             //throw error (Die Länder sind nicht verbunden!)
         }*/
-        int herkunftEinheiten = herkunft.getEinheiten();
-        herkunft.setEinheiten(herkunftEinheiten - truppen);
-        int zielEinheiten = ziel.getEinheiten();
-        ziel.setEinheiten(zielEinheiten + truppen);
+        herkunft.einheitenEntfernen(truppen);
+        ziel.einheitenHinzufuegen(truppen);
     }
     //endregion
-
-    public void sterben(Spieler moerder) {  //brauche nochmal erklärung hierzu
+    public void sterben(Spieler moerder) {  //In Domain, da Aufruf eines anderen Spielers. Replace/Reduce hier mit alive=false
         moerder.getKarten().addAll(this.karten);
         karten.removeAll(karten);
         this.alive = false;
     }
 
-    public int zaehleEinheiten() { //Wird das je in Zukunft benötigt? Für sterben vllt?
+
+    public int zaehleEinheiten() { //Kann weg. Notfalls neu coden
         int soldaten = 0;
         for (Land land : besetzteLaender) {
             soldaten += land.getEinheiten();
@@ -132,24 +132,24 @@ public class Spieler {
         return (spieler instanceof Spieler) && ((Spieler) spieler).id == this.id;
     }
 
-    public void zeigeSpieler(){ //gilt das als Print, ergo UI?
+    public void zeigeSpieler(){ //UI
         System.out.println(id + " - " + name + " - " + besetzteLaender.size());
         for (Land land : besetzteLaender) {
             System.out.println(land.getBesitzer().getId() + ": " + land.getName() + " ("+ land.getEinheiten() +")");
         }
         System.out.println();
     }
-    public Land findeEigenesLand(String name){
+    public Land findeEigenesLand(String name){ //UI
         String suche = name.trim().toLowerCase();
         for (Land land : besetzteLaender) {
             if (land.getName().toLowerCase().equals(suche)) {
                 return land;
             }
         }
-        System.out.println("Das Land "+ name +" existiert nicht");
+        System.out.println("Das valueobjects.Land "+ name +" existiert nicht");
         return null;
     }
-    public String eigeneKartenToString(){ //Print? UI?
+    public String eigeneKartenToString(){ //Print? UI? - sollte UI sein, muss nochmal gucken wofür das überhaupt aufgerufen wurde. Glaube Peruse Cards
         String kartenTxt = "";
         for (Karte karte : karten){
             kartenTxt += "["+ karte.getStrength() + " - "+ karte.getLand().getName() +"]  ";

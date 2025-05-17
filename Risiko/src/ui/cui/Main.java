@@ -1,7 +1,7 @@
+package ui.cui;
+
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
 
 public class Main {
 
@@ -10,8 +10,8 @@ public class Main {
         boolean running = true;
         System.out.println("Willkommen zu Risiko");
 
-        while (running) {       //Inhalt der schleife ins Menue?
-            System.out.println("1. Spiel starten");
+        while (running) {       //Inhalt der schleife ins ui.cui.Menue?
+            System.out.println("1. domain.Spiel starten");
             System.out.println("666. Beenden");
             System.out.println("Bitte eine Option auswählen");
             String auswahl = scanner.nextLine();
