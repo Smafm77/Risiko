@@ -1,10 +1,12 @@
+package valueobjects;
+
 public class Karte {
     private final int strength;
     private final Land land;
 
-    public Karte(Land land) {
+    public Karte(Land land, int strength) {
         this.land = land;
-        this.strength = land.getStrength();
+        this.strength = strength;
     }
 
     public int getStrength() {
