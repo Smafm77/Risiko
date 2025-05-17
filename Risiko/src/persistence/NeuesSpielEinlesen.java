@@ -1,0 +1,78 @@
+package persistence;
+
+import valueobjects.Karte;
+import valueobjects.Kontinent;
+import valueobjects.Land;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+public class NeuesSpielEinlesen {
+    public ArrayList<Land> alleLaenderEinlesen() throws FileNotFoundException, IOException,
+            NumberFormatException { //FileReader, readLine, parseInt
+        ArrayList<Land> alleLaender = new ArrayList<>();
+        BufferedReader br = new BufferedReader(new FileReader("Staatenliste.txt"));
+        String input;
+        while ((input = br.readLine()) != null) {
+            String[] values = input.trim().split(" "); //Array der Werte einer Zeile - müssen durch exakt ein Leerzeichen getrennt sein
+            String landName = values[0];
+            int staerke = Integer.parseInt(values[1]); //NumberFormatException
+            if (!input.isEmpty()) {
+                alleLaender.add(new Land(staerke, landName));
+            }
+        }
+        alleNachbarnEinlesen(alleLaender);
+        return alleLaender;
+    }
+
+    private void alleNachbarnEinlesen(ArrayList<Land> laender) throws FileNotFoundException, IOException,
+            NumberFormatException {//FileReader, readLine, parseInt
+        BufferedReader br = new BufferedReader(new FileReader("Nachbarliste.txt"));
+        String input;
+        int index = 0;
+        while ((input = br.readLine()) != null) {
+            String[] values = input.trim().split(" ");
+            Land[] nachbarn = new Land[values.length - 1];
+            for (int i = 0; i < nachbarn.length; i++) {
+                nachbarn[i] = laender.get(Integer.parseInt(values[i + 1])); //NumberFormatException
+            }
+            laender.get(index++).addNachbarn(nachbarn);
+        }
+    }
+
+    public ArrayList<Kontinent> alleKontinenteEinlesen(ArrayList<Land> laender)  throws FileNotFoundException, IOException,
+            NumberFormatException { //FileReader, readLine, parseInt{
+        ArrayList<Kontinent> kontinente = new ArrayList<>();
+        BufferedReader br = new BufferedReader(new FileReader("Kontinentliste.txt"));
+        String input;
+        while ((input = br.readLine()) != null) {
+            String[] values = input.trim().split(" ");
+            int buff = Integer.parseInt(values[0]);
+            String kontinentName = values[1];
+            Land[] gebiete = new Land[values.length - 2];
+            for (int i = 0; i < gebiete.length; i++) {
+                gebiete[i] = laender.get(Integer.parseInt(values[i + 2]));
+            }
+            kontinente.add(new Kontinent(kontinentName, gebiete, buff));
+        }
+        return kontinente;
+    }
+
+    public HashSet<Karte> kartenstapelEinlesen(ArrayList<Land> laender) throws FileNotFoundException, IOException, NumberFormatException {//FileReader, readLine, parseInt
+        HashSet<Karte> alleKarten = new HashSet<>();
+        BufferedReader br = new BufferedReader(new FileReader("Staatenliste.txt"));
+        String input;
+        int index = 0;
+        while ((input = br.readLine()) != null){
+            String[] values = input.trim().split(" ");
+            int staerke = Integer.parseInt(values[1]);
+            alleKarten.add(new Karte(laender.get(index), staerke));
+            index++;
+        }
+        return alleKarten;
+    }
+}
