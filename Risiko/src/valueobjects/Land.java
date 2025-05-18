@@ -43,7 +43,8 @@ public class Land {
     public void setBesitzer(Spieler spieler) {
         this.besitzer = spieler;
     }
-    public void wechselBesitzer(Spieler neuerBesitzer){
+
+    public void wechselBesitzer(Spieler neuerBesitzer) {
         besitzer.verliereLand(this);
         besitzer = neuerBesitzer;
         neuerBesitzer.fuegeLandHinzu(this);
@@ -52,7 +53,8 @@ public class Land {
     public void einheitenHinzufuegen(int einheiten) {
         this.einheiten += einheiten;
     }
-    public void einheitenEntfernen(int einheiten){
+
+    public void einheitenEntfernen(int einheiten) {
         //TODO muss in kampf auf 0 fallen können aber es wäre vermutlich sinnvoll sicherzustellen, dass im Land nicht negativ viele Truppen sind.
         this.einheiten -= einheiten;
     }
@@ -99,7 +101,7 @@ public class Land {
     }
 
 
-     //endregion
+    //endregion
 
 
     @Override

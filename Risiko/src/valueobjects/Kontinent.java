@@ -15,21 +15,24 @@ public class Kontinent {
     public Land[] getGebiete() {
         return gebiete;
     }
+
     public int getBuff() {
         return buff;
     }
+
     public String getName() {
         return name;
     }
-    public Spieler getEinzigerBesitzer() throws NullPointerException{ //Nicht sicher ob es das ist da es nicht fälschlich versucht auf null zuzugreifen, aber es gibt null zurück und damit sind alle Aufrufe hiervon von Nullpointerexceptions bedroht
+
+    public Spieler getEinzigerBesitzer() throws NullPointerException { //Nicht sicher ob es das ist da es nicht fälschlich versucht auf null zuzugreifen, aber es gibt null zurück und damit sind alle Aufrufe hiervon von Nullpointerexceptions bedroht
         boolean isSame = true;
-        for (int i = 1; i < gebiete.length; i++){
+        for (int i = 1; i < gebiete.length; i++) {
             if (!gebiete[i].getBesitzer().equals(gebiete[0].getBesitzer())) {
                 isSame = false;
                 break;
             }
         }
-        if (isSame){
+        if (isSame) {
             return gebiete[0].getBesitzer();
         } else {
             return null;
@@ -38,9 +41,9 @@ public class Kontinent {
     //endregion
 
     //region setter
-    public boolean beinhaltetLand(Land land){
-        for (Land landK : gebiete){
-            if (landK.equals(land)){
+    public boolean beinhaltetLand(Land land) {
+        for (Land landK : gebiete) {
+            if (landK.equals(land)) {
                 return true;
             }
         }
