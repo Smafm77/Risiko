@@ -59,11 +59,6 @@ public class Land {
         this.einheiten -= einheiten;
     }
 
-    public void setNachbarn(Collection<Land> nachbarn) {
-        this.nachbarn = null;
-        addNachbarn(nachbarn);
-    }
-
     public void addNachbarn(Land[] nachbarn) {
         addNachbarn(Arrays.asList(nachbarn));
     }

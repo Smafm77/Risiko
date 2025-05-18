@@ -43,41 +43,7 @@ public class Welt {
     }
 
     //region temporary Visualisation -- !!UI!!
-    public void printWorldMap() {
-        System.out.println("Weltkarte:");
-        System.out.println();
-        for (Land land : alleLaender) {
-            String nachbarn = land.getNachbarn().stream().map(Land::getName).collect(Collectors.joining(", "));
-            System.out.println(land.getName() + " | Angrenzend:" + nachbarn);
-        }
-        System.out.println();
-    }
 
-    public void printTheseLaender(Collection<Land> laender) {
-        for (Land land : laender) {
-            String fNachbarn = "";
-            for (Land fLand : land.getFeindlicheNachbarn()) {
-                fNachbarn += " [" + fLand.getName() + " - " + fLand.getBesitzer().getName() + "(" + fLand.getEinheiten() + ")]";
-            }
-            System.out.println(land.getName() + " ist im Besitz von " + land.getBesitzer().getName() + "(" + land.getEinheiten() + ") und bedroht von " + fNachbarn);
-        }
-    }
-
-    public void printTheseLaenderNamen(Collection<Land> laender) {
-        for (Land land : laender) {
-            System.out.println(land.getName() + " ist im Besitz von " + land.getBesitzer().getName() + "(" + land.getEinheiten() + ")");
-        }
-    }
-
-    public Land findeLand(String name) {
-        String suche = name.trim().toLowerCase();
-        for (Land land : alleLaender) {
-            if (land.getName().toLowerCase().equals(suche)) {
-                return land;
-            }
-        }
-        return null;
-    }
     //endregion
 
 

@@ -1,6 +1,6 @@
 package exceptions;
 
-public class FalscherBesitzerException extends RuntimeException {
+public class FalscherBesitzerException extends Exception {
     public FalscherBesitzerException(String message) {
         super(message);
     }
