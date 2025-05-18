@@ -1,5 +1,7 @@
 package ui.cui;
 
+import domain.Spiel;
+
 import java.io.IOException;
 import java.util.Scanner;
 

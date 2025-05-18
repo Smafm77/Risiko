@@ -25,7 +25,7 @@ public class Spieler {
 
     public int getId() {
         return id;
-    } //Wird das irgendwo außerhalb von Spieler genutzt?
+    } //Wird das irgendwo außerhalb von Spieler genutzt? Ja einmal Spiel-zeige eigene Gebiete und das wo es hier genutzt wird würde ich ins UI verschieben
 
     public boolean isAlive() {
         return alive;

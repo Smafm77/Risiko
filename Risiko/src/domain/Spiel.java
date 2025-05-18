@@ -1,8 +1,8 @@
 package domain;
 
+import persistence.NeuesSpielEinlesen;
+import valueobjects.*;
 import ui.cui.Menue;
-import valueobjects.Karte;
-import valueobjects.Land;
 
 import java.io.IOException;
 import java.util.*;
@@ -13,17 +13,16 @@ public class Spiel {
     public enum Spielphase {    //Eigene Enum Spielphasen?
         VERTEILEN, ANGRIFF, VERSCHIEBEN;
     }
-
-    Welt welt = new Welt();     //@Maj, das meintest du soll in persistence, oder?
     ArrayList<Spieler> spielerListe = new ArrayList<>();
+    Welt welt = new Welt(spielerListe);     //@Maj, das meintest du soll in persistence, oder?
     HashSet<Karte> kartenStapel = new HashSet<>();
     Menue menue = new Menue();
-
+    NeuesSpielEinlesen einlesen = new NeuesSpielEinlesen();
     public Spiel() throws IOException {
         starteSpiel();
     }
 
-    public void starteSpiel() {
+    public void starteSpiel() throws IOException {
         //Create Players
         Scanner scanner = new Scanner(System.in);
         System.out.println("Bitte die Anzahl an Spielern eingeben:");       //Spielerabfrage in ui.cui.Menue
@@ -38,7 +37,7 @@ public class Spiel {
         //Create board -- Soll das auch in persistence
         welt.printWorldMap();
         welt.verteileLaender(spielerListe);
-        kartenStapel.addAll(welt.createCardStack());
+        kartenStapel.addAll((einlesen.kartenstapelEinlesen(einlesen.alleLaenderEinlesen())));
         zeigeAlleSpieler(spielerListe);
         do {
             spielRunde();
@@ -232,7 +231,7 @@ public class Spiel {
         Spieler verteidiger = ziel.getBesitzer();
         ziel.wechselBesitzer(herkunft.getBesitzer());
         herkunft.getBesitzer().bewegeEinheiten(besatzer, herkunft, ziel);
-        welt.findeKontinentenzugehoerigkeit(ziel).checkBesitzer();
+        welt.findeKontinentenzugehoerigkeit(ziel).getEinzigerBesitzer();
 
         if (verteidiger.getBesetzteLaender().isEmpty()) {
             verteidiger.sterben(herkunft.getBesitzer());

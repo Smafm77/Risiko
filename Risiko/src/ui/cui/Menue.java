@@ -1,6 +1,7 @@
 package ui.cui;
 
 import valueobjects.Land;
+import valueobjects.Spieler;
 
 import java.util.Scanner;
 

@@ -9,7 +9,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Welt {
-    //private & getter?
+    //private & getter? Jo
+    //Todo change auf private und erstelle getter
     public ArrayList<Land> alleLaender;
     public ArrayList<Kontinent> alleKontinente;
     public ArrayList<Spieler> spielerListe;
