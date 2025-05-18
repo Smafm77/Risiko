@@ -4,7 +4,7 @@ public enum Infos { //Eigenes Enum
     BESITZER(1),
     EINHEITEN(2),
     NACHBARN(3),
-    ZURUECK(666);
+    ZURUECK(4);
 
     private final int auswahl;
 
