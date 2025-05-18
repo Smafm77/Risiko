@@ -11,10 +11,16 @@ import java.util.stream.Collectors;
 public class Welt {
     //private & getter? Jo
     //Todo change auf private und erstelle getter
-    public ArrayList<Land> alleLaender;
+    private ArrayList<Land> alleLaender;
     public ArrayList<Kontinent> alleKontinente;
-    public ArrayList<Spieler> spielerListe;
+    private ArrayList<Spieler> spielerListe;
 
+    public ArrayList<Land> getAlleLaender() {
+        return alleLaender;
+    }
+    public ArrayList<Spieler> getSpielerListe(){
+        return spielerListe;
+    }
     public Welt(ArrayList<Spieler> spieler) throws IOException {
         NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
         alleLaender = spielmaterial.alleLaenderEinlesen();
@@ -42,10 +48,15 @@ public class Welt {
         }
     }
 
-    //region temporary Visualisation -- !!UI!!
-
-    //endregion
-
+    public Land findeLand(String name) {
+        String suche = name.trim().toLowerCase();
+        for (Land land : alleLaender) {
+            if (land.getName().toLowerCase().equals(suche)) {
+                return land;
+            }
+        }
+        return null;
+    }
 
     public Kontinent findeKontinentenzugehoerigkeit(Land land) throws NullPointerException { //Wie gesagt, ich bin unsicher ob das hier schon korrekt ist oder erst wenn diese Methode aufgerufen wird
         for (Kontinent kontinent : alleKontinente) {
