@@ -1,7 +1,9 @@
 package ui.cui;
 
 import domain.Spiel;
+import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
+import exceptions.UngueltigeBewegungException;
 
 import java.io.IOException;
 import java.util.InputMismatchException;
@@ -10,7 +12,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, UngueltigeAuswahlException {
+    public static void main(String[] args) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
         Scanner scanner = new Scanner(System.in);
         int auswahl;
 

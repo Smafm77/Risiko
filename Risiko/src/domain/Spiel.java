@@ -1,6 +1,8 @@
 package domain;
 
+import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
+import exceptions.UngueltigeBewegungException;
 import persistence.NeuesSpielEinlesen;
 import valueobjects.*;
 import ui.cui.Menue;
@@ -23,14 +25,14 @@ public class Spiel {
         System.out.println("Starte Spiel...");
     }
 
-    public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException {
+    public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
         try{
             menue.spielerAbfrage(spielerListe);
         } catch (UngueltigeAuswahlException e) {
             System.out.println("Fehler: " + e.getMessage());
             System.out.println("Nocheinmal: \n");
         }
-        welt.printWorldMap();
+        menue.printWorldMap();
         welt.verteileLaender(spielerListe);
         kartenStapel.addAll((einlesen.kartenstapelEinlesen(einlesen.alleLaenderEinlesen())));
         menue.zeigeAlleSpieler(spielerListe);
@@ -39,7 +41,7 @@ public class Spiel {
         } while (spielRunde(menue));
     }
 
-    public boolean spielRunde(Menue menue) throws UngueltigeAuswahlException {
+    public boolean spielRunde(Menue menue) throws UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
 
         for (Spieler spieler : spielerListe) {
             menue.setSpieler(spieler);
@@ -49,9 +51,6 @@ public class Spiel {
             }
             //Truppen erhalten
             spieler.neueArmee(welt.alleKontinente);
-            if (!spieler.getKarten().isEmpty()) {
-                menue.peruseCards(spieler);
-            }
             spieler.setSchonErobert(false);
             boolean amZug = true;
             while (amZug) {

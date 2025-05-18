@@ -23,8 +23,10 @@ public class Menue {
         this.aktuellerSpieler = spieler;
     }
 
-
-    public void spielerAbfrage() throws UngueltigeAuswahlException {
+    public void setSpiel(Spiel spiel) {
+        this.spiel = spiel;
+    }
+    public void spielerAbfrage(ArrayList<Spieler> spielerListe) throws UngueltigeAuswahlException {
         System.out.println("Bitte die Anzahl an Spielern eingeben:");
         int anzahlSpieler;
         while (true) {
@@ -74,20 +76,21 @@ public class Menue {
             throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
         }
         scanner.nextLine();
-        if (auswahl < 1 || auswahl > 5) {
-            throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-5.");
+        if (auswahl < 1 || auswahl > 6) {
+            throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-6.");
         }
         return Befehl.fromInt(auswahl);
     }
 
-    public boolean hauptMenue(Welt welt, Spieler spieler) throws UngueltigeAuswahlException {
+    public boolean hauptMenue(Welt welt, Spieler spieler) throws UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
         System.out.println("Du bist am Zug : " + aktuellerSpieler.getName());
         System.out.println("Was willst du tun? ");
         System.out.println("1: Angreifen");
         System.out.println("2: Truppen bewegen");
         System.out.println("3: Infos über...");
         System.out.println("4: Übersicht meiner Gebiete");
-        System.out.println("5: Zug beenden");
+        System.out.println("5: Karte nutzen");
+        System.out.println("6: Zug beenden");
         while (true) {
             try {
                 return hauptAuswahl(hauptAbfrage(), welt, spieler);
@@ -164,7 +167,7 @@ public class Menue {
         }
     }
 
-    public boolean hauptAuswahl(Befehl auswahl, Welt welt, Spieler spieler) throws UngueltigeAuswahlException {
+    public boolean hauptAuswahl(Befehl auswahl, Welt welt, Spieler spieler) throws UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
 
         switch (auswahl) {
             case ANGRIFF:
@@ -183,20 +186,22 @@ public class Menue {
             case UEBERSICHT:
                 printTheseLaender(spieler.getBesetzteLaender());
                 break;
+            case KARTE:
+                peruseCards(spieler);
+                break;
             case ZUGBEENDEN:
                 return false;
         }
         return true;
     }
 
-    public boolean kampfInterface(Spieler angreifer) throws UngueltigeBewegungException { //Interface = ins ui.cui.Menue? oder UI? oder beides?
+    public boolean kampfInterface(Spieler angreifer) throws UngueltigeBewegungException {
         Scanner scanner = new Scanner(System.in);
         HashSet<Land> volleKasernen = angreifer.getBesetzteLaender().stream().filter(land -> land.getEinheiten() > 1).collect(Collectors.toCollection(HashSet::new));
-
+        boolean ergebnis = false;
         while (!volleKasernen.isEmpty()) {
             printTheseLaender(volleKasernen);
             ArrayList<Land> relevanteLaender = new ArrayList<>();
-
             System.out.println("Aus welchem Land willst du angreifen?");
             while (true) {
                 Land herkunft;
@@ -259,136 +264,147 @@ public class Menue {
                     }
 
                     System.out.println();
-                    boolean ergebnis = spiel.kampf(herkunft, ziel, truppenA, truppenV);
+                    ergebnis = spiel.kampf(herkunft, ziel, truppenA, truppenV);
                     String sieger = ergebnis ? angreifer.getName() : verteidiger.getName();
                     System.out.println(sieger + " hat gewonnen:");
-                    spiel.getWelt().printTheseLaender(relevanteLaender);
-
-                    return ergebnis;
-                } catch(FalscherBesitzerException | UngueltigeAuswahlException e){
+                    printTheseLaender(relevanteLaender);
+                } catch (FalscherBesitzerException | UngueltigeAuswahlException e) {
                     System.out.println("Fehler: " + e.getMessage());
                     System.out.println("Nocheinmal: \n");
                 }
-                return false;
-            } catch(FalscherBesitzerException e){
-                throw new RuntimeException(e);
-            }
-        }
-
-        public void moveTroopsInterface (Spieler spieler){
-
-            zeigeEigeneGebiete(spieler);
-            System.out.println("Aus welchem valueobjects.Land sollen Einheiten entzogen werden?");
-            String herkunft = scanner.nextLine();
-            Land herLand = spiel.getWelt().findeLand(herkunft);
-            while (true) {
-                if (herLand.getBesitzer() != spieler) {
-                    System.out.println("Du bist nicht der Besitzer von " + herLand.getName());
-                    break;
-                }
-                System.out.println("In welches valueobjects.Land sollen die Einheiten geschickt werden?");
-                String ziel = scanner.nextLine();
-                Land zielLand = spiel.getWelt().findeLand(ziel);
-                if (zielLand.getBesitzer() != spieler) {
-                    System.out.println("Du bist nicht der Besitzer von " + zielLand.getName());
-                    break;
-                }
-                boolean istNachbar = false;
-                for (Land land : zielLand.getNachbarn()) {
-                    if (land == herLand) {
-                        istNachbar = true;
-                        break;
-                    }
-                }
-                if (!istNachbar) {
-                    System.out.println(herLand.getName() + " ist kein Nachbar von " + zielLand.getName());
-                    break;
-                }
-
-                System.out.println("Wie viele der " + herLand.getEinheiten() + " Einheiten aus " + herLand.getName() + " sollen nach " + zielLand.getName() + " entsendet werden?");
-                int anzahl = scanner.nextInt();
-                if (herLand.getEinheiten() - anzahl < 1) {
-                    System.out.println("Du hast nicht genug Einheiten in " + herLand.getName() + " für diese Aktion. Es muss immer mindestens 1 Einheit im Herkunftsland verbleiben.");
-                    break;
-                }
-                spieler.bewegeEinheiten(anzahl, herLand, zielLand);
-                System.out.println("Neue Anzahl Einheiten: " + herLand.getName() + ": " + herLand.getEinheiten() + " , " + zielLand.getName() + ": " + zielLand.getEinheiten());
                 break;
             }
         }
+        return ergebnis;
+    }
 
-        public void zeigeEigeneGebiete (Spieler spieler){  //UI?
-            System.out.println("All deine Gebiete:");
-            //Wenn es möglich ist Nachbarn zu erörtern auch diese hinzufügen (anzahl angrenzender Gebiete und Einheiten)
-            for (Land land : spieler.getBesetzteLaender()) {
-                System.out.print(spieler.getId() + " - " + land.getName() + ": " + land.getEinheiten() + " | ");
-                for (Land nachbar : land.getNachbarn()) {
-                    for (Land besetzt : spieler.getBesetzteLaender()) {
-                        if (besetzt == nachbar) {
-                            System.out.print(nachbar.getName() + " ");
-                        }
+    public void moveTroopsInterface(Spieler spieler) throws UngueltigeAuswahlException, FalscherBesitzerException {
+
+        zeigeEigeneGebiete(spieler);
+        System.out.println("Aus welchem Land sollen Einheiten entzogen werden?");
+        String name;
+        Land herkunft;
+        Land ziel;
+        while (true) {
+            try {
+                name = scanner.nextLine();
+                if (name.isEmpty()) {
+                    throw new UngueltigeAuswahlException("Das Land darf nicht leer sein!");
+                }
+
+                herkunft = spiel.getWelt().findeLand(name);
+                if (herkunft.getBesitzer() != spieler) {
+                    throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
+                }
+
+                System.out.println("In welches Land sollen die Einheiten geschickt werden?");
+                name = scanner.nextLine();
+                if (name.isEmpty()) {
+                    throw new UngueltigeAuswahlException("Das Land darf nicht leer sein!");
+                }
+                ziel = spiel.getWelt().findeLand(name);
+                if (ziel.getBesitzer() != spieler) {
+                    throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
+                }
+                if (!herkunft.connectionPossible(ziel)) {
+                    throw new UngueltigeBewegungException(ziel.getName() + " ist von " + herkunft.getName() + " aus nicht erreichbar.");
+                }
+
+                System.out.println("Wie viele der " + herkunft.getEinheiten() + " Einheiten aus " + herkunft.getName() + " sollen nach " + ziel.getName() + " entsendet werden?");
+                int anzahl;
+                try{
+                    anzahl = scanner.nextInt();
+                }catch(InputMismatchException e){
+                    throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
+                }
+                if (herkunft.getEinheiten() - anzahl < 1) {
+                    throw new EinheitenAnzahlException("Du hast nicht genug Einheiten in " + herkunft.getName() + " für diese Aktion. Es muss immer mindestens 1 Einheit im Herkunftsland verbleiben.");
+                }
+                spieler.bewegeEinheiten(anzahl, herkunft, ziel);
+                System.out.println("Neue Anzahl Einheiten: " + herkunft.getName() + ": " + herkunft.getEinheiten() + " , " + ziel.getName() + ": " + ziel.getEinheiten());
+                break;
+
+
+            } catch (UngueltigeAuswahlException | FalscherBesitzerException | UngueltigeBewegungException e) {
+                System.out.println("Fehler: " + e.getMessage());
+                System.out.println("Nocheinmal: \n");
+            }
+        }
+    }
+
+
+    public void zeigeEigeneGebiete(Spieler spieler) {  //UI?
+        System.out.println("All deine Gebiete:");
+        for (Land land : spieler.getBesetzteLaender()) {
+            System.out.print(spieler.getId() + " - " + land.getName() + ": " + land.getEinheiten() + " | ");
+            for (Land nachbar : land.getNachbarn()) {
+                for (Land besetzt : spieler.getBesetzteLaender()) {
+                    if (besetzt == nachbar) {
+                        System.out.print(nachbar.getName() + " ");
                     }
                 }
-                System.out.println();
-            }
-        }
-
-        public void zeigeAlleSpieler (ArrayList < Spieler > spielerListe) {
-            for (Spieler spieler : spielerListe) {
-                spieler.zeigeSpieler();
-            }
-            System.out.println();
-            System.out.println();
-        }
-
-        public void peruseCards (Spieler spieler) throws NoSuchElementException { //ToDO catch exception
-            //Name Options
-            Scanner scanner = new Scanner(System.in);
-            while (!spieler.getKarten().isEmpty()) {
-                spiel.getWelt().printTheseLaender(spieler.getBesetzteLaender());
-                System.out.println();
-                System.out.println("Karten:");
-                System.out.println(spieler.eigeneKartenToString());
-                System.out.println("Welche Karte willst du ausspielen?");
-                System.out.println("Zum Abbrechen wähle N");
-
-                String input = scanner.next();
-                if (input.equals("N")) {
-                    break;
-                }
-                Optional<Karte> optChosenCard = spieler.getKarten().stream().filter(c -> c.getLand().getName().equalsIgnoreCase(input.trim())).findFirst(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
-                if (optChosenCard.isPresent()) {
-                    Karte chosenCard = optChosenCard.orElseThrow();
-                    spiel.spieleKarte(spieler, chosenCard);
-                }
-            }
-        }
-
-        public void printWorldMap () {
-            System.out.println("Weltkarte:");
-            System.out.println();
-            for (Land land : welt.getAlleLaender()) {
-                String nachbarn = land.getNachbarn().stream().map(Land::getName).collect(Collectors.joining(", "));
-                System.out.println(land.getName() + " | Angrenzend:" + nachbarn);
             }
             System.out.println();
         }
-
-        public void printTheseLaender (Collection < Land > laender) {
-            for (Land land : laender) {
-                String fNachbarn = "";
-                for (Land fLand : land.getFeindlicheNachbarn()) {
-                    fNachbarn += " [" + fLand.getName() + " - " + fLand.getBesitzer().getName() + "(" + fLand.getEinheiten() + ")]";
-                }
-                System.out.println(land.getName() + " ist im Besitz von " + land.getBesitzer().getName() + "(" + land.getEinheiten() + ") und bedroht von " + fNachbarn);
-            }
-        }
-
-        public void printTheseLaenderNamen (Collection < Land > laender) {
-            for (Land land : laender) {
-                System.out.println(land.getName() + " ist im Besitz von " + land.getBesitzer().getName() + "(" + land.getEinheiten() + ")");
-            }
-        }
-
     }
+
+    public void zeigeAlleSpieler(ArrayList<Spieler> spielerListe) {
+        for (Spieler spieler : spielerListe) {
+            spieler.zeigeSpieler();
+        }
+        System.out.println();
+        System.out.println();
+    }
+
+    public void peruseCards(Spieler spieler) throws NoSuchElementException, UngueltigeAuswahlException {
+        if (!spieler.getKarten().isEmpty()) {
+            throw new UngueltigeAuswahlException("Du hast keine Karten zum ausspielen.");
+        }
+        while (!spieler.getKarten().isEmpty()) {
+            printTheseLaender(spieler.getBesetzteLaender());
+            System.out.println();
+            System.out.println("Karten:");
+            System.out.println(spieler.eigeneKartenToString());
+            System.out.println("Welche Karte willst du ausspielen?");
+            System.out.println("Zum Abbrechen wähle N");
+
+            String input = scanner.next();
+            if (input.equals("N")) {
+                break;
+            }
+            Optional<Karte> optChosenCard = spieler.getKarten().stream().filter(c -> c.getLand().getName().equalsIgnoreCase(input.trim())).findFirst(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
+            if (optChosenCard.isPresent()) {
+                Karte chosenCard = optChosenCard.orElseThrow(); //Todo: Wird das denn gefangen?
+                spiel.spieleKarte(spieler, chosenCard);
+            }
+        }
+    }
+
+    public void printWorldMap() {
+        System.out.println("Weltkarte:");
+        System.out.println();
+        for (Land land : spiel.getWelt().getAlleLaender()) {
+            String nachbarn = land.getNachbarn().stream().map(Land::getName).collect(Collectors.joining(", "));
+            System.out.println(land.getName() + " | Angrenzend:" + nachbarn);
+        }
+        System.out.println();
+    }
+
+    public void printTheseLaender(Collection<Land> laender) {
+        for (Land land : laender) {
+            String fNachbarn = "";
+            for (Land fLand : land.getFeindlicheNachbarn()) {
+                fNachbarn += " [" + fLand.getName() + " - " + fLand.getBesitzer().getName() + "(" + fLand.getEinheiten() + ")]";
+            }
+            System.out.println(land.getName() + " ist im Besitz von " + land.getBesitzer().getName() + "(" + land.getEinheiten() + ") und bedroht von " + fNachbarn);
+        }
+    }
+
+    public void printTheseLaenderNamen(Collection<Land> laender) {
+        for (Land land : laender) {
+            System.out.println(land.getName() + " ist im Besitz von " + land.getBesitzer().getName() + "(" + land.getEinheiten() + ")");
+        }
+    }
+
+}
 

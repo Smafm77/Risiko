@@ -6,7 +6,8 @@ public enum Befehl {
     BEWEGEN(2),
     INFO(3),
     UEBERSICHT(4),
-    ZUGBEENDEN(5);
+    KARTE(5),
+    ZUGBEENDEN(6);
 
     private final int auswahl;
 
