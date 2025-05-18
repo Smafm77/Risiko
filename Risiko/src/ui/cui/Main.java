@@ -16,7 +16,7 @@ public class Main {
 
         System.out.println("Willkommen zu Risiko");
         System.out.println("1. Spiel starten");
-        System.out.println("666. Beenden");
+        System.out.println("2. Beenden");
         System.out.println("Bitte eine Option auswählen");
 
 
@@ -37,7 +37,7 @@ public class Main {
                         Menue menue = new Menue();
                         menue.setSpiel(spiel);
                         spiel.starteSpiel(menue);
-                    case 666:
+                    case 2:
                         System.out.println("Wird beendet");
                         break;
                     default:

@@ -6,7 +6,6 @@ import enums.Infos;
 import exceptions.UngueltigeAuswahlException;
 import valueobjects.*;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,12 +38,22 @@ public class Menue {
                     throw new UngueltigeAuswahlException("Spieleranzahl muss zwischen 3-6 liegen.");
                 }
                 scanner.nextLine(); //Weil scanner.nextInt immer mucken macht einfach nochmal nextLine "einlesen"
-                for (
-                        int i = 1;
-                        i <= anzahlSpieler; i++) {
-                    System.out.println("Bitte Namen des Spielers eingeben Spieler Nr. " + i + " :");
-                    Spieler spieler = new Spieler(scanner.nextLine(), i);
-                    spielerListe.add(spieler);
+                for (int i = 1; i <= anzahlSpieler; i++) {
+                    while (true) {
+                        try {
+                            System.out.println("Bitte Namen des Spielers eingeben Spieler Nr. " + i + " :");
+                            String name = scanner.nextLine();
+                            if (name.isEmpty()) {
+                                throw new UngueltigeAuswahlException("Spielername darf nicht leer sein!");
+                            }
+                            Spieler spieler = new Spieler(name, i);
+                            spielerListe.add(spieler);
+                            break;
+                        } catch (UngueltigeAuswahlException e) {
+                            System.out.println("Fehler: " + e.getMessage());
+                            System.out.println("Nocheinmal: \n");
+                        }
+                    }
                 }
                 break;
             } catch (UngueltigeAuswahlException e) {
@@ -88,9 +97,19 @@ public class Menue {
         }
     }
 
-    public Infos infoAbfrage() {
+    public Infos infoAbfrage() throws UngueltigeAuswahlException {
         infoMenue();
-        int auswahl = scanner.nextInt();
+        int auswahl;
+        try {
+            auswahl = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            scanner.nextInt();
+            throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
+        }
+        scanner.nextLine();
+        if (auswahl < 1 || auswahl > 4) {
+            throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-4.");
+        }
         scanner.nextLine();
         return Infos.fromInt(auswahl);
     }
@@ -100,12 +119,12 @@ public class Menue {
         System.out.println("1: Besitzer");
         System.out.println("2: Einheiten auf Land");
         System.out.println("3: Nachbarländer von " + auswahlLand);
-        System.out.println("666: Zurück");
+        System.out.println("4: Zurück");
     }
 
     //endregion ausgabe
 //region logik
-    public void infoAuswahl(Welt welt) { //In menue
+    public void infoAuswahl(Welt welt) throws UngueltigeAuswahlException { //In menue
         Scanner scanner = new Scanner(System.in);
         System.out.println("Über welches Land möchtest du Informationen erhalten? - Abbrechen mit Enter");
         String eingabe = scanner.nextLine();
@@ -139,7 +158,7 @@ public class Menue {
         }
     }
 
-    public boolean hauptAuswahl(Befehl auswahl, Welt welt, Spieler spieler) {
+    public boolean hauptAuswahl(Befehl auswahl, Welt welt, Spieler spieler) throws UngueltigeAuswahlException {
 
         switch (auswahl) {
             case ANGRIFF:
