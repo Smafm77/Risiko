@@ -9,6 +9,7 @@ public class Spieler {
     private final String name;
     private final int id;
     private boolean alive;
+    private boolean schonErobert;
     private ArrayList<Land> besetzteLaender = new ArrayList<>();
     private HashSet<Karte> karten = new HashSet<>();
 
@@ -31,6 +32,14 @@ public class Spieler {
         return alive;
     }
 
+    public boolean getSchonErobert() {
+        return schonErobert;
+    }
+
+    public void setSchonErobert(boolean schonErobert) {
+        this.schonErobert = schonErobert;
+    }
+
     public ArrayList<Land> getBesetzteLaender() {
         return besetzteLaender;
     }
@@ -51,7 +60,7 @@ public class Spieler {
         return feinde;
     }
 
-    public void fuegeLandHinzu(Land land){
+    public void fuegeLandHinzu(Land land) {
         besetzteLaender.add(land);
     }
 
@@ -81,13 +90,13 @@ public class Spieler {
     public void zuweisungEinheiten(int truppen) {//Domain & UI
         for (int t = 1; t <= truppen; t++) {
             Scanner scanner = new Scanner(System.in);
-            while(true){
-                System.out.println("("+ t +"/"+ truppen +")Wohin soll diese Einheit gesetzt werden "+ name +"?");
+            while (true) {
+                System.out.println("(" + t + "/" + truppen + ")Wohin soll diese Einheit gesetzt werden " + name + "?");
                 System.out.println();
                 zeigeSpieler();
 
                 Land basis = findeEigenesLand(scanner.nextLine());
-                if (basis == null){
+                if (basis == null) {
                     continue;
                 }
 
@@ -111,6 +120,7 @@ public class Spieler {
         herkunft.einheitenEntfernen(truppen);
         ziel.einheitenHinzufuegen(truppen);
     }
+
     //endregion
     public void sterben(Spieler moerder) {  //In Domain, da Aufruf eines anderen Spielers. Replace/Reduce hier mit alive=false
         moerder.getKarten().addAll(this.karten);
@@ -132,27 +142,29 @@ public class Spieler {
         return (spieler instanceof Spieler) && ((Spieler) spieler).id == this.id;
     }
 
-    public void zeigeSpieler(){ //UI
+    public void zeigeSpieler() { //UI
         System.out.println(id + " - " + name + " - " + besetzteLaender.size());
         for (Land land : besetzteLaender) {
-            System.out.println(land.getBesitzer().getId() + ": " + land.getName() + " ("+ land.getEinheiten() +")");
+            System.out.println(land.getBesitzer().getId() + ": " + land.getName() + " (" + land.getEinheiten() + ")");
         }
         System.out.println();
     }
-    public Land findeEigenesLand(String name){ //UI
+
+    public Land findeEigenesLand(String name) { //UI
         String suche = name.trim().toLowerCase();
         for (Land land : besetzteLaender) {
             if (land.getName().toLowerCase().equals(suche)) {
                 return land;
             }
         }
-        System.out.println("Das valueobjects.Land "+ name +" existiert nicht");
+        System.out.println("Das valueobjects.Land " + name + " existiert nicht");
         return null;
     }
-    public String eigeneKartenToString(){ //Print? UI? - sollte UI sein, muss nochmal gucken wofür das überhaupt aufgerufen wurde. Glaube Peruse Cards
+
+    public String eigeneKartenToString() { //Print? UI? - sollte UI sein, muss nochmal gucken wofür das überhaupt aufgerufen wurde. Glaube Peruse Cards
         String kartenTxt = "";
-        for (Karte karte : karten){
-            kartenTxt += "["+ karte.getStrength() + " - "+ karte.getLand().getName() +"]  ";
+        for (Karte karte : karten) {
+            kartenTxt += "[" + karte.getStrength() + " - " + karte.getLand().getName() + "]  ";
         }
         return kartenTxt;
     }
