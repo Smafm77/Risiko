@@ -1,3 +1,8 @@
+package ui.cui;
+
+import valueobjects.Land;
+import valueobjects.Spieler;
+
 import java.util.Scanner;
 
 public class Menue {
@@ -14,7 +19,7 @@ public class Menue {
         this.auswahlLand = auswahlLand;
     }
 
-    public enum Befehl {
+    public enum Befehl { //Eigenes Enum
         ANGRIFF(1),
         BEWEGEN(2),
         INFO(3),
@@ -43,12 +48,10 @@ public class Menue {
     }
 
     public Befehl eingabeEinlesen() {
-        while (true) {
             hauptMenue();
             int auswahl = scanner.nextInt();
             scanner.nextLine();
             return Befehl.fromInt(auswahl);
-        }
     }
 
     private void hauptMenue() {
@@ -59,10 +62,10 @@ public class Menue {
         System.out.println("3: Infos über...");
         System.out.println("4: Übersicht meiner Gebiete");
         System.out.println("5: Zug beenden");
-        System.out.println("666: Spiel beenden");
+        System.out.println("666: domain.Spiel beenden");
     }
 
-    public enum Infos {
+    public enum Infos { //Eigenes Enum
         BESITZER(1),
         EINHEITEN(2),
         NACHBARN(3),
@@ -89,18 +92,16 @@ public class Menue {
     }
 
     public Infos infoAbfrage() {
-        while (true) {
             infoMenue();
             int auswahl = scanner.nextInt();
             scanner.nextLine();
             return Infos.fromInt(auswahl);
-        }
     }
 
     private void infoMenue() {
         System.out.println("Welche Informationen möchtest du über " + auswahlLand + " erhalten?");
         System.out.println("1: Besitzer");
-        System.out.println("2: Einheiten auf Land");
+        System.out.println("2: Einheiten auf valueobjects.Land");
         System.out.println("3: Nachbarländer von " + auswahlLand);
         System.out.println("666: Zurück");
     }

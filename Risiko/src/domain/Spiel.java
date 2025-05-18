@@ -1,38 +1,43 @@
+package domain;
+
+import persistence.NeuesSpielEinlesen;
+import valueobjects.*;
+import ui.cui.Menue;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Spiel {
 
-    public enum Spielphase {
+    public enum Spielphase {    //Eigene Enum Spielphasen?
         VERTEILEN, ANGRIFF, VERSCHIEBEN;
     }
-
-    Welt welt = new Welt();
     ArrayList<Spieler> spielerListe = new ArrayList<>();
+    Welt welt = new Welt(spielerListe);     //@Maj, das meintest du soll in persistence, oder?
     HashSet<Karte> kartenStapel = new HashSet<>();
     Menue menue = new Menue();
-
+    NeuesSpielEinlesen einlesen = new NeuesSpielEinlesen();
     public Spiel() throws IOException {
         starteSpiel();
     }
 
-    public void starteSpiel() {
+    public void starteSpiel() throws IOException {
         //Create Players
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Bitte die Anzahl an Spielern eingeben:");
+        System.out.println("Bitte die Anzahl an Spielern eingeben:");       //Spielerabfrage in ui.cui.Menue
         int anzahlSpieler = scanner.nextInt();
         scanner.nextLine(); //Weil scanner.nextInt immer mucken macht einfach nochmal nextLine "einlesen"
         for (int i = 1; i <= anzahlSpieler; i++) {
-            System.out.println("Bitte Namen des Spielers eingeben Spieler Nr. " + i + " :");
+            System.out.println("Bitte Namen des Spielers eingeben valueobjects.Spieler Nr. " + i + " :");
             Spieler spieler = new Spieler(scanner.nextLine(), i);
             spielerListe.add(spieler);
         }
 
-        //Create board
+        //Create board -- Soll das auch in persistence
         welt.printWorldMap();
         welt.verteileLaender(spielerListe);
-        kartenStapel.addAll(welt.createCardStack());
+        kartenStapel.addAll((einlesen.kartenstapelEinlesen(einlesen.alleLaenderEinlesen())));
         zeigeAlleSpieler(spielerListe);
         do {
             spielRunde();
@@ -85,14 +90,14 @@ public class Spiel {
         return true;
     }
 
-    public void infoAuswahl() {
+    public void infoAuswahl() { //In menue
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Über welches Land möchtest du Informationen erhalten? - Abbrechen mit Enter");
+        System.out.println("Über welches valueobjects.Land möchtest du Informationen erhalten? - Abbrechen mit Enter");
         String eingabe = scanner.nextLine();
         if (!Objects.equals(eingabe, "")) {
             Land auswahlLand = welt.findeLand(eingabe);
             if (auswahlLand == null) {
-                System.out.println("Fehlerhafte Eingabe: " + eingabe + " ist kein Land.");
+                System.out.println("Fehlerhafte Eingabe: " + eingabe + " ist kein valueobjects.Land.");
                 infoAuswahl();
                 return;
             }
@@ -127,7 +132,7 @@ public class Spiel {
     }
 
     public void spieleKarte(Spieler spieler, Karte karte) {
-        if (!spieler.getKarten().contains(karte)) {
+        if (spieler.getKarten().contains(karte)) {
             spieler.getKarten().remove(karte);
             spieler.zuweisungEinheiten(karte.getStrength());
             kartenStapel.add(karte);
@@ -136,7 +141,7 @@ public class Spiel {
     //endregion
 
     //region kampf
-    public boolean kampfInterface(Spieler angreifer) {
+    public boolean kampfInterface(Spieler angreifer) { //Interface = ins ui.cui.Menue? oder UI? oder beides?
         Scanner scanner = new Scanner(System.in);
         HashSet<Land> volleKasernen = angreifer.getBesetzteLaender().stream().filter(land -> land.getEinheiten() > 1).collect(Collectors.toCollection(HashSet::new));
 
@@ -144,17 +149,17 @@ public class Spiel {
             welt.printTheseLaender(volleKasernen);
             ArrayList<Land> relevanteLaender = new ArrayList<>();
 
-            System.out.println("Aus welchem Land willst du angreifen?");
+            System.out.println("Aus welchem valueobjects.Land willst du angreifen?");
             Land herkunft = welt.findeLand(scanner.nextLine());
             if (!volleKasernen.contains(herkunft)) {
-                System.out.println("Das Land " + herkunft.getName() + "gehört dir nicht und oder hat zu wenig stationierte Soldaten, kann somit nicht als Angriffsbasis genutzt werden");
+                System.out.println("Das valueobjects.Land " + herkunft.getName() + "gehört dir nicht und oder hat zu wenig stationierte Soldaten, kann somit nicht als Angriffsbasis genutzt werden");
                 break;
             }
             relevanteLaender.add(herkunft);
 
             System.out.println();
             welt.printTheseLaenderNamen(herkunft.getFeindlicheNachbarn());
-            System.out.println("Welches Land möchtest du angreifen?");
+            System.out.println("Welches valueobjects.Land möchtest du angreifen?");
             Land ziel = welt.findeLand(scanner.nextLine());
             if (!herkunft.getFeindlicheNachbarn().contains(ziel)) {
                 System.out.println("Das Lander " + ziel.getName() + " ist von " + herkunft.getName() + " aus nicht angreifbar");
@@ -213,9 +218,9 @@ public class Spiel {
 
         for (int i = 0; i < Math.min(truppenA, truppenV); i++) {
             if (angriff[i] > verteidigung[i]) {
-                ziel.einheitGestorben();
+                ziel.einheitenEntfernen(1);
             } else {
-                herkunft.einheitGestorben();
+                herkunft.einheitenEntfernen(1);
             }
         }
 
@@ -226,7 +231,7 @@ public class Spiel {
         Spieler verteidiger = ziel.getBesitzer();
         ziel.wechselBesitzer(herkunft.getBesitzer());
         herkunft.getBesitzer().bewegeEinheiten(besatzer, herkunft, ziel);
-        welt.findeKontinentenzugehoerigkeit(ziel).checkBesitzer();
+        welt.findeKontinentenzugehoerigkeit(ziel).getEinzigerBesitzer();
 
         if (verteidiger.getBesetzteLaender().isEmpty()) {
             verteidiger.sterben(herkunft.getBesitzer());
@@ -238,8 +243,8 @@ public class Spiel {
         return (int) (Math.random() * 6) + 1;
     }
 
-    //region temporary Visualisation
-    public void peruseCards(Spieler spieler) throws NoSuchElementException { //ToDO catch exception  (@maj nein, kein ToDo exceptions bisher!)
+    //region temporary Visualisation  -- eindeutschen und UI?
+    public void peruseCards(Spieler spieler) throws NoSuchElementException { //ToDO catch exception
         //Name Options
         Scanner scanner = new Scanner(System.in);
         while (!spieler.getKarten().isEmpty()) {
@@ -262,10 +267,10 @@ public class Spiel {
         }
     }
 
-    public void moveTroopsInterface(Spieler spieler) {
+    public void moveTroopsInterface(Spieler spieler) { //Mix aus ui.cui.Menue und UI?
         Scanner scanner = new Scanner(System.in);
         zeigeEigeneGebiete(spieler);
-        System.out.println("Aus welchem Land sollen Einheiten entzogen werden?");
+        System.out.println("Aus welchem valueobjects.Land sollen Einheiten entzogen werden?");
         String herkunft = scanner.nextLine();
         Land herLand = welt.findeLand(herkunft);
         while (true) {
@@ -273,7 +278,7 @@ public class Spiel {
                 System.out.println("Du bist nicht der Besitzer von " + herLand.getName());
                 break;
             }
-            System.out.println("In welches Land sollen die Einheiten geschickt werden?");
+            System.out.println("In welches valueobjects.Land sollen die Einheiten geschickt werden?");
             String ziel = scanner.nextLine();
             Land zielLand = welt.findeLand(ziel);
             if (zielLand.getBesitzer() != spieler) {
@@ -305,7 +310,7 @@ public class Spiel {
     }
 
 
-    public void zeigeEigeneGebiete(Spieler spieler) {
+    public void zeigeEigeneGebiete(Spieler spieler) {  //UI?
         System.out.println("All deine Gebiete:");
         //Wenn es möglich ist Nachbarn zu erörtern auch diese hinzufügen (anzahl angrenzender Gebiete und Einheiten)
         for (Land land : spieler.getBesetzteLaender()) {
