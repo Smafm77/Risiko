@@ -3,6 +3,7 @@ package ui.cui;
 import domain.Spiel;
 import enums.Befehl;
 import enums.Infos;
+import exceptions.UngueltigeAuswahlException;
 import valueobjects.*;
 
 import java.io.IOException;
@@ -19,23 +20,57 @@ public class Menue {
         this.aktuellerSpieler = spieler;
     }
 
-    public void setLand(Land auswahlLand) {
-        this.auswahlLand = auswahlLand;
-    }
-
     public void setSpiel(Spiel spiel) {
         this.spiel = spiel;
     }
 
+    public void spielerAbfrage(ArrayList<Spieler> spielerListe) throws UngueltigeAuswahlException {
+        System.out.println("Bitte die Anzahl an Spielern eingeben:");
+        int anzahlSpieler;
+        while (true) {
+            try {
+                try {
+                    anzahlSpieler = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine(); //falsche Eingabe verwerfen, sonst endlosschleife
+                    throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
+                }
+                if (anzahlSpieler <= 2 || anzahlSpieler > 6) {
+                    throw new UngueltigeAuswahlException("Spieleranzahl muss zwischen 3-6 liegen.");
+                }
+                scanner.nextLine(); //Weil scanner.nextInt immer mucken macht einfach nochmal nextLine "einlesen"
+                for (
+                        int i = 1;
+                        i <= anzahlSpieler; i++) {
+                    System.out.println("Bitte Namen des Spielers eingeben Spieler Nr. " + i + " :");
+                    Spieler spieler = new Spieler(scanner.nextLine(), i);
+                    spielerListe.add(spieler);
+                }
+                break;
+            } catch (UngueltigeAuswahlException e) {
+                System.out.println("Fehler: " + e.getMessage());
+                System.out.println("Nocheinmal: \n");
+            }
+        }
+    }
 
     //region ausgabe
-    public Befehl hauptAbfrage() {
-        int auswahl = scanner.nextInt();
+    public Befehl hauptAbfrage() throws UngueltigeAuswahlException {
+        int auswahl;
+        try {
+            auswahl = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            scanner.nextLine();
+            throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
+        }
         scanner.nextLine();
+        if (auswahl < 1 || auswahl > 5) {
+            throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-5.");
+        }
         return Befehl.fromInt(auswahl);
     }
 
-    public boolean hauptMenue(Welt welt, Spieler spieler) {
+    public boolean hauptMenue(Welt welt, Spieler spieler) throws UngueltigeAuswahlException {
         System.out.println("Du bist am Zug : " + aktuellerSpieler.getName());
         System.out.println("Was willst du tun? ");
         System.out.println("1: Angreifen");
@@ -43,9 +78,15 @@ public class Menue {
         System.out.println("3: Infos über...");
         System.out.println("4: Übersicht meiner Gebiete");
         System.out.println("5: Zug beenden");
-        return hauptAuswahl(hauptAbfrage(), welt, spieler);
+        while (true) {
+            try {
+                return hauptAuswahl(hauptAbfrage(), welt, spieler);
+            } catch (UngueltigeAuswahlException e) {
+                System.out.println("Fehler: " + e.getMessage());
+                System.out.println("Nocheinmal: \n");
+            }
+        }
     }
-
 
     public Infos infoAbfrage() {
         infoMenue();

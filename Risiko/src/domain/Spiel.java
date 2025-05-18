@@ -1,5 +1,6 @@
 package domain;
 
+import exceptions.UngueltigeAuswahlException;
 import persistence.NeuesSpielEinlesen;
 import valueobjects.*;
 import ui.cui.Menue;
@@ -8,11 +9,9 @@ import java.io.IOException;
 import java.util.*;
 
 public class Spiel {
-
     ArrayList<Spieler> spielerListe = new ArrayList<>();
-    Welt welt = new Welt(spielerListe);     //@Maj, das meintest du soll in persistence, oder?
+    Welt welt = new Welt(spielerListe);
     HashSet<Karte> kartenStapel = new HashSet<>();
-
 
     NeuesSpielEinlesen einlesen = new NeuesSpielEinlesen();
 
@@ -24,18 +23,13 @@ public class Spiel {
         System.out.println("Starte Spiel...");
     }
 
-    public void starteSpiel(Menue menue) throws IOException {
-        //Create Players
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Bitte die Anzahl an Spielern eingeben:");       //Spielerabfrage in ui.cui.Menue
-        int anzahlSpieler = scanner.nextInt();
-        scanner.nextLine(); //Weil scanner.nextInt immer mucken macht einfach nochmal nextLine "einlesen"
-        for (int i = 1; i <= anzahlSpieler; i++) {
-            System.out.println("Bitte Namen des Spielers eingeben valueobjects.Spieler Nr. " + i + " :");
-            Spieler spieler = new Spieler(scanner.nextLine(), i);
-            spielerListe.add(spieler);
+    public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException {
+        try{
+            menue.spielerAbfrage(spielerListe);
+        } catch (UngueltigeAuswahlException e) {
+            System.out.println("Fehler: " + e.getMessage());
+            System.out.println("Nocheinmal: \n");
         }
-        //Create board -- Soll das auch in persistence
         welt.printWorldMap();
         welt.verteileLaender(spielerListe);
         kartenStapel.addAll((einlesen.kartenstapelEinlesen(einlesen.alleLaenderEinlesen())));
@@ -45,7 +39,7 @@ public class Spiel {
         } while (spielRunde(menue));
     }
 
-    public boolean spielRunde(Menue menue) {
+    public boolean spielRunde(Menue menue) throws UngueltigeAuswahlException {
 
         for (Spieler spieler : spielerListe) {
             menue.setSpieler(spieler);
