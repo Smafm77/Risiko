@@ -26,6 +26,7 @@ public class Spiel {
     }
 
     public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
+        menue.setWelt(welt);
         try{
             menue.spielerAbfrage(spielerListe);
         } catch (UngueltigeAuswahlException e) {
@@ -54,7 +55,7 @@ public class Spiel {
             spieler.setSchonErobert(false);
             boolean amZug = true;
             while (amZug) {
-                amZug = menue.hauptMenue(welt, spieler);
+                amZug = menue.hauptMenue(spieler);
             }
         }
         return true;

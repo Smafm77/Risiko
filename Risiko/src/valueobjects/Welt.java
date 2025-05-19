@@ -51,11 +51,13 @@ public class Welt {
     public Land findeLand(String name) {
         String suche = name.trim().toLowerCase();
         for (Land land : alleLaender) {
-            if (land.getName().toLowerCase().equals(suche)) {
+        try{    if (land.getName().toLowerCase().equals(suche)) {
                 return land;
             }
+        }catch (NullPointerException e){
+            System.out.println("Dieses Land existiert nicht!");
         }
-        return null;
+    }return null;
     }
 
     public Kontinent findeKontinentenzugehoerigkeit(Land land) throws NullPointerException { //Wie gesagt, ich bin unsicher ob das hier schon korrekt ist oder erst wenn diese Methode aufgerufen wird
