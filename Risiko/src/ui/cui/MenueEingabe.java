@@ -2,6 +2,7 @@ package ui.cui;
 
 import enums.Befehl;
 import enums.Infos;
+import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
 import valueobjects.Land;
 import valueobjects.Spieler;
@@ -120,7 +121,6 @@ public class MenueEingabe {
                 if (eingabe.isEmpty()) {
                     throw new UngueltigeAuswahlException("Land darf nicht leer sein!");
                 }
-
                 auswahlLand = menue.getWelt().findeLand(eingabe);
                 return auswahlLand;
             } catch (UngueltigeAuswahlException e) {
@@ -132,12 +132,21 @@ public class MenueEingabe {
 
     public void zuweisungEinheiten(int truppen, Spieler spieler) {
         for (int t = 1; t <= truppen; t++) {
+            Land basis;
             while (true) {
-                System.out.println("(" + t + "/" + truppen + ")Wohin soll diese Einheit gesetzt werden ?");
-                System.out.println();
+                try{
+                    System.out.println("(" + t + "/" + truppen + ")Wohin soll diese Einheit gesetzt werden ?");
                 spieler.zeigeSpieler();
 
-                Land basis = eingabeLand();
+                basis = eingabeLand();
+                if (basis.getBesitzer() != spieler) {
+                    throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
+                }
+                }catch(FalscherBesitzerException e){
+                    System.out.println("Fehler: " + e.getMessage());
+                    System.out.println("Noch einmal: \n");
+                    continue;
+                }
                 basis.einheitenHinzufuegen(1);
                 break;
             }
