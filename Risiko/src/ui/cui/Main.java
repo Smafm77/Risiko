@@ -39,7 +39,7 @@ public class Main {
                         spiel.starteSpiel(menue);
                     case 2:
                         System.out.println("Wird beendet");
-                        break;
+                        return;
 
                 }
 
@@ -47,7 +47,6 @@ public class Main {
                 System.out.println("Fehler: " + e.getMessage());
                 System.out.println("Nocheinmal: \n");
             }
-            break;
 
         }
 

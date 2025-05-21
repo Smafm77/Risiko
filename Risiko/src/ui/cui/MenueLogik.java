@@ -145,6 +145,7 @@ public class MenueLogik {
                 while (true) {
                     herkunft = mEingabe.eingabeLand();
                     if (!volleKasernen.contains(herkunft)) {
+
                         throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
                     }
                     relevanteLaender.add(herkunft);
@@ -182,12 +183,16 @@ public class MenueLogik {
                     System.out.println();
                     System.out.println(verteidiger.getName() + " mit wie vielen Truppen möchtest du dich verteidigen (1 - " + Math.min((ziel.getEinheiten()), 2) + ")?");
                     int truppenV;
+
                     while (true) {
-                        try {
-                            truppenV = scanner.nextInt();
-                        } catch (InputMismatchException e) {
-                            throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
-                        }
+                        try{
+                            try {
+                                truppenV = scanner.nextInt();
+                            } catch (InputMismatchException e) {
+                                scanner.nextLine();
+                                throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
+                            }
+
                         if (truppenV > ziel.getEinheiten()) {
                             throw new EinheitenAnzahlException(ziel.getName() + " hat nur " + ziel.getEinheiten() + " Einheiten zur Verfügung.");
                         } else if (truppenV < 1) {
@@ -197,6 +202,10 @@ public class MenueLogik {
                             throw new EinheitenAnzahlException("Du darfst nur maximal 2 Truppen zum Angriff nutzen.");
                         }
                         break;
+                    } catch (UngueltigeAuswahlException| EinheitenAnzahlException | InputMismatchException e) {
+                            System.out.println("Fehler: " + e.getMessage());
+                            System.out.println("Noch einmal: \n");
+                        }
                     }
                     System.out.println();
                     ergebnis = menue.getSpiel().kampf(herkunft, ziel, truppenA, truppenV);
@@ -206,7 +215,7 @@ public class MenueLogik {
 
                     break;
                 }
-            } catch (UngueltigeBewegungException | FalscherBesitzerException | UngueltigeAuswahlException e) {
+            } catch (UngueltigeBewegungException | FalscherBesitzerException | UngueltigeAuswahlException |EinheitenAnzahlException e) {
                 System.out.println("Fehler: " + e.getMessage());
                 System.out.println("Noch einmal: \n");
             }
