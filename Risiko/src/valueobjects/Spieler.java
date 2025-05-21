@@ -1,5 +1,10 @@
 package valueobjects;
 
+import exceptions.FalscherBesitzerException;
+import exceptions.UngueltigeAuswahlException;
+import ui.cui.Menue;
+import ui.cui.MenueEingabe;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -70,7 +75,8 @@ public class Spieler {
     //endregion
 
     //region Einheiten
-    public void neueArmee(ArrayList<Kontinent> alleKontinente) { //Int zurückgeben? Wenn zuweisungEinheiten in die Domain wandern muss kann es von hier nicht aufgerufen werden. Bei neuem Spielzug dazu
+
+    public int berechneNeueEinheiten(ArrayList<Kontinent> alleKontinente) {
         int neueEinheiten = 0;
         //Zuschuss besetzte Länder
         if (besetzteLaender.size() <= 9) {
@@ -83,40 +89,12 @@ public class Spieler {
         if (reiche.length > 0) {
             neueEinheiten += Arrays.stream(reiche).mapToInt(Kontinent::getBuff).sum();
         }
-
-        zuweisungEinheiten(neueEinheiten);
+        return neueEinheiten;
     }
 
-    public void zuweisungEinheiten(int truppen) {//Domain & UI
-        for (int t = 1; t <= truppen; t++) {
-            Scanner scanner = new Scanner(System.in);
-            while (true) {
-                System.out.println("(" + t + "/" + truppen + ")Wohin soll diese Einheit gesetzt werden " + name + "?");
-                System.out.println();
-                zeigeSpieler();
 
-                Land basis = findeEigenesLand(scanner.nextLine());
-                if (basis == null) {
-                    continue;
-                }
 
-                basis.einheitenHinzufuegen(1);
-                break;
-            }
-        }
-    }
-
-    public void bewegeEinheiten(int truppen, Land herkunft, Land ziel) { //Domain - Interface in UI
-        //ToDO throw errors
-        /*if (herkunft.getBesitzer() != this) {
-            //throw error (Diese Truppen gehören dir nicht!)
-        }
-        if (herkunft.getEinheiten() <= truppen) {
-            //throw error (Es befinden sich zu wenig Einheiten auf diesem Feld!)
-        }
-        if (!herkunft.connectionPossible(ziel)) {
-            //throw error (Die Länder sind nicht verbunden!)
-        }*/
+    public void bewegeEinheiten(int truppen, Land herkunft, Land ziel) {
         herkunft.einheitenEntfernen(truppen);
         ziel.einheitenHinzufuegen(truppen);
     }
@@ -129,14 +107,6 @@ public class Spieler {
     }
 
 
-    public int zaehleEinheiten() { //Kann weg. Notfalls neu coden
-        int soldaten = 0;
-        for (Land land : besetzteLaender) {
-            soldaten += land.getEinheiten();
-        }
-        return soldaten;
-    }
-
     @Override
     public boolean equals(Object spieler) {
         return (spieler instanceof Spieler) && ((Spieler) spieler).id == this.id;
@@ -148,17 +118,6 @@ public class Spieler {
             System.out.println(land.getBesitzer().getId() + ": " + land.getName() + " (" + land.getEinheiten() + ")");
         }
         System.out.println();
-    }
-
-    public Land findeEigenesLand(String name) { //UI
-        String suche = name.trim().toLowerCase();
-        for (Land land : besetzteLaender) {
-            if (land.getName().toLowerCase().equals(suche)) {
-                return land;
-            }
-        }
-        System.out.println("Das valueobjects.Land " + name + " existiert nicht");
-        return null;
     }
 
     public String eigeneKartenToString() { //Print? UI? - sollte UI sein, muss nochmal gucken wofür das überhaupt aufgerufen wurde. Glaube Peruse Cards

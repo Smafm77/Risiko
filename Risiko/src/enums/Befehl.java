@@ -1,6 +1,8 @@
 package enums;
 
 
+import exceptions.UngueltigeAuswahlException;
+
 public enum Befehl {
     ANGRIFF(1),
     BEWEGEN(2),
@@ -19,13 +21,14 @@ public enum Befehl {
         return auswahl;
     }
 
-    public static Befehl fromInt(int auswahl) {
+    public static Befehl fromInt(int auswahl) throws UngueltigeAuswahlException {
         for (Befehl b : values()) {
             if (b.getAuswahl() == auswahl) {
                 return b;
             }
         }
-        return null;
+       throw new UngueltigeAuswahlException("Ungültige Eingabe.");
     }
+
 }
 

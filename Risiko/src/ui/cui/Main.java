@@ -20,8 +20,6 @@ public class Main {
         System.out.println("1. Spiel starten");
         System.out.println("2. Beenden");
         System.out.println("Bitte eine Option auswählen");
-
-
         while (true) {
             try {
                 try {
@@ -42,14 +40,14 @@ public class Main {
                     case 2:
                         System.out.println("Wird beendet");
                         break;
-                    default:
-                        System.out.println("Ungültige Eingabe");
+
                 }
-                break;
+
             } catch (UngueltigeAuswahlException e) {
                 System.out.println("Fehler: " + e.getMessage());
                 System.out.println("Nocheinmal: \n");
             }
+            break;
 
         }
 

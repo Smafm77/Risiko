@@ -1,5 +1,6 @@
 package valueobjects;
 
+import exceptions.UngueltigeAuswahlException;
 import persistence.NeuesSpielEinlesen;
 
 import java.io.BufferedReader;
@@ -18,9 +19,11 @@ public class Welt {
     public ArrayList<Land> getAlleLaender() {
         return alleLaender;
     }
-    public ArrayList<Spieler> getSpielerListe(){
+
+    public ArrayList<Spieler> getSpielerListe() {
         return spielerListe;
     }
+
     public Welt(ArrayList<Spieler> spieler) throws IOException {
         NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
         alleLaender = spielmaterial.alleLaenderEinlesen();
@@ -48,19 +51,20 @@ public class Welt {
         }
     }
 
-    public Land findeLand(String name) {
+    public Land findeLand(String name) throws UngueltigeAuswahlException {
         String suche = name.trim().toLowerCase();
+
         for (Land land : alleLaender) {
-        try{    if (land.getName().toLowerCase().equals(suche)) {
+            if (land.getName().toLowerCase().equals(suche)) {
                 return land;
             }
-        }catch (NullPointerException e){
-            System.out.println("Dieses Land existiert nicht!");
+
         }
-    }return null;
+        throw new UngueltigeAuswahlException("Land " + name + " existiert nicht.");
     }
 
-    public Kontinent findeKontinentenzugehoerigkeit(Land land) throws NullPointerException { //Wie gesagt, ich bin unsicher ob das hier schon korrekt ist oder erst wenn diese Methode aufgerufen wird
+
+    public Kontinent findeKontinentenzugehoerigkeit(Land land) throws NullPointerException {
         for (Kontinent kontinent : alleKontinente) {
             if (kontinent.beinhaltetLand(land)) {
                 return kontinent;

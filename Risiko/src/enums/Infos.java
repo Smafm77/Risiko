@@ -1,5 +1,7 @@
 package enums;
 
+import exceptions.UngueltigeAuswahlException;
+
 public enum Infos { //Eigenes Enum
     BESITZER(1),
     EINHEITEN(2),
@@ -16,12 +18,12 @@ public enum Infos { //Eigenes Enum
         return auswahl;
     }
 
-    public static Infos fromInt(int auswahl) {
+    public static Infos fromInt(int auswahl) throws UngueltigeAuswahlException {
         for (Infos i : values()) {
             if (i.getAuswahl() == auswahl) {
                 return i;
             }
         }
-        return null;
+        throw new UngueltigeAuswahlException("Falsche Eingabe");
     }
 }

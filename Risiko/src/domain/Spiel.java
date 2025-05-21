@@ -4,6 +4,7 @@ import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
 import exceptions.UngueltigeBewegungException;
 import persistence.NeuesSpielEinlesen;
+import ui.cui.MenueEingabe;
 import valueobjects.*;
 import ui.cui.Menue;
 
@@ -14,8 +15,8 @@ public class Spiel {
     ArrayList<Spieler> spielerListe = new ArrayList<>();
     Welt welt = new Welt(spielerListe);
     HashSet<Karte> kartenStapel = new HashSet<>();
+    Menue menue = new Menue();
 
-    NeuesSpielEinlesen einlesen = new NeuesSpielEinlesen();
 
     public Welt getWelt() {
         return welt;
@@ -24,22 +25,20 @@ public class Spiel {
     public Spiel() throws IOException {
         System.out.println("Starte Spiel...");
     }
+    public HashSet<Karte> getKartenStapel(){
+        return kartenStapel;
+    }
+
+    public ArrayList<Spieler> getSpielerListe() {
+        return spielerListe;
+    }
 
     public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
-        menue.setWelt(welt);
-        try{
-            menue.spielerAbfrage(spielerListe);
-        } catch (UngueltigeAuswahlException e) {
-            System.out.println("Fehler: " + e.getMessage());
-            System.out.println("Nocheinmal: \n");
-        }
-        menue.printWorldMap();
-        welt.verteileLaender(spielerListe);
-        kartenStapel.addAll((einlesen.kartenstapelEinlesen(einlesen.alleLaenderEinlesen())));
-        menue.zeigeAlleSpieler(spielerListe);
+        menue.buildWelt(welt);
+        boolean nochEinmal;
         do {
-            spielRunde(menue);
-        } while (spielRunde(menue));
+            nochEinmal = spielRunde(menue);
+        } while (nochEinmal);
     }
 
     public boolean spielRunde(Menue menue) throws UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
@@ -51,7 +50,8 @@ public class Spiel {
                 continue;
             }
             //Truppen erhalten
-            spieler.neueArmee(welt.alleKontinente);
+            int neueEinheiten = spieler.berechneNeueEinheiten(welt.alleKontinente);
+            menue.getmEingabe().zuweisungEinheiten(neueEinheiten, spieler);
             spieler.setSchonErobert(false);
             boolean amZug = true;
             while (amZug) {
@@ -71,7 +71,7 @@ public class Spiel {
     public void spieleKarte(Spieler spieler, Karte karte) {
         if (spieler.getKarten().contains(karte)) {
             spieler.getKarten().remove(karte);
-            spieler.zuweisungEinheiten(karte.getStrength());
+            menue.getmEingabe().zuweisungEinheiten(karte.getStrength(), spieler);
             kartenStapel.add(karte);
         }
     }
