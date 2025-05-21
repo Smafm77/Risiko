@@ -37,24 +37,20 @@ public class Menue {
     public Spiel getSpiel() {
         return spiel;
     }
-    public MenueEingabe getmEingabe(){
+
+    public MenueEingabe getmEingabe() {
         return mEingabe;
     }
 
     public void buildWelt(Welt welt) throws IOException {
-        try {
-            mEingabe.spielerAbfrage(spiel.getSpielerListe());
-        } catch (UngueltigeAuswahlException e) {
-            System.out.println("Fehler: " + e.getMessage());
-            System.out.println("Nocheinmal: \n");
-        }
+        mEingabe.spielerAbfrage();
         mPrint.printWorldMap();
         welt.verteileLaender(spiel.getSpielerListe());
         spiel.getKartenStapel().addAll((einlesen.kartenstapelEinlesen(einlesen.alleLaenderEinlesen())));
         mPrint.zeigeAlleSpieler(spiel.getSpielerListe());
     }
 
-    public boolean hauptMenue(Spieler spieler) throws FalscherBesitzerException, UngueltigeBewegungException {
+    public boolean hauptMenue(Spieler spieler) {
         System.out.println("Du bist am Zug : " + aktuellerSpieler.getName());
         System.out.println("Was willst du tun? ");
         System.out.println("1: Angreifen");
@@ -63,14 +59,7 @@ public class Menue {
         System.out.println("4: Übersicht meiner Gebiete");
         System.out.println("5: Karte nutzen");
         System.out.println("6: Zug beenden");
-        while (true) {
-            try {
-                return mLogik.hauptAuswahl(spieler, welt);
-            } catch (UngueltigeAuswahlException e) {
-                System.out.println("Fehler: " + e.getMessage());
-                System.out.println("Nocheinmal: \n");
-            }
-        }
+        return mLogik.hauptAuswahl(spieler);
     }
 
     public boolean infoMenue(Land auswahlLand) {
@@ -79,40 +68,38 @@ public class Menue {
         System.out.println("2: Einheiten auf Land");
         System.out.println("3: Nachbarländer von " + auswahlLand.getName());
         System.out.println("4: Zurück");
-        while (true) {
-            try {
-                return mLogik.infoAuswahl(auswahlLand);
-            } catch (UngueltigeAuswahlException e) {
-                System.out.println("Fehler: " + e.getMessage());
-                System.out.println("Nocheinmal: \n");
-            }
-        }
+        return mLogik.infoAuswahl(auswahlLand);
     }
 
-    public void peruseCards(Spieler spieler) throws NoSuchElementException, UngueltigeAuswahlException {
-        if (!spieler.getKarten().isEmpty()) {
-            throw new UngueltigeAuswahlException("Du hast keine Karten zum ausspielen.");
-        }
-        while (!spieler.getKarten().isEmpty()) {
-            mPrint.printTheseLaender(spieler.getBesetzteLaender());
-            System.out.println();
-            System.out.println("Karten:");
-            System.out.println(spieler.eigeneKartenToString());
-            System.out.println("Welche Karte willst du ausspielen?");
-            System.out.println("Zum Abbrechen wähle N");
+    public void peruseCards(Spieler spieler) {
+        try {
+            if (!spieler.getKarten().isEmpty()) {
+                throw new UngueltigeAuswahlException("Du hast keine Karten zum ausspielen.");
+            }
 
-            String input = scanner.next();
-            if (input.equals("N")) {
-                break;
+            while (!spieler.getKarten().isEmpty()) {
+                mPrint.printTheseLaender(spieler.getBesetzteLaender());
+                System.out.println();
+                System.out.println("Karten:");
+                System.out.println(spieler.eigeneKartenToString());
+                System.out.println("Welche Karte willst du ausspielen?");
+                System.out.println("Zum Abbrechen wähle N");
+
+                String input = scanner.next();
+                if (input.equals("N")) {
+                    break;
+                }
+                Optional<Karte> optChosenCard = spieler.getKarten().stream().filter(c -> c.getLand().getName().equalsIgnoreCase(input.trim())).findFirst(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
+                if (optChosenCard.isPresent()) {
+                    Karte chosenCard = optChosenCard.orElseThrow(); //Todo: Wird das denn gefangen?
+                    spiel.spieleKarte(spieler, chosenCard);
+                }
             }
-            Optional<Karte> optChosenCard = spieler.getKarten().stream().filter(c -> c.getLand().getName().equalsIgnoreCase(input.trim())).findFirst(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
-            if (optChosenCard.isPresent()) {
-                Karte chosenCard = optChosenCard.orElseThrow(); //Todo: Wird das denn gefangen?
-                spiel.spieleKarte(spieler, chosenCard);
-            }
+        } catch (NoSuchElementException | UngueltigeAuswahlException e) {
+            System.out.println("Fehler: " + e.getMessage());
+            System.out.println("Nocheinmal: \n");
         }
     }
-
 }
 
 

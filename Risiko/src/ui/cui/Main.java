@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         int auswahl;
 
@@ -43,7 +43,7 @@ public class Main {
 
                 }
 
-            } catch (UngueltigeAuswahlException e) {
+            } catch (UngueltigeAuswahlException | FalscherBesitzerException | UngueltigeBewegungException e) {
                 System.out.println("Fehler: " + e.getMessage());
                 System.out.println("Nocheinmal: \n");
             }

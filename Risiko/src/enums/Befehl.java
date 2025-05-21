@@ -21,13 +21,13 @@ public enum Befehl {
         return auswahl;
     }
 
-    public static Befehl fromInt(int auswahl) throws UngueltigeAuswahlException {
+    public static Befehl fromInt(int auswahl){
         for (Befehl b : values()) {
             if (b.getAuswahl() == auswahl) {
                 return b;
             }
         }
-       throw new UngueltigeAuswahlException("Ungültige Eingabe.");
+      return null;
     }
 
 }

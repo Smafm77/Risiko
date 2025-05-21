@@ -18,12 +18,12 @@ public enum Infos { //Eigenes Enum
         return auswahl;
     }
 
-    public static Infos fromInt(int auswahl) throws UngueltigeAuswahlException {
+    public static Infos fromInt(int auswahl) {
         for (Infos i : values()) {
             if (i.getAuswahl() == auswahl) {
                 return i;
             }
         }
-        throw new UngueltigeAuswahlException("Falsche Eingabe");
+        return null;
     }
 }

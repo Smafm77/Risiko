@@ -25,7 +25,8 @@ public class Spiel {
     public Spiel() throws IOException {
         System.out.println("Starte Spiel...");
     }
-    public HashSet<Karte> getKartenStapel(){
+
+    public HashSet<Karte> getKartenStapel() {
         return kartenStapel;
     }
 
@@ -62,10 +63,14 @@ public class Spiel {
     }
 
     //region playing Cards
-    public void zieheKarte(Spieler spieler) throws NoSuchElementException {//ToDo catch exception from orElseThrow @Maj: Nein
-        Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
-        Karte karte = optionalCard.orElseThrow();
-        spieler.getKarten().add(karte);
+    public void zieheKarte(Spieler spieler) {
+        try {
+            Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
+            Karte karte = optionalCard.orElseThrow();
+            spieler.getKarten().add(karte);
+        } catch (NoSuchElementException e) {
+            System.out.println("Fehler: ");
+        }
     }
 
     public void spieleKarte(Spieler spieler, Karte karte) {

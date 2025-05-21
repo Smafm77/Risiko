@@ -18,36 +18,49 @@ public class MenueEingabe {
         this.menue = menue;
     }
 
-    public Befehl hauptAbfrage() throws UngueltigeAuswahlException {
+    public Befehl hauptAbfrage() {
         int auswahl;
         while (true) {
             try {
-                auswahl = scanner.nextInt();
-            } catch (InputMismatchException e) {
-                scanner.nextLine();
-                throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
-            }
+                try {
+                    auswahl = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine();
+                    throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
+                }
 
-            scanner.nextLine();
-            if (auswahl < 1 || auswahl > 6) {
-                throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-6.");
+
+                scanner.nextLine();
+                if (auswahl < 1 || auswahl > 6) {
+                    throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-6.");
+                }
+                break;
+            } catch (UngueltigeAuswahlException e) {
+                System.out.println("Fehler: " + e.getMessage());
+                System.out.println("Noch einmal: /n");
             }
-            break;
         }
+
         return Befehl.fromInt(auswahl);
     }
 
-    public Infos infoAbfrage() throws UngueltigeAuswahlException {
+    public Infos infoAbfrage() {
         int auswahl;
         while (true) {
             try {
-                auswahl = scanner.nextInt();
-                scanner.nextLine();
-                if (auswahl < 1 || auswahl > 4) {
-                    throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-4.");
+                try {
+                    auswahl = scanner.nextInt();
+                    scanner.nextLine();
+                    if (auswahl < 1 || auswahl > 4) {
+                        throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-4.");
+                    }
+                } catch (InputMismatchException e) {
+                    throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
                 }
-            } catch (InputMismatchException e) {
-                throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
+            } catch (UngueltigeAuswahlException e) {
+                System.out.println("Fehler: " + e.getMessage());
+                System.out.println("Noch einmal: /n");
+                continue;
             }
             break;
         }
@@ -74,7 +87,7 @@ public class MenueEingabe {
         }
     }
 
-    public void spielerAbfrage(ArrayList<Spieler> spielerListe) throws UngueltigeAuswahlException {
+    public void spielerAbfrage()  {
         System.out.println("Bitte die Anzahl an Spielern eingeben:");
         int anzahlSpieler;
         while (true) {
@@ -117,7 +130,7 @@ public class MenueEingabe {
         }
     }
 
-    public void zuweisungEinheiten(int truppen, Spieler spieler) {//Domain & UI
+    public void zuweisungEinheiten(int truppen, Spieler spieler) {
         for (int t = 1; t <= truppen; t++) {
             while (true) {
                 System.out.println("(" + t + "/" + truppen + ")Wohin soll diese Einheit gesetzt werden ?");
