@@ -1,6 +1,9 @@
 package valueobjects;
 
-public class Kontinent {
+import java.io.Serializable;
+
+public class Kontinent implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final String name;
     private final Land[] gebiete;
     private final int buff;

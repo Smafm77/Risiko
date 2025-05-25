@@ -1,11 +1,13 @@
 package valueobjects;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-public class Land {
+public class Land implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final String name;
     private Spieler besitzer;
     private int einheiten;

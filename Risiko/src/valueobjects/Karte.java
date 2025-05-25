@@ -1,6 +1,9 @@
 package valueobjects;
 
-public class Karte {
+import java.io.Serializable;
+
+public class Karte implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final int strength;
     private final Land land;
 

@@ -4,21 +4,26 @@ import domain.Spiel;
 import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
 import exceptions.UngueltigeBewegungException;
+import persistence.SpielSpeichern;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
-public class Main {
+public class Main implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         int auswahl;
-
+        Spiel spiel = null;
         System.out.println("Willkommen zu Risiko");
         System.out.println("1. Spiel starten");
-        System.out.println("2. Beenden");
+        System.out.println("2. Spiel speichern");
+        System.out.println("3. Spiel laden");
+        System.out.println("4. Beenden");
         System.out.println("Bitte eine Option auswählen");
         while (true) {
             try {
@@ -28,16 +33,36 @@ public class Main {
                     scanner.nextLine();
                     throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
                 }
-                if (auswahl < 1 || auswahl > 2) {
-                    throw new UngueltigeAuswahlException("Wähle zwischen 1 und 2.");
+                if (auswahl < 1 || auswahl > 4) {
+                    throw new UngueltigeAuswahlException("Wähle zwischen 1 und 4.");
                 }
                 switch (auswahl) {
                     case 1:
-                        Spiel spiel = new Spiel();
+                        spiel = new Spiel();
                         Menue menue = new Menue();
                         menue.setSpiel(spiel);
                         spiel.starteSpiel(menue);
                     case 2:
+                        if (spiel == null) {
+                            System.out.println("Kein Spiel zum speichern gefunden");
+                        } else {
+                            try {
+                                SpielSpeichern.speichern(spiel, "spielstand.risiko");
+                                System.out.println("Spiel erfolgreich gespeichert!");
+                            } catch (IOException e) {
+                                System.out.println("Fehler beim Speichern: " + e.getMessage());
+                            }
+                        }
+                        break;
+                    case 3:
+                        try {
+                            spiel = SpielSpeichern.laden("spielstand.risiko");
+                            System.out.println("Spiel erfolgreich geladen!");
+                        } catch (IOException | ClassNotFoundException e) {
+                            System.out.println("Fehler beim Laden: " + e.getMessage());
+                        }
+                        break;
+                    case 4:
                         System.out.println("Wird beendet");
                         return;
 

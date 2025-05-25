@@ -6,12 +6,14 @@ import persistence.NeuesSpielEinlesen;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Welt {
+public class Welt implements Serializable {
     //private & getter? Jo
     //Todo change auf private und erstelle getter
+    private static final long serialVersionUID = 1L;
     private ArrayList<Land> alleLaender;
     public ArrayList<Kontinent> alleKontinente;
     private ArrayList<Spieler> spielerListe;

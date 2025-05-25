@@ -9,9 +9,11 @@ import valueobjects.*;
 import ui.cui.Menue;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
-public class Spiel {
+public class Spiel implements Serializable {
+    private static final long serialVersionUID = 1L;
     ArrayList<Spieler> spielerListe = new ArrayList<>();
     Welt welt = new Welt(spielerListe);
     HashSet<Karte> kartenStapel = new HashSet<>();

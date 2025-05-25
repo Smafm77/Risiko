@@ -5,12 +5,14 @@ import exceptions.UngueltigeAuswahlException;
 import ui.cui.Menue;
 import ui.cui.MenueEingabe;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 
-public class Spieler {
+public class Spieler implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final String name;
     private final int id;
     private boolean alive;
@@ -91,7 +93,6 @@ public class Spieler {
         }
         return neueEinheiten;
     }
-
 
 
     public void bewegeEinheiten(int truppen, Land herkunft, Land ziel) {
