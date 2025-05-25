@@ -42,6 +42,10 @@ public class Menue {
         return mEingabe;
     }
 
+    public MenueLogik getmLogik() {
+        return mLogik;
+    }
+
     public void buildWelt(Welt welt) throws IOException {
         mEingabe.spielerAbfrage();
         mPrint.printWorldMap();
@@ -100,6 +104,8 @@ public class Menue {
             System.out.println("Nocheinmal: \n");
         }
     }
+
+
 }
 
 

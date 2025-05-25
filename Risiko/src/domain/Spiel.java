@@ -3,8 +3,6 @@ package domain;
 import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
 import exceptions.UngueltigeBewegungException;
-import persistence.NeuesSpielEinlesen;
-import ui.cui.MenueEingabe;
 import valueobjects.*;
 import ui.cui.Menue;
 
@@ -17,7 +15,7 @@ public class Spiel implements Serializable {
     ArrayList<Spieler> spielerListe = new ArrayList<>();
     Welt welt = new Welt(spielerListe);
     HashSet<Karte> kartenStapel = new HashSet<>();
-    Menue menue = new Menue();
+    private transient Menue menue = new Menue(); //am besten Menue aus Spiel raus nehmen aber grade bin ich zu müde
 
 
     public Welt getWelt() {
@@ -26,6 +24,7 @@ public class Spiel implements Serializable {
 
     public Spiel() throws IOException {
         System.out.println("Starte Spiel...");
+        menue.buildWelt(welt);
     }
 
     public HashSet<Karte> getKartenStapel() {
@@ -37,7 +36,7 @@ public class Spiel implements Serializable {
     }
 
     public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
-        menue.buildWelt(welt);
+
         boolean nochEinmal;
         do {
             nochEinmal = spielRunde(menue);
@@ -58,6 +57,9 @@ public class Spiel implements Serializable {
             spieler.setSchonErobert(false);
             boolean amZug = true;
             while (amZug) {
+                if(!menue.getmLogik().weiterSpielen()){
+                    return false;
+                }
                 amZug = menue.hauptMenue(spieler);
             }
         }

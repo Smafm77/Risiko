@@ -84,6 +84,7 @@ public class MenueLogik {
                 return false;
         }
         return true;
+
     }
 
     public void moveTroopsInterface(Spieler spieler) {
@@ -185,7 +186,7 @@ public class MenueLogik {
                     int truppenV;
 
                     while (true) {
-                        try{
+                        try {
                             try {
                                 truppenV = scanner.nextInt();
                             } catch (InputMismatchException e) {
@@ -193,16 +194,16 @@ public class MenueLogik {
                                 throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
                             }
 
-                        if (truppenV > ziel.getEinheiten()) {
-                            throw new EinheitenAnzahlException(ziel.getName() + " hat nur " + ziel.getEinheiten() + " Einheiten zur Verfügung.");
-                        } else if (truppenV < 1) {
-                            throw new EinheitenAnzahlException("Du brauchst mindestens 1 Truppe zum Verteidigen.");
+                            if (truppenV > ziel.getEinheiten()) {
+                                throw new EinheitenAnzahlException(ziel.getName() + " hat nur " + ziel.getEinheiten() + " Einheiten zur Verfügung.");
+                            } else if (truppenV < 1) {
+                                throw new EinheitenAnzahlException("Du brauchst mindestens 1 Truppe zum Verteidigen.");
 
-                        } else if (truppenV > 2) {
-                            throw new EinheitenAnzahlException("Du darfst nur maximal 2 Truppen zum Angriff nutzen.");
-                        }
-                        break;
-                    } catch (UngueltigeAuswahlException| EinheitenAnzahlException | InputMismatchException e) {
+                            } else if (truppenV > 2) {
+                                throw new EinheitenAnzahlException("Du darfst nur maximal 2 Truppen zum Angriff nutzen.");
+                            }
+                            break;
+                        } catch (UngueltigeAuswahlException | EinheitenAnzahlException | InputMismatchException e) {
                             System.out.println("Fehler: " + e.getMessage());
                             System.out.println("Noch einmal: \n");
                         }
@@ -215,12 +216,25 @@ public class MenueLogik {
 
                     break;
                 }
-            } catch (UngueltigeBewegungException | FalscherBesitzerException | UngueltigeAuswahlException |EinheitenAnzahlException e) {
+            } catch (UngueltigeBewegungException | FalscherBesitzerException | UngueltigeAuswahlException |
+                     EinheitenAnzahlException e) {
                 System.out.println("Fehler: " + e.getMessage());
                 System.out.println("Noch einmal: \n");
             }
             break;
         }
         return ergebnis;
+    }
+
+    public boolean weiterSpielen() {
+        int auswahl = mEingabe.inGameMenue();
+        while(true){
+            switch (auswahl) {
+                case 1:
+                    return true;
+                case 2:
+                    return false;
+            }
+        }
     }
 }

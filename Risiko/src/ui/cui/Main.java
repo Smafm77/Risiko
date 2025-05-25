@@ -19,13 +19,14 @@ public class Main implements Serializable {
         Scanner scanner = new Scanner(System.in);
         int auswahl;
         Spiel spiel = null;
-        System.out.println("Willkommen zu Risiko");
-        System.out.println("1. Spiel starten");
-        System.out.println("2. Spiel speichern");
-        System.out.println("3. Spiel laden");
-        System.out.println("4. Beenden");
-        System.out.println("Bitte eine Option auswählen");
+        Menue menue = new Menue();
         while (true) {
+            System.out.println("Willkommen zu Risiko");
+            System.out.println("1. Spiel starten");
+            System.out.println("2. Spiel speichern");
+            System.out.println("3. Spiel laden");
+            System.out.println("4. Beenden");
+            System.out.println("Bitte eine Option auswählen");
             try {
                 try {
                     auswahl = scanner.nextInt();
@@ -39,9 +40,9 @@ public class Main implements Serializable {
                 switch (auswahl) {
                     case 1:
                         spiel = new Spiel();
-                        Menue menue = new Menue();
                         menue.setSpiel(spiel);
                         spiel.starteSpiel(menue);
+                        break;
                     case 2:
                         if (spiel == null) {
                             System.out.println("Kein Spiel zum speichern gefunden");
@@ -58,6 +59,10 @@ public class Main implements Serializable {
                         try {
                             spiel = SpielSpeichern.laden("spielstand.risiko");
                             System.out.println("Spiel erfolgreich geladen!");
+                            if(spiel != null){
+                                menue.setSpiel(spiel);
+                                spiel.starteSpiel(menue);
+                            }
                         } catch (IOException | ClassNotFoundException e) {
                             System.out.println("Fehler beim Laden: " + e.getMessage());
                         }
@@ -65,7 +70,6 @@ public class Main implements Serializable {
                     case 4:
                         System.out.println("Wird beendet");
                         return;
-
                 }
 
             } catch (UngueltigeAuswahlException | FalscherBesitzerException | UngueltigeBewegungException e) {

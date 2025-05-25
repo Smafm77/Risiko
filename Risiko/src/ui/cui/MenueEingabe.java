@@ -88,7 +88,7 @@ public class MenueEingabe {
         }
     }
 
-    public void spielerAbfrage()  {
+    public void spielerAbfrage() {
         System.out.println("Bitte die Anzahl an Spielern eingeben:");
         int anzahlSpieler;
         while (true) {
@@ -134,15 +134,15 @@ public class MenueEingabe {
         for (int t = 1; t <= truppen; t++) {
             Land basis;
             while (true) {
-                try{
+                try {
                     System.out.println("(" + t + "/" + truppen + ")Wohin soll diese Einheit gesetzt werden ?");
-                spieler.zeigeSpieler();
+                    spieler.zeigeSpieler();
 
-                basis = eingabeLand();
-                if (basis.getBesitzer() != spieler) {
-                    throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
-                }
-                }catch(FalscherBesitzerException e){
+                    basis = eingabeLand();
+                    if (basis.getBesitzer() != spieler) {
+                        throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
+                    }
+                } catch (FalscherBesitzerException e) {
                     System.out.println("Fehler: " + e.getMessage());
                     System.out.println("Noch einmal: \n");
                     continue;
@@ -150,6 +150,33 @@ public class MenueEingabe {
                 basis.einheitenHinzufuegen(1);
                 break;
             }
+        }
+    }
+
+    public int inGameMenue() {
+
+        while (true) {
+            System.out.println("1. Weiterspieln");
+            System.out.println("2. Spiel beenden");
+            System.out.println("Was willst du tun?");
+            int auswahl;
+            try {
+                try {
+                    auswahl = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    scanner.nextLine();
+                    throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
+                }
+                if (auswahl < 1 || auswahl >2) {
+                    throw new UngueltigeAuswahlException("Bitte wähle zwischen 1. und 2.!");
+                }
+                return auswahl;
+
+            } catch (UngueltigeAuswahlException e) {
+                System.out.println("Fehler: " + e.getMessage());
+                System.out.println("Nocheinmal: \n");
+            }
+
         }
     }
 }
