@@ -20,6 +20,10 @@ public class Spiel implements Serializable {
     private Spieler aktuellerSpieler;
     private Spielphase phase;
 
+    public Spieler getAktuellerSpieler() {
+        return aktuellerSpieler;
+    }
+
     public Welt getWelt() {
         return welt;
     }
