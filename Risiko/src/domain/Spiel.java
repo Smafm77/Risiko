@@ -4,6 +4,7 @@ import exceptions.*;
 import valueobjects.*;
 import ui.cui.Menue;
 import enums.Spielphase;
+import missionen.*;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -35,6 +36,7 @@ public class Spiel implements Serializable {
     public Spiel() throws IOException {
         System.out.println("Starte Spiel...");
         menue.buildWelt(welt);
+        List<Mission> alleMissionen = List.of(new Laendereroberung(24), new Kontinenteroberung(welt.getKontinent().getName()), new Spielervernichtung(spielerListe.get(3)));
     }
 
     public HashSet<Karte> getKartenStapel() {
@@ -101,6 +103,11 @@ public class Spiel implements Serializable {
 
         naechstePhase();
         naechsterSpieler();
+        Mission spielerMission = aktuellerSpieler.getMission();
+        if (spielerMission.istErfuellt(this)) {
+            System.out.println("Herzlichen Glückwunsch! Mission erfüllt: " + spielerMission.getBeschreibung());
+        }
+
         return true;
     }
 
