@@ -2,7 +2,7 @@ package ui.cui;
 
 import domain.Spiel;
 import enums.Spielphase;
-import exceptions.UngueltigeAuswahlException;
+import exceptions.*;
 import persistence.NeuesSpielEinlesen;
 import valueobjects.*;
 
@@ -54,24 +54,32 @@ public class Menue {
     }
 
     public boolean hauptMenue(Spieler spieler) {
-        Spielphase phase = spiel.getPhase();
-        System.out.println("Du bist am Zug : " + aktuellerSpieler.getName() + " Phase: " + phase);
-        System.out.println("Was willst du tun? ");
-        if (phase == Spielphase.ANGRIFF) {
-            System.out.println("1: Angreifen");
+        while (true) {
+            try {
+                Spielphase phase = spiel.getPhase();
+                System.out.println("Du bist am Zug : " + aktuellerSpieler.getName() + " Phase: " + phase);
+                System.out.println("Was willst du tun? ");
+                if (phase == Spielphase.ANGRIFF) {
+                    System.out.println("1: Angreifen");
+                }
+                if (phase == Spielphase.VERSCHIEBEN) {
+                    System.out.println("2: Truppen bewegen");
+                }
+                System.out.println("3: Infos über...");
+                System.out.println("4: Übersicht meiner Gebiete");
+                System.out.println("5: Karte nutzen");
+                if (phase == Spielphase.ANGRIFF) {
+                    System.out.println("6: Angriff beenden");
+                } else {
+                    System.out.println("6: Zug beenden");
+                }
+                return mLogik.hauptAuswahl(spieler, spiel.getPhase());
+            }catch (EinheitenAnzahlException | FalscherBesitzerException | UngueltigeBewegungException |
+                    UngueltigeAuswahlException | SpielPhaseException e) {
+                System.out.println("Fehler: " + e.getMessage());
+                System.out.println("Noch einmal: \n");
+            }
         }
-        if (phase == Spielphase.VERSCHIEBEN) {
-            System.out.println("2: Truppen bewegen");
-        }
-        System.out.println("3: Infos über...");
-        System.out.println("4: Übersicht meiner Gebiete");
-        System.out.println("5: Karte nutzen");
-        if (phase == Spielphase.ANGRIFF) {
-            System.out.println("6: Angriff beenden");
-        } else {
-            System.out.println("6: Zug beenden");
-        }
-        return mLogik.hauptAuswahl(spieler, spiel.getPhase());
     }
 
     public boolean infoMenue(Land auswahlLand) {
