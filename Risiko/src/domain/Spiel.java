@@ -5,6 +5,7 @@ import exceptions.UngueltigeAuswahlException;
 import exceptions.UngueltigeBewegungException;
 import valueobjects.*;
 import ui.cui.Menue;
+import enums.Spielphase;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -19,9 +20,14 @@ public class Spiel implements Serializable {
     HashSet<Karte> kartenStapel = new HashSet<>();
     private final transient Menue menue = new Menue(); //am besten Menue aus Spiel raus nehmen aber grade bin ich zu müde
     private Spieler aktuellerSpieler;
+    private Spielphase phase;
 
     public Welt getWelt() {
         return welt;
+    }
+
+    public Spielphase getPhase(){
+        return phase;
     }
 
     public Spiel() throws IOException {
@@ -55,6 +61,14 @@ public class Spiel implements Serializable {
         }
     }
 
+    private void naechstePhase(){
+        switch (phase){
+            case VERTEILEN -> phase = Spielphase.ANGRIFF;
+            case ANGRIFF -> phase = Spielphase.VERSCHIEBEN;
+            case VERSCHIEBEN -> phase = Spielphase.VERTEILEN;
+        }
+    }
+
     public boolean spielRunde(Menue menue) {
         menue.setSpieler(aktuellerSpieler);
         if (aktuellerSpieler == null) {
@@ -67,14 +81,23 @@ public class Spiel implements Serializable {
             naechsterSpieler();
             return true;
         }
+        phase = Spielphase.VERTEILEN;
         //Truppen erhalten
         int neueEinheiten = aktuellerSpieler.berechneNeueEinheiten(welt.alleKontinente);
         menue.getmEingabe().zuweisungEinheiten(neueEinheiten, aktuellerSpieler);
         aktuellerSpieler.setSchonErobert(false);
-        boolean amZug = true;
-        while (amZug) {
-            amZug = menue.hauptMenue(aktuellerSpieler);
+        naechstePhase();
+        boolean weiterAngreifen = true;
+        while(weiterAngreifen){
+            weiterAngreifen = menue.hauptMenue(aktuellerSpieler);
         }
+        naechstePhase();
+        boolean weiterVerschieben = true;
+        while(weiterVerschieben){
+            weiterVerschieben = menue.hauptMenue(aktuellerSpieler);
+        }
+
+        naechstePhase();
         naechsterSpieler();
         return true;
     }

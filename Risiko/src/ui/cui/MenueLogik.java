@@ -2,10 +2,8 @@ package ui.cui;
 
 import enums.Befehl;
 import enums.Infos;
-import exceptions.EinheitenAnzahlException;
-import exceptions.FalscherBesitzerException;
-import exceptions.UngueltigeAuswahlException;
-import exceptions.UngueltigeBewegungException;
+import enums.Spielphase;
+import exceptions.*;
 import valueobjects.Land;
 import valueobjects.Spieler;
 
@@ -59,30 +57,41 @@ public class MenueLogik {
 
     }
 
-    public boolean hauptAuswahl(Spieler spieler) {
+    public boolean hauptAuswahl(Spieler spieler, Spielphase phase) {
         Befehl auswahl = mEingabe.hauptAbfrage();
-        switch (auswahl) {
-            case ANGRIFF:
-                boolean ergebnis = kampfInterface(spieler);
-                if (ergebnis && !spieler.getSchonErobert()) {
-                    menue.getSpiel().zieheKarte(spieler);
-                    spieler.setSchonErobert(true);
-                }
-                break;
-            case BEWEGEN:
-                moveTroopsInterface(spieler);
-                break;
-            case INFO:
-                infoLand();
-                break;
-            case UEBERSICHT:
-                mPrint.printTheseLaender(spieler.getBesetzteLaender());
-                break;
-            case KARTE:
-                menue.peruseCards(spieler);
-                break;
-            case ZUGBEENDEN:
-                return false;
+        try {
+            if (auswahl == Befehl.ANGRIFF && phase != Spielphase.ANGRIFF) {
+                throw new SpielPhaseException("Angreifen nur in der Angriffsphase erlaut!");
+            }
+
+            if (auswahl == Befehl.BEWEGEN && phase != Spielphase.VERSCHIEBEN) {
+                throw new SpielPhaseException("Truppen verschiebenm nur in der Verschiebephase erlaubt!");
+            }
+            switch (auswahl) {
+                case ANGRIFF:
+                    boolean ergebnis = kampfInterface(spieler);
+                    if (ergebnis && !spieler.getSchonErobert()) {
+                        menue.getSpiel().zieheKarte(spieler);
+                        spieler.setSchonErobert(true);
+                    }
+                    break;
+                case BEWEGEN:
+                    moveTroopsInterface(spieler);
+                    break;
+                case INFO:
+                    infoLand();
+                    break;
+                case UEBERSICHT:
+                    mPrint.printTheseLaender(spieler.getBesetzteLaender());
+                    break;
+                case KARTE:
+                    menue.peruseCards(spieler);
+                    break;
+                case ZUGBEENDEN:
+                    return false;
+            }
+        } catch (SpielPhaseException e) {
+            System.out.println("Fehler: " + e.getMessage());
         }
         return true;
 
@@ -229,7 +238,7 @@ public class MenueLogik {
 
     public boolean weiterSpielen() {
         int auswahl = mEingabe.inGameMenue();
-        while(true){
+        while (true) {
             switch (auswahl) {
                 case 1:
                     return true;

@@ -154,7 +154,7 @@ public class MenueEingabe {
     public int inGameMenue() {
 
         while (true) {
-            System.out.println("1. Weiterspieln");
+            System.out.println("1. Weiterspielen");
             System.out.println("2. Spiel beenden");
             System.out.println("Was willst du tun?");
             int auswahl;
