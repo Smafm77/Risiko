@@ -18,7 +18,7 @@ public class Spiel implements Serializable {
     Welt welt = new Welt(spielerListe);
     HashSet<Karte> kartenStapel = new HashSet<>();
     private final transient Menue menue = new Menue(); //am besten Menue aus Spiel raus nehmen aber grade bin ich zu müde
-
+    private Spieler aktuellerSpieler;
 
     public Welt getWelt() {
         return welt;
@@ -38,32 +38,44 @@ public class Spiel implements Serializable {
     }
 
     public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
-
         boolean nochEinmal;
         do {
             nochEinmal = spielRunde(menue);
         } while (nochEinmal);
     }
 
-    public boolean spielRunde(Menue menue) {
+    public void naechsterSpieler() {
+        int aktuelleID = aktuellerSpieler.getId();
+        if (aktuelleID < spielerListe.size()) {
+            aktuellerSpieler = spielerListe.get(aktuellerSpieler.getId());
 
-        for (Spieler spieler : spielerListe) {
-            menue.setSpieler(spieler);
-            if(!menue.getmLogik().weiterSpielen()){
-                return false;
-            }
-            if (!spieler.isAlive()) {
-                continue;
-            }
-            //Truppen erhalten
-            int neueEinheiten = spieler.berechneNeueEinheiten(welt.alleKontinente);
-            menue.getmEingabe().zuweisungEinheiten(neueEinheiten, spieler);
-            spieler.setSchonErobert(false);
-            boolean amZug = true;
-            while (amZug) {
-                amZug = menue.hauptMenue(spieler);
-            }
+        } else {
+            aktuellerSpieler = spielerListe.getFirst();
+
         }
+    }
+
+    public boolean spielRunde(Menue menue) {
+        menue.setSpieler(aktuellerSpieler);
+        if (aktuellerSpieler == null) {
+            aktuellerSpieler = spielerListe.getFirst();
+        }
+        if (!menue.getmLogik().weiterSpielen()) {
+            return false;
+        }
+        if (!aktuellerSpieler.isAlive()) {
+            naechsterSpieler();
+            return true;
+        }
+        //Truppen erhalten
+        int neueEinheiten = aktuellerSpieler.berechneNeueEinheiten(welt.alleKontinente);
+        menue.getmEingabe().zuweisungEinheiten(neueEinheiten, aktuellerSpieler);
+        aktuellerSpieler.setSchonErobert(false);
+        boolean amZug = true;
+        while (amZug) {
+            amZug = menue.hauptMenue(aktuellerSpieler);
+        }
+        naechsterSpieler();
         return true;
     }
 

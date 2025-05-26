@@ -10,7 +10,7 @@ public class Spieler implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private final String name;
-    private final int id;
+    private int id;
     private boolean alive;
     private boolean schonErobert;
     private ArrayList<Land> besetzteLaender = new ArrayList<>();
@@ -29,7 +29,7 @@ public class Spieler implements Serializable {
 
     public int getId() {
         return id;
-    } //Wird das irgendwo außerhalb von Spieler genutzt? Ja einmal Spiel-zeige eigene Gebiete und das wo es hier genutzt wird würde ich ins UI verschieben
+    }
 
     public boolean isAlive() {
         return alive;
