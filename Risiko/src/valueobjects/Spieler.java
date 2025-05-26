@@ -1,5 +1,7 @@
 package valueobjects;
 
+import exceptions.*;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -83,7 +85,16 @@ public class Spieler implements Serializable {
     }
 
 
-    public void bewegeEinheiten(int truppen, Land herkunft, Land ziel) {
+    public void bewegeEinheiten(int truppen, Land herkunft, Land ziel) throws FalscherBesitzerException, UngueltigeBewegungException, EinheitenAnzahlException {
+        if(herkunft.getBesitzer() != this || ziel.getBesitzer() != this){
+            throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
+        }
+        if (!herkunft.connectionPossible(ziel)){
+            throw new UngueltigeBewegungException(ziel.getName() + " ist von " + herkunft.getName() + " aus nicht erreichbar.");
+        }
+        if (truppen < 1 || herkunft.getEinheiten() - truppen <1){
+            throw new EinheitenAnzahlException("Es muss immer mindestens eine Einheit im Herkunftsland verbleiben!");
+        }
         herkunft.einheitenEntfernen(truppen);
         ziel.einheitenHinzufuegen(truppen);
     }

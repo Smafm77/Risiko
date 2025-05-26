@@ -6,6 +6,7 @@ import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
 import valueobjects.Land;
 import valueobjects.Spieler;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -27,8 +28,6 @@ public class MenueEingabe {
                     scanner.nextLine();
                     throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
                 }
-
-
                 scanner.nextLine();
                 if (auswahl < 1 || auswahl > 6) {
                     throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-6.");
@@ -39,7 +38,6 @@ public class MenueEingabe {
                 System.out.println("Noch einmal: /n");
             }
         }
-
         return Befehl.fromInt(auswahl);
     }
 
@@ -128,6 +126,34 @@ public class MenueEingabe {
         }
     }
 
+    public Land istEigenesLand(Spieler spieler) throws FalscherBesitzerException {
+        Land auswahlLand = eingabeLand();
+        if (auswahlLand.getBesitzer() != spieler) {
+            throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
+        }
+        return auswahlLand;
+    }
+
+    public Land istFeind(Spieler spieler) throws FalscherBesitzerException {
+        Land auswahlLand = eingabeLand();
+        if (auswahlLand.getBesitzer() == spieler) {
+            throw new FalscherBesitzerException("Dieses Land gehört dir!");
+        }
+        return auswahlLand;
+    }
+
+    public int eingabeTruppen() throws UngueltigeAuswahlException {
+        int auswahl;
+        try {
+            auswahl = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            scanner.nextLine();
+            throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
+        }
+        scanner.nextLine();
+        return auswahl;
+    }
+
     public void zuweisungEinheiten(int truppen, Spieler spieler) {
         for (int t = 1; t <= truppen; t++) {
             Land basis;
@@ -165,7 +191,7 @@ public class MenueEingabe {
                     scanner.nextLine();
                     throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
                 }
-                if (auswahl < 1 || auswahl >2) {
+                if (auswahl < 1 || auswahl > 2) {
                     throw new UngueltigeAuswahlException("Bitte wähle zwischen 1. und 2.!");
                 }
                 return auswahl;
