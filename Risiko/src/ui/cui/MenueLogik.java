@@ -7,14 +7,12 @@ import valueobjects.Spieler;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class MenueLogik {
     Menue menue;
     MenuePrint mPrint;
     MenueEingabe mEingabe;
-    Scanner scanner = new Scanner(System.in);
 
     public MenueLogik(Menue menue, MenuePrint mPrint, MenueEingabe mEingabe) {
         this.menue = menue;
