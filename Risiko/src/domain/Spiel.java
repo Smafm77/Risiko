@@ -1,8 +1,6 @@
 package domain;
 
-import exceptions.FalscherBesitzerException;
-import exceptions.UngueltigeAuswahlException;
-import exceptions.UngueltigeBewegungException;
+import exceptions.*;
 import valueobjects.*;
 import ui.cui.Menue;
 import enums.Spielphase;
@@ -26,7 +24,7 @@ public class Spiel implements Serializable {
         return welt;
     }
 
-    public Spielphase getPhase(){
+    public Spielphase getPhase() {
         return phase;
     }
 
@@ -61,8 +59,8 @@ public class Spiel implements Serializable {
         }
     }
 
-    private void naechstePhase(){
-        switch (phase){
+    private void naechstePhase() {
+        switch (phase) {
             case VERTEILEN -> phase = Spielphase.ANGRIFF;
             case ANGRIFF -> phase = Spielphase.VERSCHIEBEN;
             case VERSCHIEBEN -> phase = Spielphase.VERTEILEN;
@@ -88,12 +86,12 @@ public class Spiel implements Serializable {
         aktuellerSpieler.setSchonErobert(false);
         naechstePhase();
         boolean weiterAngreifen = true;
-        while(weiterAngreifen){
+        while (weiterAngreifen) {
             weiterAngreifen = menue.hauptMenue(aktuellerSpieler);
         }
         naechstePhase();
         boolean weiterVerschieben = true;
-        while(weiterVerschieben){
+        while (weiterVerschieben) {
             weiterVerschieben = menue.hauptMenue(aktuellerSpieler);
         }
 
@@ -123,7 +121,27 @@ public class Spiel implements Serializable {
     //endregion
 
     //region kampf
-    public boolean kampf(Land herkunft, Land ziel, int truppenA, int truppenV) {
+    public void kampfMoeglich(Land herkunft, Land ziel, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
+        Spieler angreifer = herkunft.getBesitzer();
+        if (angreifer != aktuellerSpieler) {
+            throw new FalscherBesitzerException("Du bist nicht der Besitzer von " + herkunft.getName());
+        }
+        if (ziel.getBesitzer() == angreifer) {
+            throw new FalscherBesitzerException(ziel.getName() + " gehört dir bereits.");
+        }
+        if (!herkunft.getFeindlicheNachbarn().contains(ziel)) {
+            throw new UngueltigeBewegungException("Kein direkter Angriffspfad zwischen den Ländern!");
+        }
+        if (truppenA < 1 || truppenA > 3 || truppenA >= herkunft.getEinheiten()) {
+            throw new EinheitenAnzahlException("Angriffstruppenzahl ungültig!");
+        }
+        if (truppenV < 1 || truppenV > 2 || truppenV > ziel.getEinheiten()) {
+            throw new EinheitenAnzahlException("Verteidigungstruppenzahl ungültig!");
+        }
+    }
+
+    public boolean kampf(Land herkunft, Land ziel, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
+        kampfMoeglich(herkunft, ziel, truppenA, truppenV);
         int ueberlebende = schlacht(herkunft, ziel, truppenA, truppenV);
         if (ueberlebende == -1) {
             return false;
@@ -155,7 +173,7 @@ public class Spiel implements Serializable {
         return ziel.getEinheiten() > 0 ? -1 : truppenA;
     }
 
-    public void erobern(Land herkunft, Land ziel, int besatzer) {
+    public void erobern(Land herkunft, Land ziel, int besatzer) throws FalscherBesitzerException, UngueltigeBewegungException {
         Spieler verteidiger = ziel.getBesitzer();
         ziel.wechselBesitzer(herkunft.getBesitzer());
         herkunft.getBesitzer().bewegeEinheiten(besatzer, herkunft, ziel);

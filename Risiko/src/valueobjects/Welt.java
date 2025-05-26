@@ -62,7 +62,6 @@ public class Welt implements Serializable {
         throw new UngueltigeAuswahlException("Land " + name + " existiert nicht.");
     }
 
-
     public Kontinent findeKontinentenzugehoerigkeit(Land land) throws NullPointerException {
         for (Kontinent kontinent : alleKontinente) {
             if (kontinent.beinhaltetLand(land)) {

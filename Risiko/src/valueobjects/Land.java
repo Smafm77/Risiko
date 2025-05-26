@@ -1,5 +1,4 @@
 package valueobjects;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -59,8 +58,10 @@ public class Land implements Serializable {
     }
 
     public void einheitenEntfernen(int einheiten) {
-        //TODO muss in kampf auf 0 fallen können aber es wäre vermutlich sinnvoll sicherzustellen, dass im Land nicht negativ viele Truppen sind.
         this.einheiten -= einheiten;
+        if(this.einheiten < 0){
+            this.einheiten = 0;
+        }
     }
 
     public void addNachbarn(Land[] nachbarn) {

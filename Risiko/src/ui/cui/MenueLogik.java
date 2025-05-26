@@ -1,23 +1,18 @@
 package ui.cui;
 
-import enums.Befehl;
-import enums.Infos;
-import enums.Spielphase;
+import enums.*;
 import exceptions.*;
 import valueobjects.Land;
 import valueobjects.Spieler;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.InputMismatchException;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class MenueLogik {
     Menue menue;
     MenuePrint mPrint;
     MenueEingabe mEingabe;
-    Scanner scanner = new Scanner(System.in);
 
     public MenueLogik(Menue menue, MenuePrint mPrint, MenueEingabe mEingabe) {
         this.menue = menue;
@@ -57,180 +52,90 @@ public class MenueLogik {
 
     }
 
-    public boolean hauptAuswahl(Spieler spieler, Spielphase phase) {
+    public boolean hauptAuswahl(Spieler spieler, Spielphase phase) throws SpielPhaseException, FalscherBesitzerException, UngueltigeBewegungException, UngueltigeAuswahlException {
         Befehl auswahl = mEingabe.hauptAbfrage();
-        try {
-            if (auswahl == Befehl.ANGRIFF && phase != Spielphase.ANGRIFF) {
-                throw new SpielPhaseException("Angreifen nur in der Angriffsphase erlaut!");
-            }
 
-            if (auswahl == Befehl.BEWEGEN && phase != Spielphase.VERSCHIEBEN) {
-                throw new SpielPhaseException("Truppen verschiebenm nur in der Verschiebephase erlaubt!");
-            }
-            switch (auswahl) {
-                case ANGRIFF:
-                    boolean ergebnis = kampfInterface(spieler);
-                    if (ergebnis && !spieler.getSchonErobert()) {
-                        menue.getSpiel().zieheKarte(spieler);
-                        spieler.setSchonErobert(true);
-                    }
-                    break;
-                case BEWEGEN:
-                    moveTroopsInterface(spieler);
-                    break;
-                case INFO:
-                    infoLand();
-                    break;
-                case UEBERSICHT:
-                    mPrint.printTheseLaender(spieler.getBesetzteLaender());
-                    break;
-                case KARTE:
-                    menue.peruseCards(spieler);
-                    break;
-                case ZUGBEENDEN:
-                    return false;
-            }
-        } catch (SpielPhaseException e) {
-            System.out.println("Fehler: " + e.getMessage());
+        if (auswahl == Befehl.ANGRIFF && phase != Spielphase.ANGRIFF) {
+            throw new SpielPhaseException("Angreifen nur in der Angriffsphase erlaut!");
+        }
+
+        if (auswahl == Befehl.BEWEGEN && phase != Spielphase.VERSCHIEBEN) {
+            throw new SpielPhaseException("Truppen verschiebenm nur in der Verschiebephase erlaubt!");
+        }
+        switch (auswahl) {
+            case ANGRIFF:
+                boolean ergebnis = kampfInterface(spieler);
+                if (ergebnis && !spieler.getSchonErobert()) {
+                    menue.getSpiel().zieheKarte(spieler);
+                    spieler.setSchonErobert(true);
+                }
+                break;
+            case BEWEGEN:
+                moveTroopsInterface(spieler);
+                break;
+            case INFO:
+                infoLand();
+                break;
+            case UEBERSICHT:
+                mPrint.printTheseLaender(spieler.getBesetzteLaender());
+                break;
+            case KARTE:
+                menue.peruseCards(spieler);
+                break;
+            case ZUGBEENDEN:
+                return false;
         }
         return true;
 
     }
 
-    public void moveTroopsInterface(Spieler spieler) {
-
-        try {
+    public void moveTroopsInterface(Spieler spieler) throws FalscherBesitzerException, UngueltigeAuswahlException, UngueltigeBewegungException {
+        while (true) {
             mPrint.zeigeEigeneGebiete(spieler);
-            while (true) {
-                System.out.println("Aus welchem Land sollen Einheiten entzogen werden?");
-                Land herkunft = mEingabe.eingabeLand();
-                if (herkunft.getBesitzer() != spieler) {
-                    throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
-                }
-                while (true) {
-                    System.out.println("In welches Land sollen die Einheiten geschickt werden?");
-                    Land ziel = mEingabe.eingabeLand();
-                    if (ziel.getBesitzer() != spieler) {
-                        throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
-                    }
-                    if (!herkunft.connectionPossible(ziel)) {
-                        throw new UngueltigeBewegungException(ziel.getName() + " ist von " + herkunft.getName() + " aus nicht erreichbar.");
-                    }
-                    System.out.println("Wie viele der " + herkunft.getEinheiten() + " Einheiten aus " + herkunft.getName() + " sollen nach " + ziel.getName() + " entsendet werden?");
-                    int anzahl;
-                    while (true) {
-                        try {
-                            anzahl = scanner.nextInt();
-                        } catch (InputMismatchException e) {
-                            throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
-                        }
-                        if (herkunft.getEinheiten() - anzahl < 1) {
-                            throw new EinheitenAnzahlException("Du hast nicht genug Einheiten in " + herkunft.getName() + " für diese Aktion. Es muss immer mindestens 1 Einheit im Herkunftsland verbleiben.");
-                        }
-                        break;
-                    }
-                    spieler.bewegeEinheiten(anzahl, herkunft, ziel);
-                    System.out.println("Neue Anzahl Einheiten: " + herkunft.getName() + ": " + herkunft.getEinheiten() + " , " + ziel.getName() + ": " + ziel.getEinheiten());
-                    break;
-                }
-                break;
-            }
-        } catch (EinheitenAnzahlException | FalscherBesitzerException | UngueltigeBewegungException |
-                 UngueltigeAuswahlException e) {
-            System.out.println("Fehler: " + e.getMessage());
-            System.out.println("Noch einmal: \n");
+            System.out.println("Aus welchem Land sollen Einheiten entzogen werden?");
+            Land herkunft = mEingabe.istEigenesLand(spieler);
+            System.out.println("In welches Land sollen die Einheiten geschickt werden?");
+            Land ziel = mEingabe.istEigenesLand(spieler);
+            System.out.println("Wie viele der " + herkunft.getEinheiten() + " Einheiten aus " + herkunft.getName() + " sollen nach " + ziel.getName() + " entsendet werden?");
+            int anzahl = mEingabe.eingabeTruppen();
+            spieler.bewegeEinheiten(anzahl, herkunft, ziel);
+            System.out.println("Neue Anzahl Einheiten: " + herkunft.getName() + ": " + herkunft.getEinheiten() + " , " + ziel.getName() + ": " + ziel.getEinheiten());
+            break;
         }
     }
 
-
-    public boolean kampfInterface(Spieler angreifer) {
+    public boolean kampfInterface(Spieler angreifer) throws FalscherBesitzerException, UngueltigeAuswahlException, UngueltigeBewegungException {
         HashSet<Land> volleKasernen = angreifer.getBesetzteLaender().stream().filter(land -> land.getEinheiten() > 1).collect(Collectors.toCollection(HashSet::new));
         boolean ergebnis = false;
         Land herkunft;
         Land ziel;
-        while (!volleKasernen.isEmpty()) {
-            try {
-                mPrint.printTheseLaender(volleKasernen);
-                ArrayList<Land> relevanteLaender = new ArrayList<>();
-                System.out.println("Aus welchem Land willst du angreifen?");
-                while (true) {
-                    herkunft = mEingabe.eingabeLand();
-                    if (!volleKasernen.contains(herkunft)) {
-
-                        throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
-                    }
-                    relevanteLaender.add(herkunft);
-                    mPrint.printTheseLaenderNamen(herkunft.getFeindlicheNachbarn());
-                    System.out.println("Welches Land möchtest du angreifen?");
-                    while (true) {
-                        ziel = mEingabe.eingabeLand();
-                        if (!herkunft.getFeindlicheNachbarn().contains(ziel)) {
-                            throw new UngueltigeBewegungException("Du kannst nicht von " + herkunft + " aus " + ziel + " angreifen.");
-                        }
-                        break;
-                    }
-
-                    relevanteLaender.add(ziel);
-                    Spieler verteidiger = ziel.getBesitzer();
-
-                    System.out.println("Mit wie vielen Truppen möchtest du angreifen (1 - " + Math.min((herkunft.getEinheiten() - 1), 3) + ")?");
-                    int truppenA;
-                    while (true) {
-                        try {
-                            truppenA = scanner.nextInt();
-                        } catch (InputMismatchException e) {
-                            throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
-                        }
-                        if (truppenA >= herkunft.getEinheiten()) {
-                            throw new EinheitenAnzahlException("Es muss immer mindestens 1 Truppe in " + herkunft + " verbleiben.");
-                        } else if (truppenA < 1) {
-                            throw new EinheitenAnzahlException("Du brauchst mindestens 1 Truppe zum Angreifen.");
-
-                        } else if (truppenA > 3) {
-                            throw new EinheitenAnzahlException("Du darfst nur maximal 3 Truppen zum Angriff nutzen.");
-                        }
-                        break;
-                    }
-                    System.out.println();
-                    System.out.println(verteidiger.getName() + " mit wie vielen Truppen möchtest du dich verteidigen (1 - " + Math.min((ziel.getEinheiten()), 2) + ")?");
-                    int truppenV;
-
-                    while (true) {
-                        try {
-                            try {
-                                truppenV = scanner.nextInt();
-                            } catch (InputMismatchException e) {
-                                scanner.nextLine();
-                                throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
-                            }
-
-                            if (truppenV > ziel.getEinheiten()) {
-                                throw new EinheitenAnzahlException(ziel.getName() + " hat nur " + ziel.getEinheiten() + " Einheiten zur Verfügung.");
-                            } else if (truppenV < 1) {
-                                throw new EinheitenAnzahlException("Du brauchst mindestens 1 Truppe zum Verteidigen.");
-
-                            } else if (truppenV > 2) {
-                                throw new EinheitenAnzahlException("Du darfst nur maximal 2 Truppen zum Angriff nutzen.");
-                            }
-                            break;
-                        } catch (UngueltigeAuswahlException | EinheitenAnzahlException | InputMismatchException e) {
-                            System.out.println("Fehler: " + e.getMessage());
-                            System.out.println("Noch einmal: \n");
-                        }
-                    }
-                    System.out.println();
-                    ergebnis = menue.getSpiel().kampf(herkunft, ziel, truppenA, truppenV);
-                    String sieger = ergebnis ? angreifer.getName() : verteidiger.getName();
-                    System.out.println(sieger + " hat gewonnen:");
-                    mPrint.printTheseLaender(relevanteLaender);
-
-                    break;
-                }
-            } catch (UngueltigeBewegungException | FalscherBesitzerException | UngueltigeAuswahlException |
-                     EinheitenAnzahlException e) {
-                System.out.println("Fehler: " + e.getMessage());
-                System.out.println("Noch einmal: \n");
+        int truppenA;
+        int truppenV;
+        Spieler verteidiger;
+        ArrayList<Land> relevanteLaender = new ArrayList<>();
+        while (true) {
+            if (volleKasernen.isEmpty()) {
+                return false;
             }
+            mPrint.printTheseLaender(volleKasernen);
+            System.out.println("Aus welchem Land willst du angreifen?");
+            herkunft = mEingabe.istEigenesLand(angreifer);
+            relevanteLaender.add(herkunft);
+            mPrint.printTheseLaenderNamen(herkunft.getFeindlicheNachbarn());
+            System.out.println("Welches Land möchtest du angreifen?");
+            ziel = mEingabe.istFeind(angreifer);
+            relevanteLaender.add(ziel);
+            verteidiger = ziel.getBesitzer();
+            System.out.println("Mit wie vielen Truppen möchtest du angreifen (1 - " + Math.min((herkunft.getEinheiten() - 1), 3) + ")?");
+            truppenA = mEingabe.eingabeTruppen();
+            System.out.println();
+            System.out.println(verteidiger.getName() + " mit wie vielen Truppen möchtest du dich verteidigen (1 - " + Math.min((ziel.getEinheiten()), 2) + ")?");
+            truppenV = mEingabe.eingabeTruppen();
+            System.out.println();
+            ergebnis = menue.getSpiel().kampf(herkunft, ziel, truppenA, truppenV);
+            String sieger = ergebnis ? angreifer.getName() : verteidiger.getName();
+            System.out.println(sieger + " hat gewonnen:");
+            mPrint.printTheseLaender(relevanteLaender);
             break;
         }
         return ergebnis;
