@@ -93,7 +93,7 @@ public class Menue {
 
     public void peruseCards(Spieler spieler) {
         try {
-            if (!spieler.getKarten().isEmpty()) {
+            if (spieler.getKarten().isEmpty()) {
                 throw new UngueltigeAuswahlException("Du hast keine Karten zum ausspielen.");
             }
 

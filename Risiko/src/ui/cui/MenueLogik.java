@@ -106,7 +106,6 @@ public class MenueLogik {
         }
     }
 
-
     public boolean kampfInterface(Spieler angreifer) throws FalscherBesitzerException, UngueltigeAuswahlException, UngueltigeBewegungException {
         HashSet<Land> volleKasernen = angreifer.getBesetzteLaender().stream().filter(land -> land.getEinheiten() > 1).collect(Collectors.toCollection(HashSet::new));
         boolean ergebnis = false;

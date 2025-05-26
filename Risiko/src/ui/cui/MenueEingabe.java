@@ -24,11 +24,10 @@ public class MenueEingabe {
             try {
                 try {
                     auswahl = scanner.nextInt();
-                } catch (InputMismatchException e) {
                     scanner.nextLine();
+                } catch (InputMismatchException e) {
                     throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
                 }
-                scanner.nextLine();
                 if (auswahl < 1 || auswahl > 6) {
                     throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-6.");
                 }
@@ -91,6 +90,7 @@ public class MenueEingabe {
             try {
                 try {
                     anzahlSpieler = scanner.nextInt();
+                    scanner.nextLine();
                 } catch (InputMismatchException e) {
                     scanner.nextLine(); //falsche Eingabe verwerfen, sonst endlosschleife
                     throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
@@ -98,7 +98,6 @@ public class MenueEingabe {
                 if (anzahlSpieler <= 2 || anzahlSpieler > 6) {
                     throw new UngueltigeAuswahlException("Spieleranzahl muss zwischen 3-6 liegen.");
                 }
-                scanner.nextLine(); //Weil scanner.nextInt immer mucken macht einfach nochmal nextLine "einlesen"
                 spielerAnlegen(anzahlSpieler);
                 break;
             } catch (UngueltigeAuswahlException e) {
@@ -146,11 +145,10 @@ public class MenueEingabe {
         int auswahl;
         try {
             auswahl = scanner.nextInt();
-        } catch (InputMismatchException e) {
             scanner.nextLine();
+        } catch (InputMismatchException e) {
             throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
         }
-        scanner.nextLine();
         return auswahl;
     }
 
@@ -187,20 +185,18 @@ public class MenueEingabe {
             try {
                 try {
                     auswahl = scanner.nextInt();
-                } catch (InputMismatchException e) {
                     scanner.nextLine();
+                } catch (InputMismatchException e) {
                     throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
                 }
                 if (auswahl < 1 || auswahl > 2) {
                     throw new UngueltigeAuswahlException("Bitte wähle zwischen 1. und 2.!");
                 }
                 return auswahl;
-
             } catch (UngueltigeAuswahlException e) {
                 System.out.println("Fehler: " + e.getMessage());
                 System.out.println("Nocheinmal: \n");
             }
-
         }
     }
 }

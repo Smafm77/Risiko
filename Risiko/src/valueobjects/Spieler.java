@@ -84,7 +84,6 @@ public class Spieler implements Serializable {
         return neueEinheiten;
     }
 
-
     public void bewegeEinheiten(int truppen, Land herkunft, Land ziel) throws FalscherBesitzerException, UngueltigeBewegungException, EinheitenAnzahlException {
         if(herkunft.getBesitzer() != this || ziel.getBesitzer() != this){
             throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
@@ -105,7 +104,6 @@ public class Spieler implements Serializable {
         karten.removeAll(karten);
         this.alive = false;
     }
-
 
     @Override
     public boolean equals(Object spieler) {
