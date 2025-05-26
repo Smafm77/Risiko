@@ -1,8 +1,10 @@
 package valueobjects;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Kontinent implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     private final String name;
     private final Land[] gebiete;
@@ -15,9 +17,6 @@ public class Kontinent implements Serializable {
     }
 
     //region getter
-    public Land[] getGebiete() {
-        return gebiete;
-    }
 
     public int getBuff() {
         return buff;

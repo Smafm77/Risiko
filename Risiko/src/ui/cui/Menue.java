@@ -1,9 +1,7 @@
 package ui.cui;
 
 import domain.Spiel;
-import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
-import exceptions.UngueltigeBewegungException;
 import persistence.NeuesSpielEinlesen;
 import valueobjects.*;
 

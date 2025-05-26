@@ -27,11 +27,12 @@ public class MenueLogik {
         this.mEingabe = mEingabe;
     }
 
-    public boolean infoLand() {
+    public void infoLand() {
         System.out.println("Über welches Land möchtest du Informationen erhalten?");
         Land auswahlLand = mEingabe.eingabeLand();
-        while (true) {
-            return menue.infoMenue(auswahlLand);
+        boolean weiter = true;
+        while (weiter) {
+            weiter = menue.infoMenue(auswahlLand);
         }
     }
 

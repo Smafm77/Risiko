@@ -7,15 +7,17 @@ import valueobjects.*;
 import ui.cui.Menue;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
 public class Spiel implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     ArrayList<Spieler> spielerListe = new ArrayList<>();
     Welt welt = new Welt(spielerListe);
     HashSet<Karte> kartenStapel = new HashSet<>();
-    private transient Menue menue = new Menue(); //am besten Menue aus Spiel raus nehmen aber grade bin ich zu müde
+    private final transient Menue menue = new Menue(); //am besten Menue aus Spiel raus nehmen aber grade bin ich zu müde
 
 
     public Welt getWelt() {
@@ -43,11 +45,13 @@ public class Spiel implements Serializable {
         } while (nochEinmal);
     }
 
-    public boolean spielRunde(Menue menue) throws UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
+    public boolean spielRunde(Menue menue) {
 
         for (Spieler spieler : spielerListe) {
             menue.setSpieler(spieler);
-
+            if(!menue.getmLogik().weiterSpielen()){
+                return false;
+            }
             if (!spieler.isAlive()) {
                 continue;
             }
@@ -57,9 +61,6 @@ public class Spiel implements Serializable {
             spieler.setSchonErobert(false);
             boolean amZug = true;
             while (amZug) {
-                if(!menue.getmLogik().weiterSpielen()){
-                    return false;
-                }
                 amZug = menue.hauptMenue(spieler);
             }
         }

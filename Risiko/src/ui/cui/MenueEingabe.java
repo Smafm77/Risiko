@@ -6,8 +6,6 @@ import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
 import valueobjects.Land;
 import valueobjects.Spieler;
-
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 

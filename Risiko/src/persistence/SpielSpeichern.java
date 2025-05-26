@@ -5,6 +5,7 @@ import domain.Spiel;
 import java.io.*;
 
 public class SpielSpeichern implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public static void speichern(Spiel spiel, String dateiname) throws IOException {

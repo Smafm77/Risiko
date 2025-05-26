@@ -1,17 +1,13 @@
 package valueobjects;
 
-import exceptions.FalscherBesitzerException;
-import exceptions.UngueltigeAuswahlException;
-import ui.cui.Menue;
-import ui.cui.MenueEingabe;
-
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Scanner;
 
 public class Spieler implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     private final String name;
     private final int id;
@@ -58,14 +54,6 @@ public class Spieler implements Serializable {
     //endregion
 
     //region Land Methoden
-
-    public HashSet<Land> getFeinde() {  //todo wird nie genutzt! Nochmal in gruen //Kann gelöscht werden. Momentan brauchen wir es nicht und notfalls können wir es neu schreiben
-        HashSet<Land> feinde = new HashSet<>();
-        for (Land kolonie : besetzteLaender) {
-            feinde.addAll(kolonie.getFeindlicheNachbarn());
-        }
-        return feinde;
-    }
 
     public void fuegeLandHinzu(Land land) {
         besetzteLaender.add(land);
@@ -122,10 +110,10 @@ public class Spieler implements Serializable {
     }
 
     public String eigeneKartenToString() { //Print? UI? - sollte UI sein, muss nochmal gucken wofür das überhaupt aufgerufen wurde. Glaube Peruse Cards
-        String kartenTxt = "";
+        StringBuilder kartenTxt = new StringBuilder();
         for (Karte karte : karten) {
-            kartenTxt += "[" + karte.getStrength() + " - " + karte.getLand().getName() + "]  ";
+            kartenTxt.append("[").append(karte.getStrength()).append(" - ").append(karte.getLand().getName()).append("]  ");
         }
-        return kartenTxt;
+        return kartenTxt.toString();
     }
 }

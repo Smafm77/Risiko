@@ -7,12 +7,14 @@ import exceptions.UngueltigeBewegungException;
 import persistence.SpielSpeichern;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
 public class Main implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public static void main(String[] args) throws IOException {
