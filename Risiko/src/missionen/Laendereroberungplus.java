@@ -11,8 +11,7 @@ public class Laendereroberungplus extends Laendereroberung {
         this.zielAnzahl = zielAnzahl;
     }
     @Override
-    public boolean istErfuellt(Spiel spiel) {
-        Spieler spieler = spiel.getAktuellerSpieler();
+    public boolean istErfuellt(Spiel spiel, Spieler spieler) {
         int counter = 0;
         for(int i = 0; spieler.getBesetzteLaender().size()<2; i++) {
             if(spieler.getBesetzteLaender().get(i).getEinheiten()>=2) {

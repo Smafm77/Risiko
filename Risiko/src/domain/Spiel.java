@@ -36,7 +36,6 @@ public class Spiel implements Serializable {
     public Spiel() throws IOException {
         System.out.println("Starte Spiel...");
         menue.buildWelt(welt);
-        List<Mission> alleMissionen = List.of(new Laendereroberung(24), new Kontinenteroberung(welt.getKontinent().getName()), new Spielervernichtung(spielerListe.get(3)));
     }
 
     public HashSet<Karte> getKartenStapel() {
@@ -101,12 +100,14 @@ public class Spiel implements Serializable {
             weiterVerschieben = menue.hauptMenue(aktuellerSpieler);
         }
 
+        //ToDo Kontrolliere ob dies die richtige Stelle im Ablauf der Runde ist
+        // Methode für Spiel zu Ende schreiben
+        if (aktuellerSpieler.hatMissionErfuellt(this)) {
+            System.out.println("Herzlichen Glückwunsch! Mission erfüllt: " + aktuellerSpieler.getMissionBeschreibung());
+        }
+
         naechstePhase();
         naechsterSpieler();
-        Mission spielerMission = aktuellerSpieler.getMission();
-        if (spielerMission.istErfuellt(this)) {
-            System.out.println("Herzlichen Glückwunsch! Mission erfüllt: " + spielerMission.getBeschreibung());
-        }
 
         return true;
     }

@@ -1,5 +1,6 @@
 package persistence;
 
+import missionen.*;
 import valueobjects.Karte;
 import valueobjects.Kontinent;
 import valueobjects.Land;
@@ -74,5 +75,25 @@ public class NeuesSpielEinlesen {
             index++;
         }
         return alleKarten;
+    }
+
+    public HashSet<Mission> missionenErstellen(ArrayList<Kontinent> kontinente){
+        HashSet<Mission> missionen = new HashSet<>();
+
+        missionen.add(new Kontinenteroberung(kontinente.get(1), kontinente.get(5)));
+        missionen.add(new Kontinenteroberung(kontinente.get(1), kontinente.get(3)));
+        missionen.add(new Kontinenteroberung(kontinente.get(4), kontinente.get(2)));
+        missionen.add(new Kontinenteroberung(kontinente.get(3), kontinente.get(4)));
+
+        missionen.add(new KleinerKontinentEroberung(kontinente.get(0), kontinente.get(5)));
+        missionen.add(new KleinerKontinentEroberung(kontinente.get(0), kontinente.get(2)));
+
+        missionen.add(new Laendereroberungplus(18));
+        missionen.add(new Laendereroberung(24));
+        for (int i = 0; i < 6; i++){
+            missionen.add(new Spielervernichtung(i));
+        }
+
+        return missionen;
     }
 }

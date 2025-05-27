@@ -49,6 +49,7 @@ public class Menue {
         mEingabe.spielerAbfrage();
         mPrint.printWorldMap();
         welt.verteileLaender(spiel.getSpielerListe());
+        welt.weiseMissionenZu();
         spiel.getKartenStapel().addAll((einlesen.kartenstapelEinlesen(einlesen.alleLaenderEinlesen())));
         mPrint.zeigeAlleSpieler(spiel.getSpielerListe());
     }

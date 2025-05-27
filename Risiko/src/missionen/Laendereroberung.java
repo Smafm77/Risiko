@@ -7,12 +7,11 @@ public class Laendereroberung extends Mission {
     private final int zielAnzahl;
 
     public Laendereroberung (int zielAnzahl) {
-        super("Erobere " + zielAnzahl + "Länder!");
+        super("Erobere " + zielAnzahl + " Länder!");
         this.zielAnzahl = zielAnzahl;
     }
     @Override
-    public boolean istErfuellt(Spiel spiel) {
-        Spieler spieler = spiel.getAktuellerSpieler();
+    public boolean istErfuellt(Spiel spiel, Spieler spieler) {
         return spieler.getBesetzteLaender().size() >= zielAnzahl;
     }
 }

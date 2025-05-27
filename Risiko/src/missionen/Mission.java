@@ -1,10 +1,11 @@
 package missionen;
 
 import domain.Spiel;
+import valueobjects.Spieler;
 
 public abstract class Mission {
-    public abstract boolean istErfuellt(Spiel spiel);
-    private final String beschreibung;
+    public abstract boolean istErfuellt(Spiel spiel, Spieler spieler);
+    protected String beschreibung;
 
     public String getBeschreibung() {
         return beschreibung;

@@ -1,6 +1,7 @@
 package valueobjects;
 
 import exceptions.UngueltigeAuswahlException;
+import missionen.Mission;
 import persistence.NeuesSpielEinlesen;
 
 import java.io.*;
@@ -14,6 +15,7 @@ public class Welt implements Serializable {
     private ArrayList<Land> alleLaender;
     public ArrayList<Kontinent> alleKontinente;
     private ArrayList<Spieler> spielerListe;
+    private HashSet<Mission> moeglicheMissionen;
 
     public ArrayList<Land> getAlleLaender() {
         return alleLaender;
@@ -28,6 +30,7 @@ public class Welt implements Serializable {
         alleLaender = spielmaterial.alleLaenderEinlesen();
         alleKontinente = spielmaterial.alleKontinenteEinlesen(alleLaender);
         spielerListe = spieler;
+        moeglicheMissionen = spielmaterial.missionenErstellen(alleKontinente);
     }
 
     public void verteileLaender(List<Spieler> spielerListe) {  //Vielleicht eher in domain.Spiel? Ist so glaube ich auch auf deiner Zeichnung wenn ich das richtig sehe :) JA
@@ -47,6 +50,14 @@ public class Welt implements Serializable {
             aktuellerSpieler.fuegeLandHinzu(aktuellesLand);
 
             index++;
+        }
+    }
+
+    public void weiseMissionenZu(){
+        for (Spieler spieler : spielerListe){
+            Mission mission = moeglicheMissionen.stream().findFirst().orElseThrow();
+            moeglicheMissionen.remove(mission);
+            spieler.teileMissionZu(mission);
         }
     }
 
