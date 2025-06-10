@@ -7,7 +7,8 @@ public class Laendereroberungplus extends Laendereroberung {
     private final int zielAnzahl;
 
     public Laendereroberungplus(int zielAnzahl) {
-        super(Integer.parseInt("Erobere " + zielAnzahl + " Länder und setzen Sie in jedes Land mindestens 2 Armeen!"));
+        super(zielAnzahl);
+        beschreibung = "Erobere " + zielAnzahl + " Länder und setzen Sie in jedes Land mindestens 2 Armeen!";
         this.zielAnzahl = zielAnzahl;
     }
     @Override
