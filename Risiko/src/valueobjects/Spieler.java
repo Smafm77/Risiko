@@ -14,6 +14,7 @@ public class Spieler implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private final String name;
+    private String Farbe;
     private int id;
     private boolean alive;
     private boolean schonErobert;
@@ -31,6 +32,8 @@ public class Spieler implements Serializable {
     public String getName() {
         return name;
     }
+
+    //ToDo Farbe später hier einfügen
 
     public int getId() {
         return id;
