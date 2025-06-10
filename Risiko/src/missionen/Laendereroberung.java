@@ -14,4 +14,10 @@ public class Laendereroberung extends Mission {
     public boolean istErfuellt(Spiel spiel, Spieler spieler) {
         return spieler.getBesetzteLaender().size() >= zielAnzahl;
     }
+
+    @Override
+    public int getFortschritt(Spiel spiel, Spieler spieler){
+        int progress = (spieler.getBesetzteLaender().size() * 100) / zielAnzahl;
+        return Math.min(progress, 100);
+    }
 }

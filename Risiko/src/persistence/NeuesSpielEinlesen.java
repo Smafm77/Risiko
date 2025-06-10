@@ -91,7 +91,7 @@ public class NeuesSpielEinlesen {
         missionen.add(new Laendereroberungplus(18));
         missionen.add(new Laendereroberung(24));
         for (int i = 0; i < 6; i++){
-            missionen.add(new Spielervernichtung(i));
+            missionen.add(new Spielervernichtung(i, 24));
         }
 
         return missionen;

@@ -14,4 +14,14 @@ public class KleinerKontinentEroberung extends Kontinenteroberung{
         boolean owns3 = spiel.getWelt().alleKontinente.stream().filter(kontinent -> kontinent.getEinzigerBesitzer() == spieler).count() >= 3;
         return super.istErfuellt(spiel, spieler) && owns3;
     }
+
+    @Override
+    public int getFortschritt(Spiel spiel, Spieler spieler){
+        int prog = 0;
+        prog += kontinent1.getBesetzungsFortschritt(spieler, 33) + kontinent2.getBesetzungsFortschritt(spieler, 33);
+        if(spiel.getWelt().alleKontinente.stream().anyMatch(kontinent -> (!kontinent.equals(kontinent1) && !kontinent.equals(kontinent2) && kontinent.getEinzigerBesitzer().equals(spieler)))){
+            prog +=34;
+        }
+        return prog;
+    }
 }

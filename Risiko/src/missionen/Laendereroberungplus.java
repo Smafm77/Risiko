@@ -13,12 +13,13 @@ public class Laendereroberungplus extends Laendereroberung {
     }
     @Override
     public boolean istErfuellt(Spiel spiel, Spieler spieler) {
-        int counter = 0;
-        for(int i = 0; spieler.getBesetzteLaender().size()<2; i++) {
-            if(spieler.getBesetzteLaender().get(i).getEinheiten()>=2) {
-                counter++;
-            }
-        }
+        long counter = spieler.getBesetzteLaender().stream().filter(land -> land.getEinheiten() >= 2).count();
         return counter>=zielAnzahl;
+    }
+
+    @Override
+    public int getFortschritt(Spiel spiel, Spieler spieler){
+        int progress = Math.toIntExact(spieler.getBesetzteLaender().stream().filter(land -> land.getEinheiten() >= 2).count()) * 100 / zielAnzahl;
+        return Math.min(progress, 100);
     }
 }

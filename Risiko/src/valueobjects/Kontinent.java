@@ -2,6 +2,7 @@ package valueobjects;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Kontinent implements Serializable {
     @Serial
@@ -39,6 +40,10 @@ public class Kontinent implements Serializable {
         } else {
             return null;
         }
+    }
+
+    public int getBesetzungsFortschritt(Spieler spieler, int bruchteil){
+        return Math.toIntExact(Arrays.stream(gebiete).filter(land -> land.getBesitzer().equals(spieler)).count()) * bruchteil / gebiete.length;
     }
     //endregion
 
