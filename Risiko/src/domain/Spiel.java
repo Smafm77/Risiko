@@ -65,6 +65,13 @@ public class Spiel implements Serializable {
     }
 
     private void naechstePhase() {
+        try {
+            SpielSpeichern.speichern(this, "spielstand.risiko");
+            System.out.println("Spiel erfolgreich gespeichert!");
+        } catch (IOException e) {
+            System.out.println("Speichern fehlgeschlagen: " + e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
         switch (phase) {
             case VERTEILEN -> phase = Spielphase.ANGRIFF;
             case ANGRIFF -> phase = Spielphase.VERSCHIEBEN;
