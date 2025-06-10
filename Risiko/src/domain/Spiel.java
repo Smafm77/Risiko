@@ -35,7 +35,6 @@ public class Spiel implements Serializable {
 
     public Spiel() throws IOException {
         System.out.println("Starte Spiel...");
-        menue.buildWelt(welt);
     }
 
     public HashSet<Karte> getKartenStapel() {
@@ -47,6 +46,7 @@ public class Spiel implements Serializable {
     }
 
     public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
+        menue.buildWelt();
         boolean nochEinmal;
         do {
             nochEinmal = spielRunde(menue);

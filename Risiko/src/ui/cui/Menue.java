@@ -45,7 +45,7 @@ public class Menue {
         return mLogik;
     }
 
-    public void buildWelt(Welt welt) throws IOException {
+    public void buildWelt() throws IOException {
         mEingabe.spielerAbfrage();
         mPrint.printWorldMap();
         welt.verteileLaender(spiel.getSpielerListe());
