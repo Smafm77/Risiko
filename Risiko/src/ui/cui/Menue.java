@@ -58,8 +58,7 @@ public class Menue {
         while (true) {
             try {
                 Spielphase phase = spiel.getPhase();
-                System.out.println("Du bist am Zug : " + aktuellerSpieler.getName() + " Phase: " + phase);
-                System.out.println("Was willst du tun? ");
+                System.out.println("Du bist am Zug : " + spieler.getName() + " Phase: " + phase);
                 if (phase == Spielphase.ANGRIFF) {
                     System.out.println("1: Angreifen");
                 }

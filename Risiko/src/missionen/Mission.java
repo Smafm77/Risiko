@@ -3,7 +3,9 @@ package missionen;
 import domain.Spiel;
 import valueobjects.Spieler;
 
-public abstract class Mission {
+import java.io.Serializable;
+
+public abstract class Mission implements Serializable {
     public abstract boolean istErfuellt(Spiel spiel, Spieler spieler);
 
     /**

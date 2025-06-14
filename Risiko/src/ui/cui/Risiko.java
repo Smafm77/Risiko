@@ -9,6 +9,7 @@ import persistence.SpielSpeichern;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -24,6 +25,7 @@ public class Risiko implements Serializable {
             starteMenue();
         } catch (Exception e) {
             System.out.println("Fehler: " + e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
             System.out.println("Nocheinmal: \n");
         }
     }

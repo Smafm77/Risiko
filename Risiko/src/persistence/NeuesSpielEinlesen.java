@@ -5,14 +5,11 @@ import valueobjects.Karte;
 import valueobjects.Kontinent;
 import valueobjects.Land;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class NeuesSpielEinlesen {
+public class NeuesSpielEinlesen implements Serializable {
     public ArrayList<Land> alleLaenderEinlesen() throws FileNotFoundException, IOException,
             NumberFormatException { //FileReader, readLine, parseInt
         ArrayList<Land> alleLaender = new ArrayList<>();
