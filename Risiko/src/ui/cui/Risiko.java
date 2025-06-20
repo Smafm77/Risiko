@@ -98,6 +98,6 @@ public class Risiko implements Serializable {
         spiel = SpielSpeichern.laden("spielstand.risiko");
         System.out.println("Spiel erfolgreich geladen!");
         menue.setSpiel(spiel);
-        spiel.starteSpiel(menue);
+        spiel.continueSpiel(menue);
     }
 }

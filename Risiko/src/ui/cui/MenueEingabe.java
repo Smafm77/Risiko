@@ -47,8 +47,9 @@ public class MenueEingabe {
             try {
                 try {
                     auswahl = scanner.nextInt();
-                    scanner.nextLine();
+
                     if (auswahl < 1 || auswahl > 4) {
+                        scanner.nextLine();
                         throw new UngueltigeAuswahlException("Bitte wähle eine Option von 1-4.");
                     }
                 } catch (InputMismatchException e) {
