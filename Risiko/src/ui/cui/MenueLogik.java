@@ -141,6 +141,7 @@ public class MenueLogik {
         return ergebnis;
     }
 
+
     public boolean weiterSpielen() {
         int auswahl = mEingabe.inGameMenue();
         while (true) {

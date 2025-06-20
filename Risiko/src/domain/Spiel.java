@@ -209,6 +209,7 @@ public class Spiel implements Serializable {
         }
     }
 
+
     //endregion
     public int rolleWuerfel() {
         return (int) (Math.random() * 6) + 1;

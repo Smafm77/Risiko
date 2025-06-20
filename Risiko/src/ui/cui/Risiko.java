@@ -99,5 +99,6 @@ public class Risiko implements Serializable {
         System.out.println("Spiel erfolgreich geladen!");
         menue.setSpiel(spiel);
         spiel.continueSpiel(menue);
+
     }
 }

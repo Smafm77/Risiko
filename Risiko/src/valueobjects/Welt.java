@@ -25,6 +25,7 @@ public class Welt implements Serializable {
         return spielerListe;
     }
 
+
     public Welt(ArrayList<Spieler> spieler) throws IOException {
         NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
         alleLaender = spielmaterial.alleLaenderEinlesen();

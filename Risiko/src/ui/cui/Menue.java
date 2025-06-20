@@ -33,6 +33,7 @@ public class Menue {
         return welt;
     }
 
+
     public Spiel getSpiel() {
         return spiel;
     }
