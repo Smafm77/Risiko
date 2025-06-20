@@ -18,8 +18,8 @@ public class Spiel implements Serializable {
     Welt welt = new Welt(spielerListe);
     HashSet<Karte> kartenStapel = new HashSet<>();
     private final transient Menue menue = new Menue(); //am besten Menue aus Spiel raus nehmen aber grade bin ich zu müde
-    private Spieler aktuellerSpieler;
-    private Spielphase phase;
+    private Spieler aktuellerSpieler = null;
+    private Spielphase phase = Spielphase.VERTEILEN;
 
     public Spieler getAktuellerSpieler() {
         return aktuellerSpieler;
@@ -46,6 +46,13 @@ public class Spiel implements Serializable {
         return spielerListe;
     }
 
+    public void init(){
+        if(spielerListe.isEmpty()){
+            throw new IllegalStateException("Keine Spieler angelegt");
+        }
+        aktuellerSpieler = spielerListe.getFirst();
+        phase = Spielphase.VERTEILEN;
+    }
     public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
         menue.buildWelt();
         boolean nochEinmal;
@@ -87,9 +94,6 @@ public class Spiel implements Serializable {
 
     public boolean spielRunde(Menue menue) {
         menue.setSpieler(aktuellerSpieler);
-        if (aktuellerSpieler == null) {
-            aktuellerSpieler = spielerListe.getFirst();
-        }
         if (!menue.getmLogik().weiterSpielen()) {
             return false;
         }
@@ -218,5 +222,9 @@ public class Spiel implements Serializable {
 
     public void addSpieler(Spieler spieler) {
         this.spielerListe.add(spieler);
+    }
+
+    public void setPhase(Spielphase spielphase) {
+        this.phase = spielphase;
     }
 }

@@ -2,6 +2,7 @@ package ui.gui;
 
 
 import domain.Spiel;
+import enums.Spielphase;
 import ui.Risiko;
 import valueobjects.Spieler;
 
@@ -39,10 +40,11 @@ public class StartGameListener implements ActionListener {
         }
 
         gui.setSpiel(neuesSpiel);
-
+        neuesSpiel.init();
+        // neuesSpiel.setPhase(Spielphase.VERTEILEN);
         for (Spieler s : spielerListe){
             new SpielerFenster(neuesSpiel, s);
         }
-        gui.setVisible(false);
+        // gui.setVisible(false);
     }
 }

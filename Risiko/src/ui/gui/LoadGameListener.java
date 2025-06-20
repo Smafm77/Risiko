@@ -1,6 +1,7 @@
 package ui.gui;
 
 import domain.Spiel;
+import enums.Spielphase;
 import persistence.SpielSpeichern;
 import valueobjects.Spieler;
 
@@ -8,9 +9,13 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 public class LoadGameListener implements ActionListener {
     private final GuiMain gui;
+    private ArrayList<Spieler> spielerListe;
+    private Spieler aktuellerSpieler;
+    private Spielphase phase;
 
     LoadGameListener(GuiMain gui) {
         this.gui = gui;
@@ -26,6 +31,9 @@ public class LoadGameListener implements ActionListener {
             try {
                 Spiel geladen = SpielSpeichern.laden(file.getAbsolutePath());
                 gui.setSpiel(geladen);
+                this.spielerListe = geladen.getSpielerListe();
+                this.aktuellerSpieler = geladen.getAktuellerSpieler();
+                this.phase = geladen.getPhase();
 
                 for (Spieler s : geladen.getSpielerListe()) {
                     new SpielerFenster(geladen, s);
