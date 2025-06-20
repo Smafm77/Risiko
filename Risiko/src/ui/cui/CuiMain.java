@@ -1,6 +1,8 @@
 package ui.cui;
 
-public class Main {
+import ui.Risiko;
+
+public class CuiMain {
 
     public static void main(String[] args) {
         new Risiko().start();

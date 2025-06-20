@@ -1,10 +1,11 @@
-package ui.cui;
+package ui;
 
 import domain.Spiel;
 import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeAuswahlException;
 import exceptions.UngueltigeBewegungException;
 import persistence.SpielSpeichern;
+import ui.cui.Menue;
 
 import java.io.IOException;
 import java.io.Serial;
