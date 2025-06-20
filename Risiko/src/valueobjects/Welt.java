@@ -14,7 +14,7 @@ public class Welt implements Serializable {
     private static final long serialVersionUID = 1L;
     private ArrayList<Land> alleLaender;
     public ArrayList<Kontinent> alleKontinente;
-    private ArrayList<Spieler> spielerListe;
+    public ArrayList<Spieler> spielerListe;
     private HashSet<Mission> moeglicheMissionen;
 
     public ArrayList<Land> getAlleLaender() {

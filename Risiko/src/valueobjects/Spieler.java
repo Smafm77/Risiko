@@ -14,7 +14,7 @@ public class Spieler implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private final String name;
-    private String Farbe;
+    private String farbe;
     private int id;
     private boolean alive;
     private boolean schonErobert;
@@ -25,6 +25,12 @@ public class Spieler implements Serializable {
     public Spieler(String name, int id) {
         this.name = name.trim();
         this.id = id;
+        alive = true;
+    }
+
+    public Spieler(String name, String farbe) {
+        this.name = name.trim();
+        this.farbe = farbe;
         alive = true;
     }
 

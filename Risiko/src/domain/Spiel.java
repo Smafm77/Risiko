@@ -216,4 +216,7 @@ public class Spiel implements Serializable {
     }
 
 
+    public void addSpieler(Spieler spieler) {
+        this.spielerListe.add(spieler);
+    }
 }

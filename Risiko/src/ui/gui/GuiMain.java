@@ -1,5 +1,8 @@
 package ui.gui;
 
+import domain.Spiel;
+import ui.Risiko;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,6 +18,8 @@ public class GuiMain extends JFrame {
     protected final DefaultListModel<String> listModel = new DefaultListModel<>();
     protected final JList<String> listPlayers = new JList<>(listModel);
     protected final JButton btnStartGame = new JButton("Spiel starten");
+    private Risiko risiko;
+    private Spiel spiel;
 
     public GuiMain() {
         super(TITLE);
@@ -26,6 +31,18 @@ public class GuiMain extends JFrame {
         setVisible(true);
     }
 
+    public void setRisiko(Risiko risiko) {
+        this.risiko = risiko;
+    }
+    public Risiko getRisiko(){
+        return risiko;
+    }
+    public void setSpiel(Spiel spiel) {
+        this.spiel = spiel;
+    }
+    public Spiel getSpiel(){
+        return spiel;
+    }
     JTextField getTfPlayerName() {
         return tfPlayerName;
     }
