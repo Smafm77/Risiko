@@ -75,7 +75,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             });
             pnlActions.add(btnEndTurn);
         } else {
-            lblInfo.setText("Spieler " + spieler.getName() + " ist am Zug.");
+            lblInfo.setText("Spieler " + spiel.getAktuellerSpieler().getName() + " ist am Zug.");
             pnlActions.setVisible(false);
         }
         mapPanel.repaint();
