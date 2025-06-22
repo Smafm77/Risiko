@@ -48,7 +48,7 @@ public class Risiko implements Serializable {
                 }
                 switch (auswahl) {
                     case 1:
-                        spiel = new Spiel();
+                        spiel = Spiel.getInstance();
                         menue.setSpiel(spiel);
                         spiel.starteSpiel(menue);
                         break;

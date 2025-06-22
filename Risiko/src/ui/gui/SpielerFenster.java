@@ -1,12 +1,15 @@
 package ui.gui;
 
+import domain.AktiverSpielerListener;
 import domain.Spiel;
 import valueobjects.Spieler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.util.Objects;
 
-public class SpielerFenster extends JFrame {
+public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private final Spiel spiel;
     private final Spieler spieler;
 
@@ -18,10 +21,10 @@ public class SpielerFenster extends JFrame {
     private MapPanel mapPanel;
 
 
-    public SpielerFenster(Spiel spiel, Spieler spieler) {
+    public SpielerFenster(Spiel spiel, Spieler spieler) throws IOException {
         this.spieler = spieler;
         setTitle("Risiko - " + spieler.getName());
-        this.spiel = spiel;
+        this.spiel = Spiel.getInstance();
 
         ALLE.add(this);
 
@@ -45,24 +48,25 @@ public class SpielerFenster extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
+        AktiverSpielerListener.add(this);
+        updateView(Spiel.getInstance());
         setVisible(true);
+
+
+    }
+    @Override
+    public void onAktiverSpielerGeaendert(Spieler neu){
+        SwingUtilities.invokeLater(() -> {
+            updateView(Spiel.getInstance());
+        });
     }
 
     public void updateView(Spiel spiel) {
-        boolean amZug = spieler.equals(spiel.getAktuellerSpieler());
         lblInfo.setText(spieler.getName());
 
-        if (spiel.getPhase() != null) {
-            lblPhase.setText("Phase: " + spiel.getPhase().toString());
-        } else {
-            lblPhase.setText("Spielphase: nicht gesetzt"); //Todo: Können wir später hoffentlich raus nehmen aber gerade habe ich den Fehler satt
-        }
-        repaint();
-
-        pnlActions.removeAll();
-
-        if (amZug) {
+        if (Objects.equals(spieler.getName(), spiel.getAktuellerSpieler().getName())) {
             lblInfo.setText("Du bist am Zug!");
+            pnlActions.setVisible(true);
             //ToDO je nach Spielphase bedingt optionen einfügen wie in cui
             JButton btnEndTurn = new JButton("Zug beenden");
             btnEndTurn.addActionListener(e -> {
@@ -72,10 +76,8 @@ public class SpielerFenster extends JFrame {
             pnlActions.add(btnEndTurn);
         } else {
             lblInfo.setText("Spieler " + spieler.getName() + " ist am Zug.");
+            pnlActions.setVisible(false);
         }
-        pnlActions.revalidate();
-        pnlActions.repaint();
-
         mapPanel.repaint();
     }
 

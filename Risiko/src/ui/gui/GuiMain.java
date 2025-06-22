@@ -2,9 +2,11 @@ package ui.gui;
 
 import domain.Spiel;
 import ui.Risiko;
+import valueobjects.Spieler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GuiMain extends JFrame {
     private static final String TITLE = "Risiko - Start";
@@ -18,8 +20,12 @@ public class GuiMain extends JFrame {
     protected final DefaultListModel<String> listModel = new DefaultListModel<>();
     protected final JList<String> listPlayers = new JList<>(listModel);
     protected final JButton btnStartGame = new JButton("Spiel starten");
-    private Risiko risiko;
+    private final ArrayList<Spieler> guiSpieler = new ArrayList<>();
     private Spiel spiel;
+
+    public ArrayList<Spieler> getGuiSpieler(){
+        return guiSpieler;
+    }
 
     public GuiMain() {
         super(TITLE);
@@ -31,18 +37,14 @@ public class GuiMain extends JFrame {
         setVisible(true);
     }
 
-    public void setRisiko(Risiko risiko) {
-        this.risiko = risiko;
-    }
-    public Risiko getRisiko(){
-        return risiko;
-    }
     public void setSpiel(Spiel spiel) {
         this.spiel = spiel;
     }
-    public Spiel getSpiel(){
+
+    public Spiel getSpiel() {
         return spiel;
     }
+
     JTextField getTfPlayerName() {
         return tfPlayerName;
     }

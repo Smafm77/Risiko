@@ -9,6 +9,7 @@ import enums.Spielphase;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.util.*;
 
 public class Spiel implements Serializable {
@@ -20,6 +21,18 @@ public class Spiel implements Serializable {
     private final transient Menue menue = new Menue(); //am besten Menue aus Spiel raus nehmen aber grade bin ich zu müde
     private Spieler aktuellerSpieler = null;
     private Spielphase phase = Spielphase.VERTEILEN;
+    private static Spiel instance;
+
+    public static synchronized Spiel getInstance() {
+        if (instance == null) {
+            try {
+                instance = new Spiel();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+        return instance;
+    }
 
     public Spieler getAktuellerSpieler() {
         return aktuellerSpieler;
@@ -33,7 +46,7 @@ public class Spiel implements Serializable {
         return phase;
     }
 
-    public Spiel() throws IOException {
+    private Spiel() throws IOException {
         System.out.println("Starte Spiel...");
 
     }
@@ -46,13 +59,14 @@ public class Spiel implements Serializable {
         return spielerListe;
     }
 
-    public void init(){
-        if(spielerListe.isEmpty()){
+    public void init() {
+        if (spielerListe.isEmpty()) {
             throw new IllegalStateException("Keine Spieler angelegt");
         }
         aktuellerSpieler = spielerListe.getFirst();
         phase = Spielphase.VERTEILEN;
     }
+
     public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
         menue.buildWelt();
         boolean nochEinmal;
@@ -60,12 +74,14 @@ public class Spiel implements Serializable {
             nochEinmal = spielRunde(menue);
         } while (nochEinmal);
     }
-    public void continueSpiel(Menue menue)throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
+
+    public void continueSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
         boolean nochEinmal;
         do {
             nochEinmal = spielRunde(menue);
         } while (nochEinmal);
     }
+
     public void naechsterSpieler() {
         int aktuelleID = aktuellerSpieler.getId();
         if (aktuelleID < spielerListe.size()) {
@@ -75,6 +91,7 @@ public class Spiel implements Serializable {
             aktuellerSpieler = spielerListe.getFirst();
 
         }
+        AktiverSpielerListener.fire(aktuellerSpieler);
     }
 
     private void naechstePhase() {

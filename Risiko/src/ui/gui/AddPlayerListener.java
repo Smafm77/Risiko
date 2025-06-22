@@ -1,5 +1,7 @@
 package ui.gui;
 
+import valueobjects.Spieler;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +26,7 @@ public class AddPlayerListener implements ActionListener {
         String color = (String) gui.getCboColor().getSelectedItem();
         gui.getListModel().addElement(name + "(" + color + ")");
         gui.getTfPlayerName().setText("");
+        gui.getGuiSpieler().add(new Spieler(name, color));
         gui.updateStartButtonState();
     }
 }
