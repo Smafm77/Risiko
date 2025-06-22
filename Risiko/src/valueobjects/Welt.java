@@ -34,8 +34,7 @@ public class Welt implements Serializable {
         moeglicheMissionen = spielmaterial.missionenErstellen(alleKontinente);
     }
 
-    public void verteileLaender(List<Spieler> spielerListe) {  //Vielleicht eher in domain.Spiel? Ist so glaube ich auch auf deiner Zeichnung wenn ich das richtig sehe :) JA
-
+    public void verteileLaender(List<Spieler> spielerListe) {
         Collections.shuffle(alleLaender);
 
         int spielerAnzahl = spielerListe.size();

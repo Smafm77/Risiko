@@ -94,7 +94,7 @@ public class Spiel implements Serializable {
         AktiverSpielerListener.fire(aktuellerSpieler);
     }
 
-    private void naechstePhase() {
+    public void naechstePhase() {
         try {
             SpielSpeichern.speichern(this, "spielstand.risiko");
             System.out.println("Spiel erfolgreich gespeichert!");

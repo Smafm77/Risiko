@@ -7,20 +7,56 @@ import valueobjects.Land;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class NeuesSpielEinlesen implements Serializable {
+
+    public Map<String, Integer> laenderFarbcodesEinlesen() throws IOException {
+        Map<String, Integer> map = new HashMap<>();
+        BufferedReader br = new BufferedReader(new FileReader("Laenderfarben.txt"));
+        String input;
+        while ((input = br.readLine()) != null) {
+            input = input.trim();
+            if (!input.contains(":")) continue;
+            String[] parts = input.split(":");
+            if (parts.length < 2) continue;
+            String landName = parts[0].trim();
+            String farbeStr = parts[1].trim();
+            try {
+                int farbcode = Integer.parseInt(farbeStr, 16);
+                map.put(landName, farbcode);
+            } catch (NumberFormatException e) {
+                System.out.println("FEHLER: Farbcode für " + landName + " nicht lesbar: " + farbeStr);
+            }
+        }
+        br.close();
+        return map;
+    }
+
     public ArrayList<Land> alleLaenderEinlesen() throws FileNotFoundException, IOException,
             NumberFormatException { //FileReader, readLine, parseInt
         ArrayList<Land> alleLaender = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader("Staatenliste.txt"));
         String input;
+
+        Map<String, Integer> farbMap = laenderFarbcodesEinlesen();
+
         while ((input = br.readLine()) != null) {
             String[] values = input.trim().split(" "); //Array der Werte einer Zeile - müssen durch exakt ein Leerzeichen getrennt sein
-            String landName = values[0];
+            String landName = values[0].trim();
             int staerke = Integer.parseInt(values[1]); //NumberFormatException
             if (!input.isEmpty()) {
-                alleLaender.add(new Land(staerke, landName));
+                Land land = new Land(staerke, landName);
+                Integer farbe = farbMap.get(landName);
+                if (farbe != null) {
+                    land.setFarbe(farbe);
+                } else {
+                    System.out.println("WARNUNG: Kein Farbcode für Land \"" + landName + "\" gefunden!");
+                    land.setFarbe(0xCCCCCC);
+                }
+                alleLaender.add(land);
             }
         }
         alleNachbarnEinlesen(alleLaender);
@@ -42,7 +78,7 @@ public class NeuesSpielEinlesen implements Serializable {
         }
     }
 
-    public ArrayList<Kontinent> alleKontinenteEinlesen(ArrayList<Land> laender)  throws FileNotFoundException, IOException,
+    public ArrayList<Kontinent> alleKontinenteEinlesen(ArrayList<Land> laender) throws FileNotFoundException, IOException,
             NumberFormatException { //FileReader, readLine, parseInt{
         ArrayList<Kontinent> kontinente = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader("Kontinentliste.txt"));
@@ -65,7 +101,7 @@ public class NeuesSpielEinlesen implements Serializable {
         BufferedReader br = new BufferedReader(new FileReader("Staatenliste.txt"));
         String input;
         int index = 0;
-        while ((input = br.readLine()) != null){
+        while ((input = br.readLine()) != null) {
             String[] values = input.trim().split(" ");
             int staerke = Integer.parseInt(values[1]);
             alleKarten.add(new Karte(laender.get(index), staerke));
@@ -74,7 +110,7 @@ public class NeuesSpielEinlesen implements Serializable {
         return alleKarten;
     }
 
-    public HashSet<Mission> missionenErstellen(ArrayList<Kontinent> kontinente){
+    public HashSet<Mission> missionenErstellen(ArrayList<Kontinent> kontinente) {
         HashSet<Mission> missionen = new HashSet<>();
 
         missionen.add(new Kontinenteroberung(kontinente.get(1), kontinente.get(5)));
@@ -87,7 +123,7 @@ public class NeuesSpielEinlesen implements Serializable {
 
         missionen.add(new Laendereroberungplus(18));
         missionen.add(new Laendereroberung(24));
-        for (int i = 0; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             missionen.add(new Spielervernichtung(i, 24));
         }
 

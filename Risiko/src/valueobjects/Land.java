@@ -1,4 +1,5 @@
 package valueobjects;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ public class Land implements Serializable {
     private final String name;
     private Spieler besitzer;
     private int einheiten;
+    private int farbe;
     private HashSet<Land> nachbarn = new HashSet<>();
 
     public Land(int strength, String name) {
@@ -20,6 +22,9 @@ public class Land implements Serializable {
     }
 
     //region getters
+    public int getFarbe() {
+        return farbe;
+    }
 
     public String getName() {
         return name;
@@ -43,6 +48,11 @@ public class Land implements Serializable {
     //endregion
 
     //region setters
+
+    public void setFarbe(int farbe){
+        this.farbe = farbe;
+    }
+
     public void setBesitzer(Spieler spieler) {
         this.besitzer = spieler;
     }
@@ -59,7 +69,7 @@ public class Land implements Serializable {
 
     public void einheitenEntfernen(int einheiten) {
         this.einheiten -= einheiten;
-        if(this.einheiten < 0){
+        if (this.einheiten < 0) {
             this.einheiten = 0;
         }
     }
