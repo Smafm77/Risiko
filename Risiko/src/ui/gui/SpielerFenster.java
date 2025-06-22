@@ -62,7 +62,7 @@ public class SpielerFenster extends JFrame {
         pnlActions.removeAll();
 
         if (amZug) {
-            lblInfo.setText("Du bists am Zug!");
+            lblInfo.setText("Du bist am Zug!");
             //ToDO je nach Spielphase bedingt optionen einfügen wie in cui
             JButton btnEndTurn = new JButton("Zug beenden");
             btnEndTurn.addActionListener(e -> {
