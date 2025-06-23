@@ -27,6 +27,12 @@ public class AddPlayerListener implements ActionListener {
         String color = (String) gui.getCboColor().getSelectedItem();
         gui.getListModel().addElement(name + "(" + color + ")");
         gui.getTfPlayerName().setText("");
+        gui.cboColor.removeItem(color);
+        if (gui.farben.isEmpty()){
+            gui.btnAddPlayer.setEnabled(false);
+        } else {
+            gui.tfPlayerName.grabFocus();
+        }
         gui.getGuiSpieler().add(new Spieler(name, color, farbeZuId(color)));
         gui.updateStartButtonState();
     }

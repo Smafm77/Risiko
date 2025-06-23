@@ -6,6 +6,8 @@ import valueobjects.Spieler;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Vector;
 
 public class GuiMain extends JFrame {
     private static final String TITLE = "Risiko - Start";
@@ -13,8 +15,9 @@ public class GuiMain extends JFrame {
 
     protected final JButton btnLoadGame = new JButton("Spiel laden");
     protected final JTextField tfPlayerName = new JTextField();
-    protected final JComboBox<String> cboColor = new JComboBox<>(new String[]{
-            "Rot", "Blau", "Gruen", "Gelb", "Orange", "Violett"});
+    protected ArrayList<String> farbenList = new ArrayList<>(Arrays.asList("Rot", "Blau", "Gruen", "Gelb", "Orange", "Violett"));
+    protected Vector<String> farben = new Vector<>(farbenList);
+    protected final JComboBox<String> cboColor = new JComboBox<>(farben);
     protected final JButton btnAddPlayer = new JButton("Spieler hinzufügen");
     protected final DefaultListModel<String> listModel = new DefaultListModel<>();
     protected final JList<String> listPlayers = new JList<>(listModel);
