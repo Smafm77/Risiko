@@ -26,6 +26,7 @@ public class MapPanel extends JPanel {
     private LandKlickListener klickListener;
     private Map<String, Point> landKoordinaten = new HashMap<>();
     private final Map<String, Image> iconByColor = new HashMap<>();
+    private Map<String, Color> spielerFarbe = new HashMap<>();
 
 
     private void ladeIcons(){
@@ -41,6 +42,14 @@ public class MapPanel extends JPanel {
             e.printStackTrace();
         }
     }
+    private void ladeFarben(){
+        spielerFarbe.put("Blau", Color.decode("#001dff"));
+        spielerFarbe.put("Gelb", Color.decode("#fff700"));
+        spielerFarbe.put("Gruen", Color.decode("#1bff00"));
+        spielerFarbe.put("Orange", Color.decode("#ff8300"));
+        spielerFarbe.put("Rot", Color.decode("#cc0000"));
+        spielerFarbe.put("Violett", Color.decode("#740ece"));
+    }
 
     public MapPanel(ArrayList<Land> laenderListe){
         try {
@@ -50,6 +59,7 @@ public class MapPanel extends JPanel {
             img = null;
             bgImg = null;
         }
+        ladeFarben();
         ladeKoordinaten();
         ladeIcons();
         for (Land land : laenderListe){
@@ -73,12 +83,15 @@ public class MapPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
+        Font font = new Font(Font.DIALOG, Font.BOLD, 15);
+        g.setFont(font);
         int w = getWidth();
         int h = getHeight();
         g.drawImage(bgImg, 0, 0, w, h, null);
         g.drawImage(img, 0, 0, w, h, null);
         for (Land land : farbwertZuLand.values()) {
             Spieler spieler = land.getBesitzer();
+            g.setColor(spielerFarbe.get(spieler.getFarbe()));
             Point p = landKoordinaten.get(land.getName());
 
             double sx = getWidth() / (double) bgImg.getWidth();
