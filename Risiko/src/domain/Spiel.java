@@ -85,14 +85,10 @@ public class Spiel implements Serializable {
     }
 
     public void naechsterSpieler() {
-        int aktuelleID = aktuellerSpieler.getId();
-        if (aktuelleID < spielerListe.size()) {
-            aktuellerSpieler = spielerListe.get(aktuellerSpieler.getId());
-
-        } else {
-            aktuellerSpieler = spielerListe.getFirst();
-
-        }
+        do{
+            int aktuelleID = aktuellerSpieler.getId();
+            aktuellerSpieler = spielerListe.get((aktuelleID + 1) & spielerListe.size());
+        } while (!aktuellerSpieler.isAlive());
         AktiverSpielerListener.fire(aktuellerSpieler);
     }
 
@@ -107,7 +103,10 @@ public class Spiel implements Serializable {
         switch (phase) {
             case VERTEILEN -> phase = Spielphase.ANGRIFF;
             case ANGRIFF -> phase = Spielphase.VERSCHIEBEN;
-            case VERSCHIEBEN -> phase = Spielphase.VERTEILEN;
+            case VERSCHIEBEN -> {
+                naechsterSpieler();
+                phase = Spielphase.VERTEILEN;
+            }
         }
     }
 
@@ -115,10 +114,6 @@ public class Spiel implements Serializable {
         menue.setSpieler(aktuellerSpieler);
         if (!menue.getmLogik().weiterSpielen()) {
             return false;
-        }
-        if (!aktuellerSpieler.isAlive()) {
-            naechsterSpieler();
-            return true;
         }
         phase = Spielphase.VERTEILEN;
         //Truppen erhalten
@@ -143,7 +138,6 @@ public class Spiel implements Serializable {
         }
 
         naechstePhase();
-        naechsterSpieler();
 
         return true;
     }
