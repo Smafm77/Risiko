@@ -89,6 +89,8 @@ public class MapPanel extends JPanel {
             Image icon = iconByColor.get(spieler.getFarbe());
             if (icon != null){
                 g.drawImage(icon, drawX - icon.getWidth(null)/2, drawY - icon.getHeight(null)/2, null);
+                String landesEinheiten = String.valueOf(land.getEinheiten());
+                g.drawString(landesEinheiten, drawX + 15, drawY + icon.getHeight(null)/2);
             }
         }
     }
