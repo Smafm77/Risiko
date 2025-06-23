@@ -5,6 +5,7 @@ import valueobjects.Spieler;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class AddPlayerListener implements ActionListener {
     private final GuiMain gui;
@@ -26,7 +27,19 @@ public class AddPlayerListener implements ActionListener {
         String color = (String) gui.getCboColor().getSelectedItem();
         gui.getListModel().addElement(name + "(" + color + ")");
         gui.getTfPlayerName().setText("");
-        gui.getGuiSpieler().add(new Spieler(name, color));
+        gui.getGuiSpieler().add(new Spieler(name, color, farbeZuId(color)));
         gui.updateStartButtonState();
+    }
+
+    private int farbeZuId(String color){
+        return switch (color) {
+            case "Rot" -> 1;
+            case "Blau" -> 2;
+            case "Grün" -> 3;
+            case "Gelb" -> 4;
+            case "Orange" -> 5;
+            case "Violett" -> 6;
+            default -> 0;
+        };
     }
 }

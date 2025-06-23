@@ -3,6 +3,7 @@ package ui.gui;
 import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeBewegungException;
 import valueobjects.Land;
+import valueobjects.Spieler;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,7 +11,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +24,23 @@ public class MapPanel extends JPanel {
     private BufferedImage bgImg;
     private Map<Integer, Land> farbwertZuLand = new HashMap<>();
     private LandKlickListener klickListener;
+    private Map<String, Point> landKoordinaten = new HashMap<>();
+    private final Map<String, Image> iconByColor = new HashMap<>();
+
+
+    private void ladeIcons(){
+        try{
+            iconByColor.put("Blau", ImageIO.read(new File("playericon_blau.png")));
+            iconByColor.put("Gelb", ImageIO.read(new File("playericon_gelb.png")));
+            iconByColor.put("Gruen", ImageIO.read(new File("playericon_gruen.png")));
+            iconByColor.put("Orange", ImageIO.read(new File("playericon_orange.png")));
+            iconByColor.put("Rot", ImageIO.read(new File("playericon_rot.png")));
+            iconByColor.put("Violett", ImageIO.read(new File("playericon_violett.png")));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public MapPanel(ArrayList<Land> laenderListe){
         try {
@@ -30,6 +50,8 @@ public class MapPanel extends JPanel {
             img = null;
             bgImg = null;
         }
+        ladeKoordinaten();
+        ladeIcons();
         for (Land land : laenderListe){
             farbwertZuLand.put(land.getFarbe(), land);
         }
@@ -51,15 +73,27 @@ public class MapPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
-        if(img != null && bgImg != null) {
-            int w = getWidth();
-            int h = getHeight();
-            g.drawImage(bgImg, 0, 0, w, h, null);
-            g.drawImage(img, 0, 0, w, h, null);
+        int w = getWidth();
+        int h = getHeight();
+        g.drawImage(bgImg, 0, 0, w, h, null);
+        g.drawImage(img, 0, 0, w, h, null);
+        for (Land land : farbwertZuLand.values()) {
+            Spieler spieler = land.getBesitzer();
+            Point p = landKoordinaten.get(land.getName());
 
+            double sx = getWidth() / (double) bgImg.getWidth();
+            double sy = getHeight() / (double) bgImg.getHeight();
+            int drawX = (int) Math.round(p.x * sx);
+            int drawY = (int) Math.round(p.y * sy);
+
+            Image icon = iconByColor.get(spieler.getFarbe());
+            if (icon != null){
+                g.drawImage(icon, drawX - icon.getWidth(null)/2, drawY - icon.getHeight(null)/2, null);
+            }
         }
-        //ToDo: Truppen, Besitzer, etc
     }
+
+
 
     public Land getLandAt(int x, int y){
         if (bgImg == null) return null;
@@ -77,6 +111,22 @@ public class MapPanel extends JPanel {
 
     public void setLandKlickListener(LandKlickListener listener){
         this.klickListener = listener;
+    }
+
+    private void ladeKoordinaten(){
+        try (BufferedReader br = new BufferedReader(new FileReader("LaenderKoordinaten.txt"))){
+            String zeile;
+            while ((zeile = br.readLine()) != null){
+                String[] parts = zeile.split(":");
+                String name = parts[0].trim();
+                String[] xy = parts[1].split(",");
+                int x = Integer.parseInt(xy[0].trim());
+                int y = Integer.parseInt(xy[1].trim());
+                landKoordinaten.put(name, new Point(x,y));
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 }

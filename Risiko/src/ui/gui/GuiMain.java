@@ -1,7 +1,6 @@
 package ui.gui;
 
 import domain.Spiel;
-import ui.Risiko;
 import valueobjects.Spieler;
 
 import javax.swing.*;
@@ -15,7 +14,7 @@ public class GuiMain extends JFrame {
     protected final JButton btnLoadGame = new JButton("Spiel laden");
     protected final JTextField tfPlayerName = new JTextField();
     protected final JComboBox<String> cboColor = new JComboBox<>(new String[]{
-            "Rot", "Blau", "Grün", "Gelb", "Orange", "Violett"});
+            "Rot", "Blau", "Gruen", "Gelb", "Orange", "Violett"});
     protected final JButton btnAddPlayer = new JButton("Spieler hinzufügen");
     protected final DefaultListModel<String> listModel = new DefaultListModel<>();
     protected final JList<String> listPlayers = new JList<>(listModel);
@@ -104,6 +103,7 @@ public class GuiMain extends JFrame {
     }
 
     public static void main(String[] args) {
+
         SwingUtilities.invokeLater(GuiMain::new);
     }
 }

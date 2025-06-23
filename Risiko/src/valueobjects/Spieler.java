@@ -28,9 +28,10 @@ public class Spieler implements Serializable {
         alive = true;
     }
 
-    public Spieler(String name, String farbe) {
+    public Spieler(String name, String farbe, int id) {
         this.name = name.trim();
         this.farbe = farbe;
+        this.id = id;
         alive = true;
     }
 
@@ -39,7 +40,9 @@ public class Spieler implements Serializable {
         return name;
     }
 
-    //ToDo Farbe später hier einfügen
+    public String getFarbe(){
+        return farbe;
+    }
 
     public int getId() {
         return id;
