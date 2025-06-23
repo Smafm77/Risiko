@@ -105,7 +105,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     break;
 
                 case VERSCHIEBEN_ZIEL:
-                    if (!ausgewaehlt1.getNachbarn().contains(land) || !land.getBesitzer().equals(spieler)) {
+                    if (!ausgewaehlt1.connectionPossible(land)) {
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Nur eigene Nachbarländer als Ziel!");
                         return;
                     }
@@ -117,7 +117,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     mapPanel.repaint();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
-                    auswahlModus = AuswahlModus.KEINER;
+                    auswahlModus = AuswahlModus.VERSCHIEBEN_HERKUNFT;
                     break;
 
                 default:
@@ -185,7 +185,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             pnlActions.add(btnFertig);
         }
 
-        if (!Objects.equals(spieler.getName(), spiel.getAktuellerSpieler().getName())) {
+        if (!Objects.equals(spieler.getName(), spiel.getAktuellerSpieler().getName())) { //Warum nicht einfach spieler.equals(spiel.getAktuellerSpieler()) ?
             auswahlModus = AuswahlModus.KEINER;
             lblInfo.setText("Spieler " + spiel.getAktuellerSpieler().getName() + " ist am Zug.");
             pnlActions.setVisible(false);
