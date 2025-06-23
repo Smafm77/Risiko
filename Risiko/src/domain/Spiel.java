@@ -86,8 +86,8 @@ public class Spiel implements Serializable {
 
     public void naechsterSpieler() {
         do{
-            int aktuelleID = aktuellerSpieler.getId();
-            aktuellerSpieler = spielerListe.get((aktuelleID + 1) & spielerListe.size());
+            int spielerIndex = spielerListe.indexOf(aktuellerSpieler);
+            aktuellerSpieler = spielerListe.get((spielerIndex + 1) % spielerListe.size());
         } while (!aktuellerSpieler.isAlive());
         AktiverSpielerListener.fire(aktuellerSpieler);
     }
