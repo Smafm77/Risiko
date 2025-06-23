@@ -59,7 +59,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     land.einheitenHinzufuegen(1);
                     verbleibendeTruppen--;
                     lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
-                    mapPanel.repaint();
+                    updateAllMaps();
                     if (verbleibendeTruppen <= 0) {
                         auswahlModus = AuswahlModus.KEINER;
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Alle Einheiten verteilt!");
@@ -88,7 +88,8 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     boolean ergebnis = spiel.kampf(ausgewaehlt1, ausgewaehlt2, truppenA, truppenV);
                     String sieger = ergebnis ? spieler.getName() : land.getBesitzer().getName();
                     JOptionPane.showMessageDialog(SpielerFenster.this, sieger + " hat den Kampf gewonnen.");
-                    mapPanel.repaint();
+                    JOptionPane.showMessageDialog(verteidiger, sieger + " hat den Kampf gewonnen.");
+                    updateAllMaps();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
                     auswahlModus = AuswahlModus.ANGRIFF_HERKUNFT;
@@ -115,7 +116,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     int anzahl = frageAnzahl("Wie viele Einheiten verschieben? (max " + max + ")", 1, max);
                     spieler.bewegeEinheiten(anzahl, ausgewaehlt1, ausgewaehlt2);
                     JOptionPane.showMessageDialog(SpielerFenster.this, "Einheiten verschoben!");
-                    mapPanel.repaint();
+                    updateAllMaps();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
                     auswahlModus = AuswahlModus.VERSCHIEBEN_HERKUNFT;
@@ -201,6 +202,11 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private void updateViewInAllFenster() {
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
             fenster.updateView(spiel);
+        }
+    }
+    private void updateAllMaps(){
+        for (SpielerFenster fenster : SpielerFenster.ALLE) {
+            fenster.mapPanel.repaint();
         }
     }
 
