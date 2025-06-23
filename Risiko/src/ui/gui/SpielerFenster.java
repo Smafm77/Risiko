@@ -4,6 +4,7 @@ import domain.AktiverSpielerListener;
 import domain.Spiel;
 import exceptions.FalscherBesitzerException;
 import exceptions.UngueltigeBewegungException;
+import persistence.NeuesSpielEinlesen;
 import valueobjects.Land;
 import valueobjects.Spieler;
 import enums.AuswahlModus;
@@ -23,7 +24,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private Land ausgewaehlt2;
 
     private static final java.util.List<SpielerFenster> ALLE = new java.util.ArrayList<>();
-
+    NeuesSpielEinlesen einlesen = new NeuesSpielEinlesen();
     private JLabel lblInfo;
     private JLabel lblPhase;
     private JPanel pnlActions;
@@ -34,7 +35,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         this.spieler = spieler;
         setTitle("Risiko - " + spieler.getName());
         this.spiel = Spiel.getInstance();
-
+        buildWelt();
         ALLE.add(this);
 
         setLayout(new BorderLayout());
@@ -214,4 +215,13 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             JOptionPane.showMessageDialog(this, "Bitte Zahl zwischen " + min + " und " + max + " eingeben!");
         }
     }
+
+    public void buildWelt() throws IOException {
+        spiel.getWelt().verteileLaender(spiel.getSpielerListe());
+        spiel.getWelt().weiseMissionenZu();
+        spiel.getKartenStapel().addAll((einlesen.kartenstapelEinlesen(einlesen.alleLaenderEinlesen())));
+
+    }
+
+
 }
