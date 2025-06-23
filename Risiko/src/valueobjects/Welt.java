@@ -14,7 +14,7 @@ public class Welt implements Serializable {
     private static final long serialVersionUID = 1L;
     private ArrayList<Land> alleLaender;
     public ArrayList<Kontinent> alleKontinente;
-    public ArrayList<Spieler> spielerListe;
+    public ArrayList<Spieler> spielerListe = new ArrayList<>();
     private HashSet<Mission> moeglicheMissionen;
 
     public ArrayList<Land> getAlleLaender() {
@@ -25,16 +25,21 @@ public class Welt implements Serializable {
         return spielerListe;
     }
 
+    public void setSpielerListe(ArrayList<Spieler> spielerListe) {
+        this.spielerListe.clear();
+        this.spielerListe.addAll(spielerListe);
+        verteileLaender();
+        weiseMissionenZu();
+    }
 
-    public Welt(ArrayList<Spieler> spieler) throws IOException {
+    public Welt() throws IOException {
         NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
         alleLaender = spielmaterial.alleLaenderEinlesen();
         alleKontinente = spielmaterial.alleKontinenteEinlesen(alleLaender);
-        spielerListe = spieler;
         moeglicheMissionen = spielmaterial.missionenErstellen(alleKontinente);
     }
 
-    public void verteileLaender(List<Spieler> spielerListe) {
+    private void verteileLaender() {
         Collections.shuffle(alleLaender);
 
         int spielerAnzahl = spielerListe.size();
@@ -53,7 +58,7 @@ public class Welt implements Serializable {
         }
     }
 
-    public void weiseMissionenZu(){
+    private void weiseMissionenZu(){
         for (Spieler spieler : spielerListe){
             Mission mission = moeglicheMissionen.stream().findFirst().orElseThrow();
             moeglicheMissionen.remove(mission);

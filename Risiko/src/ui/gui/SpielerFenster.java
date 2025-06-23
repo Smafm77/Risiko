@@ -35,7 +35,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         this.spieler = spieler;
         setTitle("Risiko - " + spieler.getName());
         this.spiel = Spiel.getInstance();
-        buildWelt();
         ALLE.add(this);
 
         setLayout(new BorderLayout());
@@ -215,13 +214,4 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             JOptionPane.showMessageDialog(this, "Bitte Zahl zwischen " + min + " und " + max + " eingeben!");
         }
     }
-
-    public void buildWelt() throws IOException {
-        spiel.getWelt().verteileLaender(spiel.getSpielerListe());
-        spiel.getWelt().weiseMissionenZu();
-        spiel.getKartenStapel().addAll((einlesen.kartenstapelEinlesen(einlesen.alleLaenderEinlesen())));
-
-    }
-
-
 }

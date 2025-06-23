@@ -1,6 +1,7 @@
 package domain;
 
 import exceptions.*;
+import persistence.NeuesSpielEinlesen;
 import persistence.SpielSpeichern;
 import valueobjects.*;
 import ui.cui.Menue;
@@ -15,8 +16,8 @@ import java.util.*;
 public class Spiel implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    ArrayList<Spieler> spielerListe = new ArrayList<>();
-    Welt welt = new Welt(spielerListe);
+    Welt welt = new Welt();
+    ArrayList<Spieler> spielerListe = welt.getSpielerListe();
     HashSet<Karte> kartenStapel = new HashSet<>();
     private final transient Menue menue = new Menue(); //am besten Menue aus Spiel raus nehmen aber grade bin ich zu müde
     private Spieler aktuellerSpieler = null;
@@ -48,7 +49,8 @@ public class Spiel implements Serializable {
 
     private Spiel() throws IOException {
         System.out.println("Starte Spiel...");
-
+        NeuesSpielEinlesen einlesen = new NeuesSpielEinlesen();
+        kartenStapel = einlesen.kartenstapelEinlesen(welt.getAlleLaender());
     }
 
     public HashSet<Karte> getKartenStapel() {

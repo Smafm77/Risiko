@@ -7,6 +7,7 @@ import exceptions.UngueltigeAuswahlException;
 import valueobjects.Land;
 import valueobjects.Spieler;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -67,6 +68,7 @@ public class MenueEingabe {
     }
 
     public void spielerAnlegen(int anzahlSpieler) {
+        ArrayList<Spieler> spielerListe = new ArrayList<>();
         for (int i = 1; i <= anzahlSpieler; i++) {
             while (true) {
                 try {
@@ -76,7 +78,7 @@ public class MenueEingabe {
                         throw new UngueltigeAuswahlException("Spielername darf nicht leer sein!");
                     }
                     Spieler spieler = new Spieler(name, i);
-                    menue.getWelt().getSpielerListe().add(spieler);
+                    spielerListe.add(spieler);
                     break;
                 } catch (UngueltigeAuswahlException e) {
                     System.out.println("Fehler: " + e.getMessage());
@@ -84,6 +86,7 @@ public class MenueEingabe {
                 }
             }
         }
+        menue.getWelt().setSpielerListe(spielerListe);
     }
 
     public void spielerAbfrage() {
