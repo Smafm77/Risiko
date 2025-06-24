@@ -87,8 +87,9 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen "+ausgewaehlt2.getName()+" vor "+spieler.getName()+"'s "+ truppenA +" angreifenden Truppen verteidigen? (max " + Math.min(ausgewaehlt2.getEinheiten(), 2) + ")?", 1, Math.min(ausgewaehlt2.getEinheiten(), 2));
                     boolean ergebnis = spiel.kampf(ausgewaehlt1, ausgewaehlt2, truppenA, truppenV);
                     String sieger = ergebnis ? spieler.getName() : land.getBesitzer().getName();
-                    JOptionPane.showMessageDialog(SpielerFenster.this, sieger + " hat den Kampf gewonnen.");
-                    JOptionPane.showMessageDialog(verteidiger, sieger + " hat den Kampf gewonnen.");
+                    String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen") ;
+                    JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
+                    JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
                     updateMissionProgress();
                     updateAllMaps();
                     ausgewaehlt1 = null;
