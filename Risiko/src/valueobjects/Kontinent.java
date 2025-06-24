@@ -43,7 +43,7 @@ public class Kontinent implements Serializable {
     }
 
     public int getBesetzungsFortschritt(Spieler spieler, int bruchteil){
-        return Math.toIntExact(Arrays.stream(gebiete).filter(land -> land.getBesitzer().equals(spieler)).count()) * bruchteil / gebiete.length;
+        return (Math.toIntExact(Arrays.stream(gebiete).filter(land -> land.getBesitzer().equals(spieler)).count()) * bruchteil) / gebiete.length;
     }
     //endregion
 

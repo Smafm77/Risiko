@@ -214,7 +214,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         }
     }
     private void updateMissionProgress(){
-        //spieler.getMissionProgress(spiel);
+        spieler.getMissionProgress(spiel);
     }
 
     private int frageAnzahl(String frage, int min, int max) {
