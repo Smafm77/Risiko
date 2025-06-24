@@ -33,7 +33,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
     public SpielerFenster(Spiel spiel, Spieler spieler) throws IOException {
         this.spieler = spieler;
-        setTitle("Risiko - " + spieler.getName());
+        setTitle("Risiko - " + spieler.getName() + " (" + spieler.getFarbe() + ")");
         this.spiel = Spiel.getInstance();
         ALLE.add(this);
 
