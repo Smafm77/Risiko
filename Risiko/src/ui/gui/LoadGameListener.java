@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LoadGameListener implements ActionListener {
     private final GuiMain gui;
@@ -40,7 +41,8 @@ public class LoadGameListener implements ActionListener {
                 }
                 gui.setVisible(false);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(gui, "Fehler beim Laden!!");
+                JOptionPane.showMessageDialog(gui, "Fehler beim Laden!! Cause:" + ex.getCause());
+                System.out.println("Source: " + Arrays.toString(ex.getStackTrace()));
             }
         }
     }
