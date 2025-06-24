@@ -19,7 +19,7 @@ public class KleinerKontinentEroberung extends Kontinenteroberung{
     public int getFortschritt(Spiel spiel, Spieler spieler){
         int prog = 0;
         prog += kontinent1.getBesetzungsFortschritt(spieler, 33) + kontinent2.getBesetzungsFortschritt(spieler, 33);
-        if(spiel.getWelt().alleKontinente.stream().anyMatch(kontinent -> (!kontinent.equals(kontinent1) && !kontinent.equals(kontinent2) && kontinent.getEinzigerBesitzer().equals(spieler)))){
+        if(spiel.getWelt().alleKontinente.stream().anyMatch(kontinent -> (!kontinent.equals(kontinent1) && !kontinent.equals(kontinent2) && kontinent.getEinzigerBesitzer() != null && kontinent.getEinzigerBesitzer().equals(spieler)))){
             prog +=34;
         }
         return prog;
