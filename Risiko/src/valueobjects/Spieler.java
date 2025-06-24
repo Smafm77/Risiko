@@ -75,6 +75,9 @@ public class Spieler implements Serializable {
     public boolean hatMissionErfuellt(Spiel spiel){
         return mission.istErfuellt(spiel, this);
     }
+    public int getMissionProgress(Spiel spiel){
+        return mission.getFortschritt(spiel, this);
+    }
     //endregion
 
     public void teileMissionZu(Mission mission){

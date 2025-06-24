@@ -89,6 +89,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     String sieger = ergebnis ? spieler.getName() : land.getBesitzer().getName();
                     JOptionPane.showMessageDialog(SpielerFenster.this, sieger + " hat den Kampf gewonnen.");
                     JOptionPane.showMessageDialog(verteidiger, sieger + " hat den Kampf gewonnen.");
+                    updateMissionProgress();
                     updateAllMaps();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
@@ -160,6 +161,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             JButton btnFertig = new JButton("Verteilen abschließen");
             btnFertig.addActionListener(e -> {
                 spiel.naechstePhase();
+                updateMissionProgress();
                 updateViewInAllFenster();
             });
             pnlActions.add(btnFertig);
@@ -183,6 +185,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             btnFertig.addActionListener(e -> {
                 spiel.naechstePhase();
                 updateViewInAllFenster();
+                updateMissionProgress();
             });
             pnlActions.add(btnFertig);
         }
@@ -190,6 +193,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         if (!Objects.equals(spieler.getName(), spiel.getAktuellerSpieler().getName())) { //Warum nicht einfach spieler.equals(spiel.getAktuellerSpieler()) ?
             auswahlModus = AuswahlModus.KEINER;
             lblInfo.setText("Spieler " + spiel.getAktuellerSpieler().getName() + " ist am Zug.");
+            updateMissionProgress();
             pnlActions.setVisible(false);
         } else {
             pnlActions.setVisible(true);
@@ -208,6 +212,9 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
             fenster.mapPanel.repaint();
         }
+    }
+    private void updateMissionProgress(){
+        spieler.getMissionProgress(spiel);//
     }
 
     private int frageAnzahl(String frage, int min, int max) {
