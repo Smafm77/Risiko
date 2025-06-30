@@ -35,7 +35,7 @@ public class NeuesSpielEinlesen implements Serializable {
         return map;
     }
 
-    public ArrayList<Land> alleLaenderEinlesen() throws FileNotFoundException, IOException,
+    public ArrayList<Land> alleLaenderEinlesen() throws IOException,
             NumberFormatException { //FileReader, readLine, parseInt
         ArrayList<Land> alleLaender = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader("Staatenliste.txt"));
@@ -63,7 +63,7 @@ public class NeuesSpielEinlesen implements Serializable {
         return alleLaender;
     }
 
-    private void alleNachbarnEinlesen(ArrayList<Land> laender) throws FileNotFoundException, IOException,
+    private void alleNachbarnEinlesen(ArrayList<Land> laender) throws IOException,
             NumberFormatException {//FileReader, readLine, parseInt
         BufferedReader br = new BufferedReader(new FileReader("Nachbarliste.txt"));
         String input;
@@ -78,7 +78,7 @@ public class NeuesSpielEinlesen implements Serializable {
         }
     }
 
-    public ArrayList<Kontinent> alleKontinenteEinlesen(ArrayList<Land> laender) throws FileNotFoundException, IOException,
+    public ArrayList<Kontinent> alleKontinenteEinlesen(ArrayList<Land> laender) throws IOException,
             NumberFormatException { //FileReader, readLine, parseInt{
         ArrayList<Kontinent> kontinente = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader("Kontinentliste.txt"));
@@ -96,7 +96,7 @@ public class NeuesSpielEinlesen implements Serializable {
         return kontinente;
     }
 
-    public HashSet<Karte> kartenstapelEinlesen(ArrayList<Land> laender) throws FileNotFoundException, IOException, NumberFormatException {//FileReader, readLine, parseInt
+    public HashSet<Karte> kartenstapelEinlesen(ArrayList<Land> laender) throws IOException, NumberFormatException {//FileReader, readLine, parseInt
         HashSet<Karte> alleKarten = new HashSet<>();
         BufferedReader br = new BufferedReader(new FileReader("Staatenliste.txt"));
         String input;

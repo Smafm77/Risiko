@@ -2,8 +2,6 @@ package ui.gui;
 
 import domain.AktiverSpielerListener;
 import domain.Spiel;
-import exceptions.FalscherBesitzerException;
-import exceptions.UngueltigeBewegungException;
 import persistence.NeuesSpielEinlesen;
 import valueobjects.Land;
 import valueobjects.Spieler;

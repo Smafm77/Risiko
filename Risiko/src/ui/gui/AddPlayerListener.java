@@ -5,7 +5,6 @@ import valueobjects.Spieler;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Objects;
 
 public class AddPlayerListener implements ActionListener {
     private final GuiMain gui;

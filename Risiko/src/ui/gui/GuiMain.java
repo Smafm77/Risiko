@@ -59,10 +59,6 @@ public class GuiMain extends JFrame {
         return listModel;
     }
 
-    JButton getBtnStartGame() {
-        return btnStartGame;
-    }
-
     private void initLayout() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(WINDOW_SIZE);

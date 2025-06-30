@@ -22,11 +22,11 @@ import java.util.Map;
 public class MapPanel extends JPanel {
     private BufferedImage img;
     private BufferedImage bgImg;
-    private Map<Integer, Land> farbwertZuLand = new HashMap<>();
+    private final Map<Integer, Land> farbwertZuLand = new HashMap<>();
     private LandKlickListener klickListener;
-    private Map<String, Point> landKoordinaten = new HashMap<>();
+    private final Map<String, Point> landKoordinaten = new HashMap<>();
     private final Map<String, Image> iconByColor = new HashMap<>();
-    private Map<String, Color> spielerFarbe = new HashMap<>();
+    private final Map<String, Color> spielerFarbe = new HashMap<>();
 
 
     private void ladeIcons(){
