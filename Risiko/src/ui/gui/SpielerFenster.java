@@ -3,6 +3,7 @@ package ui.gui;
 import domain.AktiverSpielerListener;
 import domain.Spiel;
 import persistence.NeuesSpielEinlesen;
+import persistence.SpielSpeichern;
 import valueobjects.Land;
 import valueobjects.Spieler;
 import enums.AuswahlModus;
@@ -32,6 +33,10 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     public SpielerFenster(Spiel spiel, Spieler spieler) throws IOException {
         this.spieler = spieler;
         setTitle("Risiko - " + spieler.getName() + " (" + spieler.getFarbe() + ")");
+
+        JMenuBar menuBar = getBar();
+        setJMenuBar(menuBar);
+
         this.spiel = Spiel.getInstance();
         ALLE.add(this);
 
@@ -142,6 +147,29 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
 
     }
+
+    private JMenuBar getBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("Datei");
+        JMenuItem miSaveExit = new JMenuItem("Speichern & Beenden");
+        miSaveExit.addActionListener(e -> {
+            try {
+                SpielSpeichern.speichern(Spiel.getInstance(), "spielstand.risiko");
+                dispose();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Fehler beim Speichern:\n" + ex.getMessage(),
+                        "Speicherfehler",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
+        fileMenu.add(miSaveExit);
+        menuBar.add(fileMenu);
+        return menuBar;
+    }
+
     @Override
     public void onAktiverSpielerGeaendert(Spieler neu){
         SwingUtilities.invokeLater(() -> {
