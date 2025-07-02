@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Risiko/ModuleClient/ModuleClient.iml" filepath="$PROJECT_DIR$/Risiko/ModuleClient/ModuleClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Risiko/ModuleCommon/ModuleCommon.iml" filepath="$PROJECT_DIR$/Risiko/ModuleCommon/ModuleCommon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Risiko/ModuleServer/ModuleServer.iml" filepath="$PROJECT_DIR$/Risiko/ModuleServer/ModuleServer.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/SoSe25_Prog2_GruppeB_1.iml" filepath="$PROJECT_DIR$/.idea/SoSe25_Prog2_GruppeB_1.iml" />
     </modules>
   </component>
