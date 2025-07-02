@@ -6,6 +6,4 @@ module ModuleCommon {
     exports common.valueobjects;
 
     requires java.datatransfer;
-    requires ModuleServer;
-    requires ModuleClient;
 }
