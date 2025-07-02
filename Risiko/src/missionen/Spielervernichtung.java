@@ -5,6 +5,8 @@ import domain.Spiel;
 
 public class Spielervernichtung extends Laendereroberung {
     private final int opferId;
+    private Boolean missionPossible = null;
+    private Spieler opfer = null;
 
     public Spielervernichtung(int opferId, int zielAnzahl) {
         super(zielAnzahl);
@@ -12,10 +14,11 @@ public class Spielervernichtung extends Laendereroberung {
     }
     @Override
     public boolean istErfuellt(Spiel spiel, Spieler spieler) {
-        if (spiel.getSpielerListe().size() > opferId && opferId != spieler.getId()){
-            Spieler opfer = spiel.getSpielerListe().get(opferId);
-            beschreibung = "Vernichte alle Truppen von " + opfer.getName() + "!";
-            return opfer.isAlive();
+        if (missionPossible == null){
+            firstMission(spiel, spieler);
+        }
+        if (missionPossible){
+            return !opfer.isAlive();
         } else {
             return super.istErfuellt(spiel, spieler);
         }
@@ -23,11 +26,21 @@ public class Spielervernichtung extends Laendereroberung {
 
     @Override
     public int getFortschritt(Spiel spiel, Spieler spieler){
-        if (spiel.getSpielerListe().size() > opferId && opferId != spieler.getId()){
-            Spieler opfer = spiel.getSpielerListe().get(opferId);
-            return opfer.getBesetzteLaender().size() * 100 / 41;
+        if (missionPossible == null){
+            firstMission(spiel, spieler);
+        }
+        if (missionPossible){
+            return 100 - (opfer.getBesetzteLaender().size() * 100 / 42);
         } else {
             return super.getFortschritt(spiel, spieler);
+        }
+    }
+
+    private void firstMission(Spiel spiel, Spieler spieler){
+        missionPossible = opferId != spieler.getId() && spiel.getSpielerListe().stream().anyMatch(spieler1 -> spieler1.getId() == opferId);
+        if (missionPossible){
+            opfer = spiel.getSpielerListe().stream().filter(spieler1 -> spieler1.getId() == opferId).findFirst().orElseThrow();
+            beschreibung = "Vernichte alle Truppen von " + opfer.getName() + "!";
         }
     }
 }

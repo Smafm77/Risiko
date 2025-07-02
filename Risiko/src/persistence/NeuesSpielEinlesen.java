@@ -123,7 +123,7 @@ public class NeuesSpielEinlesen implements Serializable {
 
         missionen.add(new Laendereroberungplus(18));
         missionen.add(new Laendereroberung(24));
-        for (int i = 0; i < 6; i++) {
+        for (int i = 1; i <= 6; i++) {
             missionen.add(new Spielervernichtung(i, 24));
         }
 

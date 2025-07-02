@@ -40,7 +40,7 @@ public class AddPlayerListener implements ActionListener {
         return switch (color) {
             case "Rot" -> 1;
             case "Blau" -> 2;
-            case "Grün" -> 3;
+            case "Gruen" -> 3;
             case "Gelb" -> 4;
             case "Orange" -> 5;
             case "Violett" -> 6;
