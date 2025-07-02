@@ -93,7 +93,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen") ;
                     JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
                     JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
-                    updateMissionProgress();
+                    updateMissionStaus();
                     updateAllMaps();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
@@ -135,8 +135,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
         pnlActions = new JPanel();
         add(pnlActions, BorderLayout.SOUTH);
-
-        updateView(spiel);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 600);
@@ -182,13 +180,14 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         pnlActions.removeAll();
 
         if (spiel.getPhase() == Spielphase.VERTEILEN && spiel.getAktuellerSpieler().equals(spieler)) {
+            updateMissionStaus();
             verbleibendeTruppen = spieler.berechneNeueEinheiten(spiel.getWelt().alleKontinente);
             auswahlModus = AuswahlModus.VERTEILEN;
             lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten. Klicke auf deine Länder.");
             JButton btnFertig = new JButton("Verteilen abschließen");
             btnFertig.addActionListener(e -> {
+                updateMissionStaus();
                 spiel.naechstePhase();
-                updateMissionProgress();
                 updateViewInAllFenster();
             });
             pnlActions.add(btnFertig);
@@ -210,9 +209,9 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             lblInfo.setText("Wähle ein eigenes Land, von dem du Einheiten verschieben willst.");
             JButton btnFertig = new JButton("Verschieben abschließen");
             btnFertig.addActionListener(e -> {
+                updateMissionStaus();
                 spiel.naechstePhase();
                 updateViewInAllFenster();
-                updateMissionProgress();
             });
             pnlActions.add(btnFertig);
         }
@@ -220,7 +219,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         if (!Objects.equals(spieler.getName(), spiel.getAktuellerSpieler().getName())) { //Warum nicht einfach spieler.equals(spiel.getAktuellerSpieler()) ?
             auswahlModus = AuswahlModus.KEINER;
             lblInfo.setText("Spieler " + spiel.getAktuellerSpieler().getName() + " ist am Zug.");
-            updateMissionProgress();
+            updateMissionProgressbar();
             pnlActions.setVisible(false);
         } else {
             pnlActions.setVisible(true);
@@ -234,15 +233,36 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
             fenster.updateView(spiel);
         }
+        System.out.println("__________");
     }
     private void updateAllMaps(){
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
             fenster.mapPanel.repaint();
         }
     }
-    private void updateMissionProgress(){
-        spieler.getMissionProgress(spiel);
+    private void updateMissionStaus(){
+        checkMissionFulfilled();
+        updateMissionProgressbar();
     }
+    private void updateMissionProgressbar(){//Updated Progressbar auf Bildschirm
+        System.out.println(spieler.getName() + ": [ " + spieler.getMissionProgress(spiel) + "% ]");
+    }
+    private void checkMissionFulfilled(){
+        if (spieler.hatMissionErfuellt(spiel)){
+            updateMissionProgressbar();
+            benachrichtigeAlle(spieler.getName() + "'s Mission ist erfüllt. Damit hat " +spieler.getName()+ " gewonnen!");
+            //ToDo spielende einläuten
+        } else {
+            System.out.println(spieler.getName() + " hat Mission [" + spieler.getMissionBeschreibung() + "] noch nicht erfüllt");
+        }
+    }
+    private void benachrichtigeAlle(String nachricht){
+        //make Asynchron? alle sollen die Nachricht zeitgleich, nicht nacheinander kriegen wenn möglich
+        for (SpielerFenster fenster : SpielerFenster.ALLE){
+            JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
 
     private int frageAnzahl(String frage, int min, int max) {
         while (true) {
