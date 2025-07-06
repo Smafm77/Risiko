@@ -1,9 +1,10 @@
 package client.ui;
 
+import common.enums.Spielphase;
+import common.valueobjects.Spieler;
+import common.valueobjects.Welt;
 import server.domain.Spiel;
-import common.exceptions.FalscherBesitzerException;
-import common.exceptions.UngueltigeAuswahlException;
-import common.exceptions.UngueltigeBewegungException;
+import common.exceptions.*;
 import server.persistence.SpielSpeichern;
 import client.ui.cui.Menue;
 
@@ -50,7 +51,9 @@ public class Risiko implements Serializable {
                     case 1:
                         spiel = Spiel.getInstance();
                         menue.setSpiel(spiel);
-                        spiel.starteSpiel(menue);
+                        menue.buildWelt();
+                        continueSpiel(menue);
+
                         break;
                     case 2:
                         spielSpeichern();
@@ -99,7 +102,48 @@ public class Risiko implements Serializable {
         spiel = SpielSpeichern.laden("spielstand.risiko");
         System.out.println("Spiel erfolgreich geladen!");
         menue.setSpiel(spiel);
-        spiel.continueSpiel(menue);
+        continueSpiel(menue);
 
+    }
+
+    public void continueSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
+        boolean nochEinmal;
+        do {
+            nochEinmal = spielRunde(menue);
+        } while (nochEinmal);
+    }
+
+    private boolean spielRunde (Menue menue){
+        menue.setSpieler(spiel.getAktuellerSpieler());
+        Spieler spieler = menue.getAktuellerSpieler();
+        if (!menue.getmLogik().weiterSpielen()) {
+            return false;
+        }
+
+        //Truppen erhalten
+        spiel.setPhase(Spielphase.VERTEILEN);
+        int neueEinheiten = spieler.berechneNeueEinheiten(spiel.getWelt().alleKontinente);
+        menue.getmEingabe().zuweisungEinheiten(neueEinheiten, spieler);
+        spieler.setSchonErobert(false);
+        spiel.naechstePhase();
+        boolean weiterAngreifen = true;
+        while (weiterAngreifen) {
+            weiterAngreifen = menue.hauptMenue(spieler);
+        }
+        spiel.naechstePhase();
+        boolean weiterVerschieben = true;
+        while (weiterVerschieben) {
+            weiterVerschieben = menue.hauptMenue(spieler);
+        }
+
+        //ToDo Kontrolliere ob dies die richtige Stelle im Ablauf der Runde ist
+        // Methode für Spiel zu Ende schreiben
+        if (spieler.hatMissionErfuellt(spiel)) {
+            System.out.println("Herzlichen Glückwunsch! Mission erfüllt: " + spieler.getMissionBeschreibung());
+        }
+
+        spiel.naechstePhase();
+
+        return true;
     }
 }

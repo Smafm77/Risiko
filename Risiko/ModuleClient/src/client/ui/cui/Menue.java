@@ -1,5 +1,7 @@
 package client.ui.cui;
 
+import common.exceptions.*;
+import common.valueobjects.*;
 import server.domain.Spiel;
 import common.enums.Spielphase;
 import server.persistence.NeuesSpielEinlesen;
@@ -25,6 +27,10 @@ public class Menue {
     public void setSpiel(Spiel spiel) {
         this.spiel = spiel;
         this.welt = spiel.getWelt();
+    }
+
+    public Spieler getAktuellerSpieler() {
+        return aktuellerSpieler;
     }
 
     public Welt getWelt() {
@@ -107,7 +113,7 @@ public class Menue {
                 Optional<Karte> optChosenCard = spieler.getKarten().stream().filter(c -> c.getLand().getName().equalsIgnoreCase(input.trim())).findFirst(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
                 if (optChosenCard.isPresent()) {
                     Karte chosenCard = optChosenCard.orElseThrow(); //Todo: Wird das denn gefangen?
-                    spiel.spieleKarte(spieler, chosenCard);
+                    mEingabe.zuweisungEinheiten(spiel.spieleKarte(spieler, chosenCard), spieler);
                 }
             }
         } catch (NoSuchElementException | UngueltigeAuswahlException e) {

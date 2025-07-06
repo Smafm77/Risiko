@@ -1,13 +1,8 @@
 package server.domain;
 
-import common.exceptions.FalscherBesitzerException;
-import common.exceptions.UngueltigeAuswahlException;
-import common.exceptions.UngueltigeBewegungException;
-import common.valueobjects.Karte;
-import common.valueobjects.Spieler;
-import common.valueobjects.Welt;
-import server.persistence.NeuesSpielEinlesen;
-import server.persistence.SpielSpeichern;
+import common.exceptions.*;
+import common.valueobjects.*;
+import server.persistence.*;
 import common.enums.Spielphase;
 
 import java.io.IOException;
@@ -22,7 +17,6 @@ public class Spiel implements Serializable {
     Welt welt = new Welt();
     ArrayList<Spieler> spielerListe = welt.getSpielerListe();
     HashSet<Karte> kartenStapel = new HashSet<>();
-    //private final transient Menue menue = new Menue(); //am besten Menue aus Spiel raus nehmen aber grade bin ich zu müde
     private Spieler aktuellerSpieler = null;
     private Spielphase phase = Spielphase.VERTEILEN;
     private static Spiel instance;
@@ -72,21 +66,6 @@ public class Spiel implements Serializable {
         phase = Spielphase.VERTEILEN;
     }
 
-    public void starteSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
-        menue.buildWelt();
-        boolean nochEinmal;
-        do {
-            nochEinmal = spielRunde(menue);
-        } while (nochEinmal);
-    }
-
-    public void continueSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
-        boolean nochEinmal;
-        do {
-            nochEinmal = spielRunde(menue);
-        } while (nochEinmal);
-    }
-
     public void naechsterSpieler() {
         do{
             int spielerIndex = spielerListe.indexOf(aktuellerSpieler);
@@ -113,37 +92,6 @@ public class Spiel implements Serializable {
         }
     }
 
-    public boolean spielRunde(Menue menue) {
-        menue.setSpieler(aktuellerSpieler);
-        if (!menue.getmLogik().weiterSpielen()) {
-            return false;
-        }
-        phase = Spielphase.VERTEILEN;
-        //Truppen erhalten
-        int neueEinheiten = aktuellerSpieler.berechneNeueEinheiten(welt.alleKontinente);
-        menue.getmEingabe().zuweisungEinheiten(neueEinheiten, aktuellerSpieler);
-        aktuellerSpieler.setSchonErobert(false);
-        naechstePhase();
-        boolean weiterAngreifen = true;
-        while (weiterAngreifen) {
-            weiterAngreifen = menue.hauptMenue(aktuellerSpieler);
-        }
-        naechstePhase();
-        boolean weiterVerschieben = true;
-        while (weiterVerschieben) {
-            weiterVerschieben = menue.hauptMenue(aktuellerSpieler);
-        }
-
-        //ToDo Kontrolliere ob dies die richtige Stelle im Ablauf der Runde ist
-        // Methode für Spiel zu Ende schreiben
-        if (aktuellerSpieler.hatMissionErfuellt(this)) {
-            System.out.println("Herzlichen Glückwunsch! Mission erfüllt: " + aktuellerSpieler.getMissionBeschreibung());
-        }
-
-        naechstePhase();
-
-        return true;
-    }
 
     //region playing Cards
     public void zieheKarte(Spieler spieler) {
@@ -156,12 +104,13 @@ public class Spiel implements Serializable {
         }
     }
 
-    public void spieleKarte(Spieler spieler, Karte karte) {
+    public int spieleKarte(Spieler spieler, Karte karte) {
         if (spieler.getKarten().contains(karte)) {
             spieler.getKarten().remove(karte);
-            menue.getmEingabe().zuweisungEinheiten(karte.getStrength(), spieler);
             kartenStapel.add(karte);
+            return karte.getStrength();
         }
+        return 0;
     }
     //endregion
 
