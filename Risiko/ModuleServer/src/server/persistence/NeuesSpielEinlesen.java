@@ -3,6 +3,7 @@ package server.persistence;
 import common.valueobjects.Karte;
 import common.valueobjects.Kontinent;
 import common.valueobjects.Land;
+import server.domain.missionen.*;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package common.missionen;
+package server.domain.missionen;
 
 import common.valueobjects.Kontinent;
 import server.domain.Spiel;
