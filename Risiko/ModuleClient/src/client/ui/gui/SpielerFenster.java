@@ -1,5 +1,6 @@
 package client.ui.gui;
 
+import common.valueobjects.Karte;
 import server.domain.AktiverSpielerListener;
 import server.domain.Spiel;
 import server.persistence.NeuesSpielEinlesen;
@@ -12,7 +13,10 @@ import common.enums.Spielphase;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private final Spiel spiel;
@@ -48,6 +52,26 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         pnlNorth.add(lblInfo);
         pnlNorth.add(lblPhase);
         add(pnlNorth, BorderLayout.NORTH);
+        JPanel missionsPanel = new JPanel();
+        missionsPanel.setLayout(new BoxLayout(missionsPanel, BoxLayout.Y_AXIS));
+        missionsPanel.setBorder(BorderFactory.createTitledBorder("Mission"));
+
+        JLabel lblMission = new JLabel(spiel.getMissionBeschreibung(spieler));
+        lblMission.setAlignmentX(Component.CENTER_ALIGNMENT);
+        missionsPanel.add(lblMission);
+
+        JProgressBar progress = new JProgressBar(0,100);
+        progress.setValue(spiel.getMissionProgress(spieler));
+        progress.setStringPainted(true);
+        progress.setAlignmentX(Component.CENTER_ALIGNMENT);
+        missionsPanel.add(progress);
+
+        missionsPanel.add(Box.createVerticalStrut(20));
+
+        JButton btnKarteSpielen = new JButton(("Karte spielen"));
+        btnKarteSpielen.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnKarteSpielen.addActionListener(e -> openCardsSelectionDialog());
+        missionsPanel.add(btnKarteSpielen);
 
         mapPanel = new MapPanel(spiel.getWelt().getAlleLaender());
         mapPanel.setLandKlickListener(land -> {
@@ -131,7 +155,11 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     // Kein Modus → Nichts tun
             }
         });
-        add(mapPanel, BorderLayout.CENTER);
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,missionsPanel,mapPanel);
+        split.setResizeWeight(0.3);
+        split.setOneTouchExpandable(true);
+
+        add(split, BorderLayout.CENTER);
 
         pnlActions = new JPanel();
         add(pnlActions, BorderLayout.SOUTH);
@@ -144,6 +172,33 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setVisible(true);
 
 
+    }
+
+    private void openCardsSelectionDialog(){
+        Set<Karte> karteSet = spieler.getKarten();
+        if(karteSet.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Du hast keine Karten zum spielen!");
+            return;
+        }
+        ArrayList<Karte> karten = new ArrayList<>(karteSet);
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (Karte k : karten){
+            model.addElement("["+k.getStrength()+"]"+k.getLand().getName());
+        }
+        JList<String> list = new JList<>(model);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        int res = JOptionPane.showConfirmDialog(this, new JScrollPane(list), "Karte spielen", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (res == JOptionPane.OK_OPTION && !list.isSelectionEmpty()){
+            Karte auswahl = karten.get(list.getSelectedIndex());
+            int bonus = spiel.spieleKarte(spieler, auswahl);
+            if(bonus > 0){
+                JOptionPane.showMessageDialog(this, "Karte gespielt! Du erhälst " + bonus + " Einheiten.", "Karte gespielt", JOptionPane.INFORMATION_MESSAGE);
+                updateView(spiel);
+            }else {
+                JOptionPane.showMessageDialog(this, "Karte konnte nicht gespielt werden.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private JMenuBar getBar() {
