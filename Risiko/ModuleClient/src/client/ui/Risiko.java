@@ -52,6 +52,7 @@ public class Risiko implements Serializable {
                         spiel = Spiel.getInstance();
                         menue.setSpiel(spiel);
                         menue.buildWelt();
+                        spiel.init();
                         continueSpiel(menue);
 
                         break;
