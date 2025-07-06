@@ -20,7 +20,7 @@ public class Spiel implements Serializable {
     HashSet<Karte> kartenStapel;
     public final Map<Spieler, Mission> missionen = new HashMap<>();
     private Spieler aktuellerSpieler = null;
-    private Spielphase phase = Spielphase.VERTEILEN;
+    private Spielphase phase;
     private static Spiel instance;
 
     public static synchronized Spiel getInstance() {
