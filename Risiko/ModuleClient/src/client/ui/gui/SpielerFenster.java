@@ -60,7 +60,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         lblMission.setAlignmentX(Component.CENTER_ALIGNMENT);
         missionsPanel.add(lblMission);
 
-        JProgressBar progress = new JProgressBar(0,100);
+        JProgressBar progress = new JProgressBar(0, 100);
         progress.setValue(spiel.getMissionProgress(spieler));
         progress.setStringPainted(true);
         progress.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -111,10 +111,10 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     ausgewaehlt2 = land;
                     int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(ausgewaehlt1.getEinheiten() - 1, 3) + ")?", 1, Math.min(ausgewaehlt1.getEinheiten() - 1, 3));
                     SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(ausgewaehlt2.getBesitzer())).findFirst().orElseThrow();
-                    int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen "+ausgewaehlt2.getName()+" vor "+spieler.getName()+"'s "+ truppenA +" angreifenden Truppen verteidigen? (max " + Math.min(ausgewaehlt2.getEinheiten(), 2) + ")?", 1, Math.min(ausgewaehlt2.getEinheiten(), 2));
+                    int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(ausgewaehlt2.getEinheiten(), 2) + ")?", 1, Math.min(ausgewaehlt2.getEinheiten(), 2));
                     boolean ergebnis = spiel.kampf(ausgewaehlt1, ausgewaehlt2, truppenA, truppenV);
                     String sieger = ergebnis ? spieler.getName() : land.getBesitzer().getName();
-                    String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen") ;
+                    String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
                     JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
                     JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
                     updateMissionStaus();
@@ -155,7 +155,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     // Kein Modus → Nichts tun
             }
         });
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,missionsPanel,mapPanel);
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, missionsPanel, mapPanel);
         split.setResizeWeight(0.3);
         split.setOneTouchExpandable(true);
 
@@ -174,28 +174,42 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
     }
 
-    private void openCardsSelectionDialog(){
+    private void openCardsSelectionDialog() {
         Set<Karte> karteSet = spieler.getKarten();
-        if(karteSet.isEmpty()){
+        if (karteSet.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Du hast keine Karten zum spielen!");
             return;
         }
         ArrayList<Karte> karten = new ArrayList<>(karteSet);
         DefaultListModel<String> model = new DefaultListModel<>();
-        for (Karte k : karten){
-            model.addElement("["+k.getStrength()+"]"+k.getLand().getName());
+        for (Karte k : karten) {
+            model.addElement("[" + k.getStrength() + "]" + k.getLand().getName());
         }
         JList<String> list = new JList<>(model);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         int res = JOptionPane.showConfirmDialog(this, new JScrollPane(list), "Karte spielen", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (res == JOptionPane.OK_OPTION && !list.isSelectionEmpty()){
+        if (res == JOptionPane.OK_OPTION && !list.isSelectionEmpty()) {
             Karte auswahl = karten.get(list.getSelectedIndex());
             int bonus = spiel.spieleKarte(spieler, auswahl);
-            if(bonus > 0){
+            if (bonus > 0) {
                 JOptionPane.showMessageDialog(this, "Karte gespielt! Du erhälst " + bonus + " Einheiten.", "Karte gespielt", JOptionPane.INFORMATION_MESSAGE);
-                updateView(spiel);
-            }else {
+                spiel.setPhase(Spielphase.VERTEILEN);
+                verbleibendeTruppen = bonus;
+                auswahlModus = AuswahlModus.VERTEILEN;
+                lblInfo.setText("Verteile " + bonus + " Bonus-Einheiten.");
+
+                pnlActions.removeAll();
+                JButton btnFertig = new JButton("Verteilen abschließen");
+                btnFertig.addActionListener(e -> {
+                    spiel.naechstePhase();
+                    updateViewInAllFenster();
+                });
+                pnlActions.add(btnFertig);
+                pnlActions.setVisible(true);
+                pnlActions.revalidate();
+                mapPanel.repaint();
+            } else {
                 JOptionPane.showMessageDialog(this, "Karte konnte nicht gespielt werden.", "Fehler", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -226,7 +240,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     }
 
     @Override
-    public void onAktiverSpielerGeaendert(Spieler neu){
+    public void onAktiverSpielerGeaendert(Spieler neu) {
         SwingUtilities.invokeLater(() -> {
             updateView(Spiel.getInstance());
         });
@@ -292,30 +306,35 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         }
         System.out.println("__________");
     }
-    private void updateAllMaps(){
+
+    private void updateAllMaps() {
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
             fenster.mapPanel.repaint();
         }
     }
-    private void updateMissionStaus(){
+
+    private void updateMissionStaus() {
         checkMissionFulfilled();
         updateMissionProgressbar();
     }
-    private void updateMissionProgressbar(){//Updated Progressbar auf Bildschirm
+
+    private void updateMissionProgressbar() {//Updated Progressbar auf Bildschirm
         System.out.println(spieler.getName() + ": [ " + spiel.getMissionProgress(spieler) + "% ]");
     }
-    private void checkMissionFulfilled(){
-        if (spiel.hatMissionErfuellt(spieler)){
+
+    private void checkMissionFulfilled() {
+        if (spiel.hatMissionErfuellt(spieler)) {
             updateMissionProgressbar();
-            benachrichtigeAlle(spieler.getName() + "'s Mission ist erfüllt. Damit hat " +spieler.getName()+ " gewonnen!");
+            benachrichtigeAlle(spieler.getName() + "'s Mission ist erfüllt. Damit hat " + spieler.getName() + " gewonnen!");
             //ToDo spielende einläuten
         } else {
             System.out.println(spieler.getName() + " hat Mission [" + spiel.getMissionBeschreibung(spieler) + "] noch nicht erfüllt");
         }
     }
-    private void benachrichtigeAlle(String nachricht){
+
+    private void benachrichtigeAlle(String nachricht) {
         //make Asynchron? alle sollen die Nachricht zeitgleich, nicht nacheinander kriegen wenn möglich
-        for (SpielerFenster fenster : SpielerFenster.ALLE){
+        for (SpielerFenster fenster : SpielerFenster.ALLE) {
             JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE);
         }
     }
@@ -328,7 +347,8 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             try {
                 int wert = Integer.parseInt(eingabe);
                 if (wert >= min && wert <= max) return wert;
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
             JOptionPane.showMessageDialog(this, "Bitte Zahl zwischen " + min + " und " + max + " eingeben!");
         }
     }
