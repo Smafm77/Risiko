@@ -153,7 +153,9 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         miSaveExit.addActionListener(e -> {
             try {
                 SpielSpeichern.speichern(Spiel.getInstance(), "spielstand.risiko");
-                dispose();
+                for (SpielerFenster fenster : SpielerFenster.ALLE) {
+                    fenster.dispose();
+                }
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(
                         this,

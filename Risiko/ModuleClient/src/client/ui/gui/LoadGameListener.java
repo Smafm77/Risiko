@@ -31,7 +31,6 @@ public class LoadGameListener implements ActionListener {
             File file = chooser.getSelectedFile();
             try {
                 Spiel geladen = SpielSpeichern.laden(file.getAbsolutePath());
-                geladen.init();
                 this.spielerListe = geladen.getSpielerListe();
                 this.aktuellerSpieler = geladen.getAktuellerSpieler();
                 this.phase = geladen.getPhase();
@@ -41,7 +40,7 @@ public class LoadGameListener implements ActionListener {
                 }
                 gui.setVisible(false);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(gui, "Fehler beim Laden!! Cause:" + ex.getCause());
+                JOptionPane.showMessageDialog(gui, "Fehler beim Laden!! Cause:" + ex.getCause() + ex.getMessage());
                 System.out.println("Source: " + Arrays.toString(ex.getStackTrace()));
             }
         }
