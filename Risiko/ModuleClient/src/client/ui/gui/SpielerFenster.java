@@ -245,15 +245,15 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         updateMissionProgressbar();
     }
     private void updateMissionProgressbar(){//Updated Progressbar auf Bildschirm
-        System.out.println(spieler.getName() + ": [ " + spieler.getMissionProgress(spiel) + "% ]");
+        System.out.println(spieler.getName() + ": [ " + spiel.getMissionProgress(spieler) + "% ]");
     }
     private void checkMissionFulfilled(){
-        if (spieler.hatMissionErfuellt(spiel)){
+        if (spiel.hatMissionErfuellt(spieler)){
             updateMissionProgressbar();
             benachrichtigeAlle(spieler.getName() + "'s Mission ist erfüllt. Damit hat " +spieler.getName()+ " gewonnen!");
             //ToDo spielende einläuten
         } else {
-            System.out.println(spieler.getName() + " hat Mission [" + spieler.getMissionBeschreibung() + "] noch nicht erfüllt");
+            System.out.println(spieler.getName() + " hat Mission [" + spiel.getMissionBeschreibung(spieler) + "] noch nicht erfüllt");
         }
     }
     private void benachrichtigeAlle(String nachricht){

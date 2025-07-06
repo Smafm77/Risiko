@@ -1,7 +1,6 @@
 package common.valueobjects;
 
-import server.domain.Spiel;
-import common.missionen.Mission;
+import common.exceptions.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -19,7 +18,6 @@ public class Spieler implements Serializable {
     private boolean schonErobert;
     private ArrayList<Land> besetzteLaender = new ArrayList<>();
     private HashSet<Karte> karten = new HashSet<>();
-    private Mission mission = null;
 
     public Spieler(String name, int id) {
         this.name = name.trim();
@@ -66,24 +64,9 @@ public class Spieler implements Serializable {
     public HashSet<Karte> getKarten() {
         return karten;
     }
-
-    public String getMissionBeschreibung(){
-        return mission.getBeschreibung();
-    }
-
-    public boolean hatMissionErfuellt(Spiel spiel){
-        return mission.istErfuellt(spiel, this);
-    }
-    public int getMissionProgress(Spiel spiel){
-        return mission.getFortschritt(spiel, this);
-    }
     //endregion
 
-    public void teileMissionZu(Mission mission){
-        if (this.mission == null){
-            this.mission = mission;
-        }
-    }
+
 
     //region Land Methoden
 

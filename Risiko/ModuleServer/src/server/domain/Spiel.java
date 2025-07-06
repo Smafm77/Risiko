@@ -2,6 +2,7 @@ package server.domain;
 
 import common.exceptions.*;
 import common.valueobjects.*;
+import server.domain.missionen.Mission;
 import server.persistence.*;
 import common.enums.Spielphase;
 
@@ -14,9 +15,10 @@ import java.util.*;
 public class Spiel implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    Welt welt = new Welt();
+    Welt welt = buildWelt();
     ArrayList<Spieler> spielerListe = welt.getSpielerListe();
-    HashSet<Karte> kartenStapel = new HashSet<>();
+    HashSet<Karte> kartenStapel;
+    public final Map<Spieler, Mission> missionen= new HashMap<>();
     private Spieler aktuellerSpieler = null;
     private Spielphase phase = Spielphase.VERTEILEN;
     private static Spiel instance;
@@ -192,4 +194,32 @@ public class Spiel implements Serializable {
     public void setPhase(Spielphase spielphase) {
         this.phase = spielphase;
     }
+
+    private Welt buildWelt() throws IOException{
+        NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
+        ArrayList<Land> laender = spielmaterial.alleLaenderEinlesen();
+        ArrayList<Kontinent> kontinente = spielmaterial.alleKontinenteEinlesen(laender);
+        return new Welt(laender, kontinente);
+    }
+
+    //region missionen
+    public void weiseMissionenZu(){
+        NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
+        HashSet<Mission> alleMissionen = spielmaterial.missionenErstellen(welt.alleKontinente);
+        for(Spieler spieler : welt.getSpielerListe()){
+            Mission mission = alleMissionen.stream().findFirst().orElseThrow();
+            alleMissionen.remove(mission);
+            missionen.put(spieler, mission);
+        }
+    }
+    public String getMissionBeschreibung (Spieler spieler){
+        return missionen.get(spieler).getBeschreibung();
+    }
+    public boolean hatMissionErfuellt(Spieler spieler){
+        return missionen.get(spieler).istErfuellt(this, spieler);
+    }
+    public int getMissionProgress (Spieler spieler){
+        return missionen.get(spieler).getFortschritt(this, spieler);
+    }
+    //endregion
 }

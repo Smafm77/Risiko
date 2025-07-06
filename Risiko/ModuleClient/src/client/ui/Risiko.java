@@ -138,8 +138,8 @@ public class Risiko implements Serializable {
 
         //ToDo Kontrolliere ob dies die richtige Stelle im Ablauf der Runde ist
         // Methode für Spiel zu Ende schreiben
-        if (spieler.hatMissionErfuellt(spiel)) {
-            System.out.println("Herzlichen Glückwunsch! Mission erfüllt: " + spieler.getMissionBeschreibung());
+        if (spiel.hatMissionErfuellt(spieler)) {
+            System.out.println("Herzlichen Glückwunsch! Mission erfüllt: " + spiel.getMissionBeschreibung(spieler));
         }
 
         spiel.naechstePhase();

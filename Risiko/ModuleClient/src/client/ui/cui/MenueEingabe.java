@@ -87,6 +87,7 @@ public class MenueEingabe {
             }
         }
         menue.getWelt().setSpielerListe(spielerListe);
+        menue.getSpiel().weiseMissionenZu();
     }
 
     public void spielerAbfrage() {

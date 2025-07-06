@@ -1,8 +1,6 @@
 package common.valueobjects;
 
 import common.exceptions.UngueltigeAuswahlException;
-import common.missionen.Mission;
-import server.persistence.NeuesSpielEinlesen;
 
 import java.io.*;
 import java.util.*;
@@ -15,7 +13,6 @@ public class Welt implements Serializable {
     private ArrayList<Land> alleLaender;
     public ArrayList<Kontinent> alleKontinente;
     public ArrayList<Spieler> spielerListe = new ArrayList<>();
-    private HashSet<Mission> moeglicheMissionen;
 
     public ArrayList<Land> getAlleLaender() {
         return alleLaender;
@@ -29,14 +26,11 @@ public class Welt implements Serializable {
         this.spielerListe.clear();
         this.spielerListe.addAll(spielerListe);
         verteileLaender();
-        weiseMissionenZu();
     }
 
-    public Welt() throws IOException {
-        NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
-        alleLaender = spielmaterial.alleLaenderEinlesen();
-        alleKontinente = spielmaterial.alleKontinenteEinlesen(alleLaender);
-        moeglicheMissionen = spielmaterial.missionenErstellen(alleKontinente);
+    public Welt(ArrayList<Land> laender, ArrayList<Kontinent> kontinente) throws IOException {
+        alleLaender = laender;
+        alleKontinente = kontinente;
     }
 
     private void verteileLaender() {
@@ -58,13 +52,6 @@ public class Welt implements Serializable {
         }
     }
 
-    private void weiseMissionenZu(){
-        for (Spieler spieler : spielerListe){
-            Mission mission = moeglicheMissionen.stream().findFirst().orElseThrow();
-            moeglicheMissionen.remove(mission);
-            spieler.teileMissionZu(mission);
-        }
-    }
 
     public Land findeLand(String name) throws UngueltigeAuswahlException {
         String suche = name.trim().toLowerCase();

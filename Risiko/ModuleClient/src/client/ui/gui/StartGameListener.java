@@ -23,6 +23,7 @@ public class StartGameListener implements ActionListener {
         try {
             Spiel spiel = Spiel.getInstance();
             spiel.getWelt().setSpielerListe(gui.getGuiSpieler());
+            spiel.weiseMissionenZu();
             spiel.init();
             AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
             for (Spieler s : gui.getGuiSpieler()){
