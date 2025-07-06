@@ -114,7 +114,7 @@ public class Risiko implements Serializable {
         } while (nochEinmal);
     }
 
-    private boolean spielRunde (Menue menue){
+    private boolean spielRunde(Menue menue) {
         menue.setSpieler(spiel.getAktuellerSpieler());
         Spieler spieler = menue.getAktuellerSpieler();
         if (!menue.getmLogik().weiterSpielen()) {

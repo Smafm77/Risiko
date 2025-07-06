@@ -37,7 +37,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         JMenuBar menuBar = getBar();
         setJMenuBar(menuBar);
 
-        this.spiel = Spiel.getInstance();
+        this.spiel = spiel;
         ALLE.add(this);
 
         setLayout(new BorderLayout());
@@ -140,7 +140,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setSize(800, 600);
         setLocationRelativeTo(null);
         AktiverSpielerListener.add(this);
-        updateView(Spiel.getInstance());
+        updateView(this.spiel);
         setVisible(true);
 
 

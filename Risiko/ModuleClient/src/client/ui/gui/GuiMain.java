@@ -23,9 +23,8 @@ public class GuiMain extends JFrame {
     protected final JList<String> listPlayers = new JList<>(listModel);
     protected final JButton btnStartGame = new JButton("Spiel starten");
     private final ArrayList<Spieler> guiSpieler = new ArrayList<>();
-    private Spiel spiel;
 
-    public ArrayList<Spieler> getGuiSpieler(){
+    public ArrayList<Spieler> getGuiSpieler() {
         return guiSpieler;
     }
 
@@ -38,15 +37,6 @@ public class GuiMain extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
     }
-
-    public void setSpiel(Spiel spiel) {
-        this.spiel = spiel;
-    }
-
-    public Spiel getSpiel() {
-        return spiel;
-    }
-
     JTextField getTfPlayerName() {
         return tfPlayerName;
     }

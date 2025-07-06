@@ -31,7 +31,7 @@ public class LoadGameListener implements ActionListener {
             File file = chooser.getSelectedFile();
             try {
                 Spiel geladen = SpielSpeichern.laden(file.getAbsolutePath());
-                gui.setSpiel(geladen);
+                geladen.init();
                 this.spielerListe = geladen.getSpielerListe();
                 this.aktuellerSpieler = geladen.getAktuellerSpieler();
                 this.phase = geladen.getPhase();

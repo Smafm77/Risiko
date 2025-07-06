@@ -18,7 +18,7 @@ public class Spiel implements Serializable {
     Welt welt = buildWelt();
     ArrayList<Spieler> spielerListe = welt.getSpielerListe();
     HashSet<Karte> kartenStapel;
-    public final Map<Spieler, Mission> missionen= new HashMap<>();
+    public final Map<Spieler, Mission> missionen = new HashMap<>();
     private Spieler aktuellerSpieler = null;
     private Spielphase phase = Spielphase.VERTEILEN;
     private static Spiel instance;
@@ -69,7 +69,7 @@ public class Spiel implements Serializable {
     }
 
     public void naechsterSpieler() {
-        do{
+        do {
             int spielerIndex = spielerListe.indexOf(aktuellerSpieler);
             aktuellerSpieler = spielerListe.get((spielerIndex + 1) % spielerListe.size());
         } while (!aktuellerSpieler.isAlive());
@@ -195,7 +195,7 @@ public class Spiel implements Serializable {
         this.phase = spielphase;
     }
 
-    private Welt buildWelt() throws IOException{
+    private Welt buildWelt() throws IOException {
         NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
         ArrayList<Land> laender = spielmaterial.alleLaenderEinlesen();
         ArrayList<Kontinent> kontinente = spielmaterial.alleKontinenteEinlesen(laender);
@@ -203,22 +203,25 @@ public class Spiel implements Serializable {
     }
 
     //region missionen
-    public void weiseMissionenZu(){
+    public void weiseMissionenZu() {
         NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
         HashSet<Mission> alleMissionen = spielmaterial.missionenErstellen(welt.alleKontinente);
-        for(Spieler spieler : welt.getSpielerListe()){
+        for (Spieler spieler : welt.getSpielerListe()) {
             Mission mission = alleMissionen.stream().findFirst().orElseThrow();
             alleMissionen.remove(mission);
             missionen.put(spieler, mission);
         }
     }
-    public String getMissionBeschreibung (Spieler spieler){
+
+    public String getMissionBeschreibung(Spieler spieler) {
         return missionen.get(spieler).getBeschreibung();
     }
-    public boolean hatMissionErfuellt(Spieler spieler){
+
+    public boolean hatMissionErfuellt(Spieler spieler) {
         return missionen.get(spieler).istErfuellt(this, spieler);
     }
-    public int getMissionProgress (Spieler spieler){
+
+    public int getMissionProgress(Spieler spieler) {
         return missionen.get(spieler).getFortschritt(this, spieler);
     }
     //endregion
