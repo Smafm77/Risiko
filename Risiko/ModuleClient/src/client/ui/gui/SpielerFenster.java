@@ -151,7 +151,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             }
         });
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, missionsPanel, mapPanel);
-        split.setResizeWeight(0.3);
+        split.setDividerLocation(0.3);
         split.setOneTouchExpandable(true);
 
         add(split, BorderLayout.CENTER);
