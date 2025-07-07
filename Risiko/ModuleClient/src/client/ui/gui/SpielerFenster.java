@@ -68,27 +68,22 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
         missionsPanel.add(Box.createVerticalStrut(20));
 
-        JButton btnKarteSpielen = new JButton(("Karte spielen"));
-        btnKarteSpielen.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnKarteSpielen.addActionListener(e -> openCardsSelectionDialog());
-        missionsPanel.add(btnKarteSpielen);
-
         mapPanel = new MapPanel(spiel.getWelt().getAlleLaender());
         mapPanel.setLandKlickListener(land -> {
             if (!spiel.getAktuellerSpieler().equals(spieler)) return;
 
             switch (auswahlModus) {
                 case VERTEILEN:
-                    if (!land.getBesitzer().equals(spieler)) {
-                        JOptionPane.showMessageDialog(SpielerFenster.this, "Dieses Land gehört dir nicht!");
-                        return;
-                    }
-                    land.einheitenHinzufuegen(1);
-                    verbleibendeTruppen--;
-                    lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
-                    updateAllMaps();
-                    if (verbleibendeTruppen <= 0) {
-                        auswahlModus = AuswahlModus.KEINER;
+                    if (verbleibendeTruppen > 0){
+                        if (!land.getBesitzer().equals(spieler)) {
+                            JOptionPane.showMessageDialog(SpielerFenster.this, "Dieses Land gehört dir nicht!");
+                            return;
+                        }
+                        land.einheitenHinzufuegen(1);
+                        verbleibendeTruppen--;
+                        lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
+                        updateAllMaps();
+                    } else {
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Alle Einheiten verteilt!");
                     }
                     break;
@@ -194,20 +189,9 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             int bonus = spiel.spieleKarte(spieler, auswahl);
             if (bonus > 0) {
                 JOptionPane.showMessageDialog(this, "Karte gespielt! Du erhälst " + bonus + " Einheiten.", "Karte gespielt", JOptionPane.INFORMATION_MESSAGE);
-                spiel.setPhase(Spielphase.VERTEILEN);
-                verbleibendeTruppen = bonus;
+                verbleibendeTruppen += bonus;
                 auswahlModus = AuswahlModus.VERTEILEN;
-                lblInfo.setText("Verteile " + bonus + " Bonus-Einheiten.");
-
-                pnlActions.removeAll();
-                JButton btnFertig = new JButton("Verteilen abschließen");
-                btnFertig.addActionListener(e -> {
-                    spiel.naechstePhase();
-                    updateViewInAllFenster();
-                });
-                pnlActions.add(btnFertig);
-                pnlActions.setVisible(true);
-                pnlActions.revalidate();
+                lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten. Klicke auf deine Länder.");
                 mapPanel.repaint();
             } else {
                 JOptionPane.showMessageDialog(this, "Karte konnte nicht gespielt werden.", "Fehler", JOptionPane.ERROR_MESSAGE);
@@ -251,15 +235,28 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         pnlActions.removeAll();
 
         if (spiel.getPhase() == Spielphase.VERTEILEN && spiel.getAktuellerSpieler().equals(spieler)) {
+            JButton btnKarteSpielen = new JButton(("Karte spielen"));
+            btnKarteSpielen.setAlignmentX(Component.CENTER_ALIGNMENT);
+            btnKarteSpielen.addActionListener(e -> openCardsSelectionDialog());
+            pnlActions.add(btnKarteSpielen);
+
             updateMissionStaus();
             verbleibendeTruppen = spieler.berechneNeueEinheiten(spiel.getWelt().alleKontinente);
+            spieler.setSchonErobert(false);
             auswahlModus = AuswahlModus.VERTEILEN;
             lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten. Klicke auf deine Länder.");
             JButton btnFertig = new JButton("Verteilen abschließen");
             btnFertig.addActionListener(e -> {
-                updateMissionStaus();
-                spiel.naechstePhase();
-                updateViewInAllFenster();
+                if (verbleibendeTruppen <= 0){
+                    pnlActions.remove(btnKarteSpielen);
+                    updateMissionStaus();
+                    spiel.naechstePhase();
+                    pnlActions.setVisible(false);
+                    pnlActions.setVisible(true);
+                    updateViewInAllFenster();
+                } else {
+                    JOptionPane.showMessageDialog(SpielerFenster.this, "Du hast noch nicht alle Truppen verteilt");
+                }
             });
             pnlActions.add(btnFertig);
         }

@@ -100,6 +100,7 @@ public class Spiel implements Serializable {
         try {
             Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
             Karte karte = optionalCard.orElseThrow();
+            kartenStapel.remove(karte);
             spieler.getKarten().add(karte);
         } catch (NoSuchElementException e) {
             System.out.println("Fehler: ");
@@ -170,10 +171,16 @@ public class Spiel implements Serializable {
     }
 
     public void erobern(Land herkunft, Land ziel, int besatzer) throws FalscherBesitzerException, UngueltigeBewegungException {
+        Spieler angreifer = herkunft.getBesitzer();
         Spieler verteidiger = ziel.getBesitzer();
-        ziel.wechselBesitzer(herkunft.getBesitzer());
-        herkunft.getBesitzer().bewegeEinheiten(besatzer, herkunft, ziel);
+        ziel.wechselBesitzer(angreifer);
+        angreifer.bewegeEinheiten(besatzer, herkunft, ziel);
         welt.findeKontinentenzugehoerigkeit(ziel).getEinzigerBesitzer();
+
+        if (!angreifer.getSchonErobert()){
+            zieheKarte(angreifer);
+            angreifer.setSchonErobert(true);
+        }
 
         if (verteidiger.getBesetzteLaender().isEmpty()) {
             verteidiger.sterben(herkunft.getBesitzer());
