@@ -24,13 +24,9 @@ public class LoadGameListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("Spielstand laden");
-        int result = chooser.showOpenDialog(gui);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
+
             try {
-                Spiel geladen = SpielSpeichern.laden(file.getAbsolutePath());
+                Spiel geladen = SpielSpeichern.laden("spielstand.risiko");
                 this.spielerListe = geladen.getSpielerListe();
                 this.aktuellerSpieler = geladen.getAktuellerSpieler();
                 this.phase = geladen.getPhase();
@@ -46,4 +42,4 @@ public class LoadGameListener implements ActionListener {
         }
     }
 
-}
+
