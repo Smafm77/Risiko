@@ -47,8 +47,9 @@ public class NeuesSpielEinlesen implements Serializable {
             String[] values = input.trim().split(" "); //Array der Werte einer Zeile - müssen durch exakt ein Leerzeichen getrennt sein
             String landName = values[0].trim();
             int staerke = Integer.parseInt(values[1]); //NumberFormatException
+            int id = Integer.parseInt(values[2]);
             if (!input.isEmpty()) {
-                Land land = new Land(staerke, landName);
+                Land land = new Land(staerke, landName, id);
                 Integer farbe = farbMap.get(landName);
                 if (farbe != null) {
                     land.setFarbe(farbe);

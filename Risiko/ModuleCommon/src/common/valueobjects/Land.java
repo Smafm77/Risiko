@@ -14,11 +14,13 @@ public class Land implements Serializable {
     private Spieler besitzer;
     private int einheiten;
     private int farbe;
+    private int id;
     private HashSet<Land> nachbarn = new HashSet<>();
 
-    public Land(int strength, String name) {
+    public Land(int strength, String name, int id) {
         this.name = name;
         this.einheiten = strength;
+        this.id = id;
     }
 
     //region getters
