@@ -55,10 +55,16 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         JPanel missionsPanel = new JPanel();
         missionsPanel.setLayout(new BoxLayout(missionsPanel, BoxLayout.Y_AXIS));
         missionsPanel.setBorder(BorderFactory.createTitledBorder("Mission"));
+        missionsPanel.setPreferredSize(new Dimension(250,0));
 
-        JLabel lblMission = new JLabel(spiel.getMissionBeschreibung(spieler));
-        lblMission.setAlignmentX(Component.CENTER_ALIGNMENT);
-        missionsPanel.add(lblMission);
+        JTextArea txtMission = new JTextArea(spiel.getMissionBeschreibung(spieler));
+        txtMission.setWrapStyleWord(true);
+        txtMission.setLineWrap(true);
+        txtMission.setEditable(false);
+        txtMission.setFocusable(false);
+        txtMission.setOpaque(false);
+        txtMission.setBorder(null);
+        missionsPanel.add(txtMission);
 
         JProgressBar progress = new JProgressBar(0, 100);
         progress.setValue(spiel.getMissionProgress(spieler));
@@ -151,7 +157,8 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             }
         });
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, missionsPanel, mapPanel);
-        split.setDividerLocation(0.3);
+        split.setDividerLocation(250);
+        split.setResizeWeight(0.0);
         split.setOneTouchExpandable(true);
 
         add(split, BorderLayout.CENTER);
