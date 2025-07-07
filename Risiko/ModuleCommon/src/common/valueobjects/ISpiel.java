@@ -22,7 +22,6 @@ public interface ISpiel {
     //endregion
 
     //region setter
-    void addSpieler(Spieler spieler);
     void setPhase(Spielphase spielphase);
     void weiseMissionenZu();
     //endregion

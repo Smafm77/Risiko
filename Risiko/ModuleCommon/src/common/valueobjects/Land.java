@@ -24,6 +24,10 @@ public class Land implements Serializable {
     }
 
     //region getters
+    public int getId() {
+        return id;
+    }
+
     public int getFarbe() {
         return farbe;
     }

@@ -64,6 +64,16 @@ public class Welt implements Serializable {
         }
         throw new UngueltigeAuswahlException("Land " + name + " existiert nicht.");
     }
+    public Land findeLand(int landId) {
+        for (Land land : alleLaender) {
+            if (land.getId() == landId) {
+                return land;
+            }
+
+        }
+        System.out.println("Land mit ID " + landId + " existiert nicht.");
+        return null;
+    }
 
     public Kontinent findeKontinentenzugehoerigkeit(Land land) throws NullPointerException {
         for (Kontinent kontinent : alleKontinente) {
@@ -72,6 +82,10 @@ public class Welt implements Serializable {
             }
         }
         return null; //sollte nie vorkommen
+    }
+
+    public Spieler findeSpieler(int id) { //No Such Element Exception
+        return spielerListe.stream().filter(spieler -> spieler.getId() == id).findAny().orElseThrow();
     }
 
 }

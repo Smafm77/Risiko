@@ -191,11 +191,6 @@ public class Spiel implements Serializable, ISpiel {
     }
     //endregion
 
-
-    public void addSpieler(Spieler spieler) {
-        this.spielerListe.add(spieler);
-    }
-
     public void setPhase(Spielphase spielphase) {
         this.phase = spielphase;
     }
