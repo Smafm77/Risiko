@@ -1,42 +1,42 @@
-Nordafrika 2
-Brasilien 2
-China 2
-Mittlerer-Osten 2
-Ostafrika 2
-Suedafrika 2
-Russland 2
-Indien 2
-Oststaaten 2
-Ostaustralien 2
-Afghanistan 2
-Zentralafrika 2
-Weststaaten 2
-Mongolei 2
-Argentinien 2
-Westaustralien 2
-Nordwest-Territorium 2
-Jakutien 2
-Peru 2
-Ural 2
-Aegypten 2
-Kamtschatka 1
-Mittelamerika 1
-Venezuela 1
-Sibirien 1
-Groenland 1
-Alberta 1
-Irkutsk 1
-Suedostasien 1
-Indonesien 1
-Ostkanada 1
-Alaska 1
-Ontario 1
-Suedeuropa 1
-Westeuropa 1
-Skandinavien 1
-Nordeuropa 1
-Neuguinea 1
-Madagaskar 1
-Japan 1
-Grossbritannien 1
-Island 1
+Nordafrika 2 0
+Brasilien 2 1
+China 2 2
+Mittlerer-Osten 2 3
+Ostafrika 2 4
+Suedafrika 2 5
+Russland 2 6
+Indien 2 7
+Oststaaten 2 8
+Ostaustralien 2 9
+Afghanistan 2 10
+Zentralafrika 2 11
+Weststaaten 2 12
+Mongolei 2 13
+Argentinien 2 14
+Westaustralien 2 15
+Nordwest-Territorium 2 16
+Jakutien 2 17
+Peru 2 18
+Ural 2 19
+Aegypten 2 20
+Kamtschatka 1 21
+Mittelamerika 1 22
+Venezuela 1 23
+Sibirien 1 24
+Groenland 1 25
+Alberta 1 26
+Irkutsk 1 27
+Suedostasien 1 28
+Indonesien 1 29
+Ostkanada 1 30
+Alaska 1 31
+Ontario 1 32
+Suedeuropa 1 33
+Westeuropa 1 34
+Skandinavien 1 35
+Nordeuropa 1 36
+Neuguinea 1 37
+Madagaskar 1 38
+Japan 1 39
+Grossbritannien 1 40
+Island 1 41
