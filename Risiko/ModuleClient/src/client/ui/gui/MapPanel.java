@@ -31,12 +31,12 @@ public class MapPanel extends JPanel {
 
     private void ladeIcons(){
         try{
-            iconByColor.put("Blau", ImageIO.read(new File("playericon_blau.png")));
-            iconByColor.put("Gelb", ImageIO.read(new File("playericon_gelb.png")));
-            iconByColor.put("Gruen", ImageIO.read(new File("playericon_gruen.png")));
-            iconByColor.put("Orange", ImageIO.read(new File("playericon_orange.png")));
-            iconByColor.put("Rot", ImageIO.read(new File("playericon_rot.png")));
-            iconByColor.put("Violett", ImageIO.read(new File("playericon_violett.png")));
+            iconByColor.put("Blau", ImageIO.read(new File("Risiko/Grafiken/playericon_blau.png")));
+            iconByColor.put("Gelb", ImageIO.read(new File("Risiko/Grafiken/playericon_gelb.png")));
+            iconByColor.put("Gruen", ImageIO.read(new File("Risiko/Grafiken/playericon_gruen.png")));
+            iconByColor.put("Orange", ImageIO.read(new File("Risiko/Grafiken/playericon_orange.png")));
+            iconByColor.put("Rot", ImageIO.read(new File("Risiko/Grafiken/playericon_rot.png")));
+            iconByColor.put("Violett", ImageIO.read(new File("Risiko/Grafiken/playericon_violett.png")));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,8 +53,8 @@ public class MapPanel extends JPanel {
 
     public MapPanel(ArrayList<Land> laenderListe){
         try {
-            img = ImageIO.read(new File("map-front.png"));
-            bgImg = ImageIO.read(new File("map-back.png"));
+            img = ImageIO.read(new File("Risiko/Grafiken/map-front.png"));
+            bgImg = ImageIO.read(new File("Risiko/Grafiken/map-back.png"));
         } catch (IOException e){
             img = null;
             bgImg = null;
@@ -129,7 +129,7 @@ public class MapPanel extends JPanel {
     }
 
     private void ladeKoordinaten(){
-        try (BufferedReader br = new BufferedReader(new FileReader("LaenderKoordinaten.txt"))){
+        try (BufferedReader br = new BufferedReader(new FileReader("Risiko/Txt-dateien/LaenderKoordinaten.txt"))){
             String zeile;
             while ((zeile = br.readLine()) != null){
                 String[] parts = zeile.split(":");
