@@ -205,7 +205,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         JMenuItem miSaveExit = new JMenuItem("Speichern & Beenden");
         miSaveExit.addActionListener(e -> {
             try {
-                SpielSpeichern.speichern(Spiel.getInstance(), "spielstand.risiko");
+                SpielSpeichern.speichern(spiel, "spielstand.risiko");
                 for (SpielerFenster fenster : SpielerFenster.ALLE) {
                     fenster.dispose();
                 }

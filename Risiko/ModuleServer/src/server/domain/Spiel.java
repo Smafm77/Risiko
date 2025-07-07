@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.util.*;
 
-public class Spiel implements Serializable {
+public class Spiel implements Serializable, ISpiel {
     @Serial
     private static final long serialVersionUID = 1L;
     Welt welt = buildWelt();
@@ -52,10 +52,6 @@ public class Spiel implements Serializable {
         kartenStapel = einlesen.kartenstapelEinlesen(welt.getAlleLaender());
     }
 
-    public HashSet<Karte> getKartenStapel() {
-        return kartenStapel;
-    }
-
     public ArrayList<Spieler> getSpielerListe() {
         return spielerListe;
     }
@@ -68,7 +64,7 @@ public class Spiel implements Serializable {
         phase = Spielphase.VERTEILEN;
     }
 
-    public void naechsterSpieler() {
+    private void naechsterSpieler() {
         do {
             int spielerIndex = spielerListe.indexOf(aktuellerSpieler);
             aktuellerSpieler = spielerListe.get((spielerIndex + 1) % spielerListe.size());
@@ -77,13 +73,7 @@ public class Spiel implements Serializable {
     }
 
     public void naechstePhase() {
-        try {
-            SpielSpeichern.speichern(this, "spielstand.risiko");
-            System.out.println("Spiel erfolgreich gespeichert!");
-        } catch (IOException e) {
-            System.out.println("Speichern fehlgeschlagen: " + e.getMessage());
-            System.out.println(Arrays.toString(e.getStackTrace()));
-        }
+        spielSpeichern();
         switch (phase) {
             case VERTEILEN -> phase = Spielphase.ANGRIFF;
             case ANGRIFF -> phase = Spielphase.VERSCHIEBEN;
@@ -93,10 +83,19 @@ public class Spiel implements Serializable {
             }
         }
     }
+    public void spielSpeichern (){
+        try {
+            SpielSpeichern.speichern(this, "spielstand.risiko");
+            System.out.println("Spiel erfolgreich gespeichert!");
+        } catch (IOException e) {
+            System.out.println("Speichern fehlgeschlagen: " + e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
+    }
 
 
     //region playing Cards
-    public void zieheKarte(Spieler spieler) {
+    private void zieheKarte(Spieler spieler) {
         try {
             Optional<Karte> optionalCard = kartenStapel.stream().findFirst();
             Karte karte = optionalCard.orElseThrow();
@@ -118,7 +117,7 @@ public class Spiel implements Serializable {
     //endregion
 
     //region kampf
-    public void kampfMoeglich(Land herkunft, Land ziel, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
+    private void kampfMoeglich(Land herkunft, Land ziel, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
         Spieler angreifer = herkunft.getBesitzer();
         if (angreifer != aktuellerSpieler) {
             throw new FalscherBesitzerException("Du bist nicht der Besitzer von " + herkunft.getName());
@@ -170,7 +169,7 @@ public class Spiel implements Serializable {
         return ziel.getEinheiten() > 0 ? -1 : truppenA;
     }
 
-    public void erobern(Land herkunft, Land ziel, int besatzer) throws FalscherBesitzerException, UngueltigeBewegungException {
+    private void erobern(Land herkunft, Land ziel, int besatzer) throws FalscherBesitzerException, UngueltigeBewegungException {
         Spieler angreifer = herkunft.getBesitzer();
         Spieler verteidiger = ziel.getBesitzer();
         ziel.wechselBesitzer(angreifer);
@@ -187,11 +186,10 @@ public class Spiel implements Serializable {
         }
     }
 
-
-    //endregion
-    public int rolleWuerfel() {
+    private int rolleWuerfel() {
         return (int) (Math.random() * 6) + 1;
     }
+    //endregion
 
 
     public void addSpieler(Spieler spieler) {

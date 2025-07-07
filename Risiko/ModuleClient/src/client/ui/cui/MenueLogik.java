@@ -67,11 +67,7 @@ public class MenueLogik {
         }
         switch (auswahl) {
             case ANGRIFF:
-                boolean ergebnis = kampfInterface(spieler);
-                if (ergebnis && !spieler.getSchonErobert()) {
-                    menue.getSpiel().zieheKarte(spieler);
-                    spieler.setSchonErobert(true);
-                }
+                kampfInterface(spieler);
                 break;
             case BEWEGEN:
                 moveTroopsInterface(spieler);
