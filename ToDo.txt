@@ -1,7 +1,0 @@
-Ein Textdokument, in dem wir ToDos festhalten können, bis wir rausgefunden haben wie hier Tickets funktionieren.
-ToDo final cleanup:
- - check how private we can make everything
- - refactor everything away from denglish
- - delete unneccessaryly complicated stuff
-
-- eine Menue Klasse erstellen, damit weniger in der Main steht?
