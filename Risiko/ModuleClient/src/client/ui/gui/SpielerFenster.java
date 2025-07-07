@@ -226,7 +226,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     @Override
     public void onAktiverSpielerGeaendert(Spieler neu) {
         SwingUtilities.invokeLater(() -> {
-            updateView(Spiel.getInstance());
+            updateView(spiel);
         });
     }
 
@@ -284,7 +284,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             pnlActions.add(btnFertig);
         }
 
-        if (!Objects.equals(spieler.getName(), spiel.getAktuellerSpieler().getName())) { //Warum nicht einfach spieler.equals(spiel.getAktuellerSpieler()) ?
+        if (!spiel.getAktuellerSpieler().equals(spieler)) {
             auswahlModus = AuswahlModus.KEINER;
             lblInfo.setText("Spieler " + spiel.getAktuellerSpieler().getName() + " ist am Zug.");
             updateMissionProgressbar();
