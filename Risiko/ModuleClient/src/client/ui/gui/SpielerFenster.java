@@ -55,6 +55,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         missionsPanel.setLayout(new BoxLayout(missionsPanel, BoxLayout.Y_AXIS));
         missionsPanel.setBorder(BorderFactory.createTitledBorder("Mission"));
         missionsPanel.setPreferredSize(new Dimension(250,0));
+        missionsPanel.setMinimumSize(new Dimension(100, 0));
 
         JTextArea txtMission = new JTextArea(spiel.getMissionBeschreibung(spieler));
         txtMission.setWrapStyleWord(true);
