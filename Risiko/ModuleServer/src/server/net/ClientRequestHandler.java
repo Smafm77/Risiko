@@ -2,6 +2,8 @@ package server.net;
 
 import common.enums.Commands;
 import common.enums.Spielphase;
+import common.exceptions.FalscherBesitzerException;
+import common.exceptions.UngueltigeBewegungException;
 import common.valueobjects.*;
 
 import java.io.BufferedReader;
@@ -35,11 +37,13 @@ public class ClientRequestHandler implements Runnable {
                 break;
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (FalscherBesitzerException | UngueltigeBewegungException  e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
-    private void decipherRequest(String message){
+    private void decipherRequest(String message) throws FalscherBesitzerException, UngueltigeBewegungException {
         System.out.println("Empfangene Daten: "+ message);
         String[] data = message.split(separator);
 
@@ -119,7 +123,7 @@ public class ClientRequestHandler implements Runnable {
     private void handleNextPhase(){
         spiel.naechstePhase();
     }
-    private void handleKampf(String[] infos){
+    private void handleKampf(String[] infos) throws FalscherBesitzerException, UngueltigeBewegungException {
         Land herkunft = spiel.getWelt().findeLand(Integer.parseInt(infos[1]));
         Land ziel = spiel.getWelt().findeLand(Integer.parseInt(infos[2]));
         int angreifendeTruppe = Integer.parseInt(infos[3]);
