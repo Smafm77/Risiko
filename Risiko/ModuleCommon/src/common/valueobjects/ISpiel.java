@@ -3,6 +3,7 @@ package common.valueobjects;
 import common.enums.Spielphase;
 import common.exceptions.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public interface ISpiel {
@@ -12,7 +13,7 @@ public interface ISpiel {
      */
     //region getter
     Spieler getAktuellerSpieler();
-    Welt getWelt();
+    Welt getWelt() throws IOException;
     Spielphase getPhase();
     ArrayList<Spieler> getSpielerListe();
     int spieleKarte(Spieler spieler, Karte karte);

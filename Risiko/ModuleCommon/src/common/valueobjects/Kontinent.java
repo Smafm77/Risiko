@@ -8,7 +8,7 @@ public class Kontinent implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private final String name;
-    private final Land[] gebiete;
+    public final Land[] gebiete;
     private final int buff;
 
     public Kontinent(String name, Land[] gebiete, int buff) {

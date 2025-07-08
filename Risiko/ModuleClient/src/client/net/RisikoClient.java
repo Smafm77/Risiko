@@ -10,7 +10,8 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class RisikoClient implements ISpiel {
     private Socket socket;
@@ -21,25 +22,14 @@ public class RisikoClient implements ISpiel {
     private final String separator = "%";
 
     public RisikoClient() throws IOException{
+        socket = new Socket("127.0.0.1", 1399);
+        socket.setSoTimeout(1000);
+        InputStream inputStream = socket.getInputStream();
         socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         socketOut = new PrintStream(socket.getOutputStream());
         //ToDo konstruktor Bücherei 6 nachempfunden schreiben
         // initiiere Welt nach spiel init über setWelt()
-        /*
-                public BibliothekClient() throws IOException {
-                    // Verbindung zum Server aufbauen
-                    socket = new Socket("127.0.0.1", 1399);
-                    // Siehe Doku:
-                    // With this option set to a positive timeout value, a read() call on the InputStream associated with
-                    // this Socket will block for only this amount of time.
-                    socket.setSoTimeout(1000); // Jegliche Antworten vom Server werden innerhalb einer Sekunde erwartet
 
-                    // Streams vom Socket holen
-                    InputStream inputStream = socket.getInputStream();
-                    socketIn = new BufferedReader(new InputStreamReader(inputStream));
-                    socketOut = new PrintStream(socket.getOutputStream());
-                }
-         */
     }
 
     //region convenience
@@ -79,16 +69,88 @@ public class RisikoClient implements ISpiel {
     }
 
     @Override
-    public Welt getWelt() {
+    public Welt getWelt() throws IOException {
         if (welt == null){
             setWelt();
         }
         return welt;
     }
 
-    private Welt setWelt(){
-        //TODO: use CMD_GET_WELT to initialize Welt
-        return null;
+    private Welt setWelt() throws IOException {
+        String cmd = Commands.CMD_GET_WELT.name();
+        writeString(cmd);
+        String[] data = readStringResponse();
+        if (data == null || data.length <2) {
+            return null;
+        }
+        if(!data[0].equals((Commands.CMD_GET_WELT_RESP.name()))){
+            throw new RuntimeException("Falsches Kommando: " + data[0]);
+        }
+
+        int idx = 1;
+
+        int spielerCount = Integer.parseInt(data[idx++]);
+        ArrayList<Spieler> spielerListe = new ArrayList<>();
+        for(int i = 0; i < spielerCount; i++){
+            String[] s = data[idx++].split(":");
+            int id = Integer.parseInt(s[0]);
+            String name = s[1];
+            String farbe = s[2];
+            boolean alive = Boolean.parseBoolean(s[3]);
+            Spieler spieler = (farbe == null || farbe.isEmpty()) ? new Spieler(name, id) : new Spieler(name, farbe, id); //CUI ohne farbe, GUI mit
+            spielerListe.add(spieler);
+        }
+        int kontinentCount = Integer.parseInt(data[idx++]);
+        ArrayList<Kontinent> kontinentListe = new ArrayList<>();
+        ArrayList<int[]> kontinentLandIds = new ArrayList<>();
+        for(int i = 0; i < kontinentCount; i++){
+            String[] k = data[idx++].split(":");
+            String kontinentName = k[0];
+            int buff = Integer.parseInt(k[1]);
+            String[] landIds = k.length > 2 && !k[2].isEmpty() ? k[2].split(",") : new String[0];
+            int[] ids = Arrays.stream(landIds).filter(str -> !str.isEmpty()).mapToInt(Integer::parseInt).toArray();
+            kontinentLandIds.add(ids);
+            kontinentListe.add(null);
+        }
+        int landCount = Integer.parseInt(data[idx++]);
+        ArrayList<Land> laenderListe = new ArrayList<>();
+        ArrayList<int[]> nachbarnIds = new ArrayList<>();
+        int startIdx = idx; //Merken für Nachbar-Verlinkung
+        for(int i = 0; i < landCount; i++){
+            String[] l = data[idx++].split(":");
+            int id = Integer.parseInt(l[0]);
+            String name = l[1];
+            int besitzerId = Integer.parseInt(l[2]);
+            int einheiten = Integer.parseInt(l[3]);
+            int farbe = Integer.parseInt(l[4]);
+            String[] nIds = l.length > 5 && !l[5].isEmpty() ? l[5].split(",") : new String[0];
+            Land land = new Land(einheiten, name, id);
+            land.setFarbe(farbe);
+            laenderListe.add(land);
+            nachbarnIds.add(Arrays.stream(nIds).filter(str -> !str.isEmpty()).mapToInt(Integer::parseInt).toArray());
+        }
+
+        for (int i = 0; i < landCount; i++) {
+            Land land = laenderListe.get(i);
+            String[] l = data[startIdx + i].split(":");
+            int besitzerId = Integer.parseInt(l[2]);
+            Spieler besitzer = spielerListe.stream().filter(s -> s.getId() == besitzerId).findFirst().orElse(null); land.setBesitzer(besitzer);
+            if (besitzer != null) besitzer.fuegeLandHinzu(land);
+            int[] nIds = nachbarnIds.get(i);
+            for (int nId : nIds) {
+                laenderListe.stream().filter(la -> la.getId() == nId).findFirst().ifPresent(land::addNachbar);
+            }
+        }
+        for (int i = 0; i < kontinentCount; i++) {
+            int[] ids = kontinentLandIds.get(i);
+            Land[] gebiete = Arrays.stream(ids).mapToObj(id -> laenderListe.stream().filter(l -> l.getId() == id).findFirst().orElse(null)).filter(Objects::nonNull).toArray(Land[]::new);
+            Kontinent k = new Kontinent(data[1 + spielerCount + 1 + i].split(":")[0], gebiete, Integer.parseInt(data[1 + spielerCount + 1 + i].split(":")[1]));
+            kontinentListe.set(i,k);
+        }
+
+        welt = new Welt(laenderListe, kontinentListe);
+        welt.setSpielerListe(spielerListe);
+        return welt;
     }
 
     @Override

@@ -6,7 +6,6 @@ import java.io.*;
 import java.util.*;
 
 public class Welt implements Serializable {
-    //private & getter? Jo
     //Todo change auf private und erstelle getter
     @Serial
     private static final long serialVersionUID = 1L;

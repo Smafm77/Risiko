@@ -1,6 +1,5 @@
 package client.ui.gui;
 
-import server.domain.Spiel;
 import common.valueobjects.Spieler;
 
 import javax.swing.*;
