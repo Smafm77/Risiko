@@ -14,8 +14,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class SpielerFenster extends JFrame implements AktiverSpielerListener {
@@ -32,6 +30,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private JLabel lblPhase;
     private JPanel pnlActions;
     private MapPanel mapPanel;
+    private JProgressBar progress;
 
 
     public SpielerFenster(Spiel spiel, Spieler spieler) throws IOException {
@@ -66,7 +65,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         txtMission.setBorder(null);
         missionsPanel.add(txtMission);
 
-        JProgressBar progress = new JProgressBar(0, 100);
+        progress = new JProgressBar(0, 100);
         progress.setValue(spiel.getMissionProgress(spieler));
         progress.setStringPainted(true);
         progress.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -118,7 +117,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
                     JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
                     JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
-                    updateMissionStaus();
+                    updateMissionStatus();
                     updateAllMaps();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
@@ -240,6 +239,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     public void updateView(Spiel spiel) {
         lblInfo.setText(spieler.getName());
         pnlActions.removeAll();
+        updateMissionStatus();
 
         if (spiel.getPhase() == Spielphase.VERTEILEN && spiel.getAktuellerSpieler().equals(spieler)) {
             JButton btnKarteSpielen = new JButton(("Karte spielen"));
@@ -247,7 +247,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             btnKarteSpielen.addActionListener(e -> openCardsSelectionDialog());
             pnlActions.add(btnKarteSpielen);
 
-            updateMissionStaus();
+            updateMissionStatus();
             verbleibendeTruppen = spieler.berechneNeueEinheiten(spiel.getWelt().alleKontinente);
             spieler.setSchonErobert(false);
             auswahlModus = AuswahlModus.VERTEILEN;
@@ -256,8 +256,8 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             btnFertig.addActionListener(e -> {
                 if (verbleibendeTruppen <= 0){
                     pnlActions.remove(btnKarteSpielen);
-                    updateMissionStaus();
                     spiel.naechstePhase();
+                    updateMissionStatus();
                     pnlActions.setVisible(false);
                     pnlActions.setVisible(true);
                     updateViewInAllFenster();
@@ -273,6 +273,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             lblInfo.setText("Wähle ein eigenes Land mit >1 Einheiten für den Angriff.");
             JButton btnBeenden = new JButton("Angriffsphase beenden");
             btnBeenden.addActionListener(e -> {
+                updateMissionStatus();
                 spiel.naechstePhase();
                 updateViewInAllFenster();
             });
@@ -284,7 +285,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             lblInfo.setText("Wähle ein eigenes Land, von dem du Einheiten verschieben willst.");
             JButton btnFertig = new JButton("Verschieben abschließen");
             btnFertig.addActionListener(e -> {
-                updateMissionStaus();
+                updateMissionStatus();
                 spiel.naechstePhase();
                 updateViewInAllFenster();
             });
@@ -307,8 +308,8 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private void updateViewInAllFenster() {
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
             fenster.updateView(spiel);
+            updateMissionProgressbar();
         }
-        System.out.println("__________");
     }
 
     private void updateAllMaps() {
@@ -317,13 +318,15 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         }
     }
 
-    private void updateMissionStaus() {
+    private void updateMissionStatus() {
         checkMissionFulfilled();
         updateMissionProgressbar();
     }
 
     private void updateMissionProgressbar() {//Updated Progressbar auf Bildschirm
-        System.out.println(spieler.getName() + ": [ " + spiel.getMissionProgress(spieler) + "% ]");
+        if (progress != null){
+            progress.setValue(spiel.getMissionProgress(spieler));
+        }
     }
 
     private void checkMissionFulfilled() {
@@ -331,8 +334,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             updateMissionProgressbar();
             benachrichtigeAlle(spieler.getName() + "'s Mission ist erfüllt. Damit hat " + spieler.getName() + " gewonnen!");
             //ToDo spielende einläuten
-        } else {
-            System.out.println(spieler.getName() + " hat Mission [" + spiel.getMissionBeschreibung(spieler) + "] noch nicht erfüllt");
         }
     }
 
