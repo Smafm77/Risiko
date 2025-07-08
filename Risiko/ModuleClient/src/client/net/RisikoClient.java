@@ -24,7 +24,7 @@ public class RisikoClient implements ISpiel {
         socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         socketOut = new PrintStream(socket.getOutputStream());
         //ToDo konstruktor Bücherei 6 nachempfunden schreiben
-        // initiiere Welt nach spiel init über initWelt()
+        // initiiere Welt nach spiel init über setWelt()
         /*
                 public BibliothekClient() throws IOException {
                     // Verbindung zum Server aufbauen
@@ -80,10 +80,13 @@ public class RisikoClient implements ISpiel {
 
     @Override
     public Welt getWelt() {
+        if (welt == null){
+            setWelt();
+        }
         return welt;
     }
 
-    private Welt initWelt(){
+    private Welt setWelt(){
         //TODO: use CMD_GET_WELT to initialize Welt
         return null;
     }

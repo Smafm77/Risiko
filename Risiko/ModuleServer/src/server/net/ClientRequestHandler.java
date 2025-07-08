@@ -129,7 +129,6 @@ public class ClientRequestHandler implements Runnable {
         int angreifendeTruppe = Integer.parseInt(infos[3]);
         int verteidigendeTruppe = Integer.parseInt(infos[4]);
         boolean erfolg = spiel.kampf(herkunft, ziel, angreifendeTruppe, verteidigendeTruppe);
-        //ToDo handle Exceptions/leite sie weiter
         String resp = Commands.CMD_KAMPF_RESP.name() + separator + erfolg;
         socketOut.println(resp);
     }
