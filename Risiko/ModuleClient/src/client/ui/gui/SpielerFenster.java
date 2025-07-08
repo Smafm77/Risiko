@@ -212,9 +212,13 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         JMenuItem miSaveExit = new JMenuItem("Speichern & Beenden");
         miSaveExit.addActionListener(e -> {
             try {
-                SpielSpeichern.speichern(spiel, "spielstand.risiko");
-                for (SpielerFenster fenster : SpielerFenster.ALLE) {
-                    fenster.dispose();
+                if (spiel.getPhase() != Spielphase.VERTEILEN){
+                    SpielSpeichern.speichern(spiel, "spielstand.risiko");
+                    for (SpielerFenster fenster : SpielerFenster.ALLE) {
+                        fenster.dispose();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(SpielerFenster.this, "Schließe erst verteilen ab");
                 }
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(
