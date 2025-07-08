@@ -104,7 +104,10 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     break;
 
                 case ANGRIFF_ZIEL:
-                    if (!ausgewaehlt1.getFeindlicheNachbarn().contains(land)) {
+                    if (land.getBesitzer().equals(spieler) && land.getEinheiten() > 1){
+                        ausgewaehlt1 = land;
+                        break;
+                    } else if (!ausgewaehlt1.getFeindlicheNachbarn().contains(land)) {
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Nur feindliche Nachbarländer angreifen!");
                         return;
                     }
@@ -211,9 +214,13 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         JMenuItem miSaveExit = new JMenuItem("Speichern & Beenden");
         miSaveExit.addActionListener(e -> {
             try {
-                SpielSpeichern.speichern(spiel, "spielstand.risiko");
-                for (SpielerFenster fenster : SpielerFenster.ALLE) {
-                    fenster.dispose();
+                if (spiel.getPhase() != Spielphase.VERTEILEN){
+                    SpielSpeichern.speichern(spiel, "spielstand.risiko");
+                    for (SpielerFenster fenster : SpielerFenster.ALLE) {
+                        fenster.dispose();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(SpielerFenster.this, "Schließe erst verteilen ab");
                 }
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(
