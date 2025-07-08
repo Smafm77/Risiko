@@ -105,7 +105,10 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     break;
 
                 case ANGRIFF_ZIEL:
-                    if (!ausgewaehlt1.getFeindlicheNachbarn().contains(land)) {
+                    if (land.getBesitzer().equals(spieler) && land.getEinheiten() > 1){
+                        ausgewaehlt1 = land;
+                        break;
+                    } else if (!ausgewaehlt1.getFeindlicheNachbarn().contains(land)) {
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Nur feindliche Nachbarländer angreifen!");
                         return;
                     }
