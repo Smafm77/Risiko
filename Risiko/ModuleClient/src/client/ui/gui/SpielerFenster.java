@@ -54,7 +54,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         JPanel missionsPanel = new JPanel();
         missionsPanel.setLayout(new BoxLayout(missionsPanel, BoxLayout.Y_AXIS));
         missionsPanel.setBorder(BorderFactory.createTitledBorder("Mission"));
-        missionsPanel.setPreferredSize(new Dimension(250,0));
+        missionsPanel.setPreferredSize(new Dimension(250, 0));
         missionsPanel.setMinimumSize(new Dimension(100, 0));
 
         JTextArea txtMission = new JTextArea(spiel.getMissionBeschreibung(spieler));
@@ -80,7 +80,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
             switch (auswahlModus) {
                 case VERTEILEN:
-                    if (verbleibendeTruppen > 0){
+                    if (verbleibendeTruppen > 0) {
                         if (!land.getBesitzer().equals(spieler)) {
                             JOptionPane.showMessageDialog(SpielerFenster.this, "Dieses Land gehört dir nicht!");
                             return;
@@ -100,19 +100,22 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                         return;
                     }
                     ausgewaehlt1 = land;
+                    mapPanel.zeigeOverlayHerkunft(land.getName());
                     auswahlModus = AuswahlModus.ANGRIFF_ZIEL;
                     lblInfo.setText("Wähle ein feindliches Nachbarland zum Angreifen.");
                     break;
 
                 case ANGRIFF_ZIEL:
-                    if (land.getBesitzer().equals(spieler) && land.getEinheiten() > 1){
+                    if (land.getBesitzer().equals(spieler) && land.getEinheiten() > 1) {
                         ausgewaehlt1 = land;
+                        mapPanel.zeigeOverlayHerkunft(land.getName());;
                         break;
                     } else if (!ausgewaehlt1.getFeindlicheNachbarn().contains(land)) {
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Nur feindliche Nachbarländer angreifen!");
                         return;
                     }
                     ausgewaehlt2 = land;
+                    mapPanel.zeigeOverlayZiel(land.getName());
                     int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(ausgewaehlt1.getEinheiten() - 1, 3) + ")?", 1, Math.min(ausgewaehlt1.getEinheiten() - 1, 3));
                     SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(ausgewaehlt2.getBesitzer())).findFirst().orElseThrow();
                     int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(ausgewaehlt2.getEinheiten(), 2) + ")?", 1, Math.min(ausgewaehlt2.getEinheiten(), 2));
@@ -125,6 +128,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     updateAllMaps();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
+                    mapPanel.versteckeOverlay();
                     auswahlModus = AuswahlModus.ANGRIFF_HERKUNFT;
                     lblInfo.setText("Für nächsten Angriff: Herkunft wählen.");
                     break;
@@ -135,6 +139,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                         return;
                     }
                     ausgewaehlt1 = land;
+                    mapPanel.zeigeOverlayHerkunft(land.getName());
                     auswahlModus = AuswahlModus.VERSCHIEBEN_ZIEL;
                     lblInfo.setText("Wähle Ziel-Land (eigenes Nachbarland).");
                     break;
@@ -145,6 +150,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                         return;
                     }
                     ausgewaehlt2 = land;
+                    mapPanel.zeigeOverlayZiel(land.getName());
                     int max = ausgewaehlt1.getEinheiten() - 1;
                     int anzahl = frageAnzahl("Wie viele Einheiten verschieben? (max " + max + ")", 1, max);
                     spieler.bewegeEinheiten(anzahl, ausgewaehlt1, ausgewaehlt2);
@@ -152,6 +158,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     updateAllMaps();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
+                    mapPanel.versteckeOverlay();
                     auswahlModus = AuswahlModus.VERSCHIEBEN_HERKUNFT;
                     break;
 
@@ -215,7 +222,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         JMenuItem miSaveExit = new JMenuItem("Speichern & Beenden");
         miSaveExit.addActionListener(e -> {
             try {
-                if (spiel.getPhase() != Spielphase.VERTEILEN){
+                if (spiel.getPhase() != Spielphase.VERTEILEN) {
                     SpielSpeichern.speichern(spiel, "spielstand.risiko");
                     for (SpielerFenster fenster : SpielerFenster.ALLE) {
                         fenster.dispose();
@@ -262,7 +269,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten. Klicke auf deine Länder.");
             JButton btnFertig = new JButton("Verteilen abschließen");
             btnFertig.addActionListener(e -> {
-                if (verbleibendeTruppen <= 0){
+                if (verbleibendeTruppen <= 0) {
                     pnlActions.remove(btnKarteSpielen);
                     spiel.naechstePhase();
                     updateMissionStatus();
@@ -332,7 +339,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     }
 
     private void updateMissionProgressbar() {//Updated Progressbar auf Bildschirm
-        if (progress != null){
+        if (progress != null) {
             progress.setValue(spiel.getMissionProgress(spieler));
         }
     }

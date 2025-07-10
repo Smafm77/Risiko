@@ -27,10 +27,14 @@ public class MapPanel extends JPanel {
     private final Map<String, Point> landKoordinaten = new HashMap<>();
     private final Map<String, Image> iconByColor = new HashMap<>();
     private final Map<String, Color> spielerFarbe = new HashMap<>();
+    private Map<String, BufferedImage> landOverlayImages = new HashMap<>();
+    private String sichtbarOverlayLandName = null;
+    private String overlayHerkunft = null;
+    private String overlayZiel = null;
 
 
-    private void ladeIcons(){
-        try{
+    private void ladeIcons() {
+        try {
             iconByColor.put("Blau", ImageIO.read(new File("Risiko/Grafiken/playericon_blau.png")));
             iconByColor.put("Gelb", ImageIO.read(new File("Risiko/Grafiken/playericon_gelb.png")));
             iconByColor.put("Gruen", ImageIO.read(new File("Risiko/Grafiken/playericon_gruen.png")));
@@ -42,7 +46,8 @@ public class MapPanel extends JPanel {
             e.printStackTrace();
         }
     }
-    private void ladeFarben(){
+
+    private void ladeFarben() {
         spielerFarbe.put("Blau", Color.decode("#001dff"));
         spielerFarbe.put("Gelb", Color.decode("#fff700"));
         spielerFarbe.put("Gruen", Color.decode("#1bff00"));
@@ -51,25 +56,38 @@ public class MapPanel extends JPanel {
         spielerFarbe.put("Violett", Color.decode("#740ece"));
     }
 
-    public MapPanel(ArrayList<Land> laenderListe){
+    private void ladeOverlays(ArrayList<Land> laenderliste) {
+        for (Land land : laenderliste) {
+            try {
+                String path = "Risiko/Grafiken/overlays/overlay-" + land.getName() + ".png";
+                BufferedImage overlayImg = ImageIO.read(new File(path));
+                landOverlayImages.put(land.getName(), overlayImg);
+            } catch (IOException e) {
+                landOverlayImages.put(land.getName(), null);
+            }
+        }
+    }
+
+    public MapPanel(ArrayList<Land> laenderListe) {
         try {
             img = ImageIO.read(new File("Risiko/Grafiken/map-front.png"));
             bgImg = ImageIO.read(new File("Risiko/Grafiken/map-back.png"));
-        } catch (IOException e){
+        } catch (IOException e) {
             img = null;
             bgImg = null;
         }
         ladeFarben();
         ladeKoordinaten();
         ladeIcons();
-        for (Land land : laenderListe){
+        ladeOverlays(laenderListe);
+        for (Land land : laenderListe) {
             farbwertZuLand.put(land.getFarbe(), land);
         }
-        addMouseListener(new MouseAdapter(){
+        addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 Land land = getLandAt(e.getX(), e.getY());
-                if(land != null && klickListener != null){
+                if (land != null && klickListener != null) {
                     try {
                         klickListener.landAngeklickt(land);
                     } catch (FalscherBesitzerException | UngueltigeBewegungException ex) {
@@ -81,7 +99,7 @@ public class MapPanel extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g){
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Font font = new Font(Font.DIALOG, Font.BOLD, 15);
         g.setFont(font);
@@ -100,48 +118,73 @@ public class MapPanel extends JPanel {
             int drawY = (int) Math.round(p.y * sy);
 
             Image icon = iconByColor.get(spieler.getFarbe());
-            if (icon != null){
-                g.drawImage(icon, drawX - icon.getWidth(null)/2, drawY - icon.getHeight(null)/2, null);
+            if (icon != null) {
+                g.drawImage(icon, drawX - icon.getWidth(null) / 2, drawY - icon.getHeight(null) / 2, null);
                 String landesEinheiten = String.valueOf(land.getEinheiten());
-                g.drawString(landesEinheiten, drawX + 15, drawY + icon.getHeight(null)/2);
+                g.drawString(landesEinheiten, drawX + 15, drawY + icon.getHeight(null) / 2);
+            }
+        }
+        if (overlayHerkunft != null) {
+            BufferedImage overlay = landOverlayImages.get(overlayHerkunft);
+            if (overlay != null) {
+                g.drawImage(overlay, 0, 0, getWidth(), getHeight(), null);
+            }
+        }
+        if (overlayZiel != null) {
+            BufferedImage overlay = landOverlayImages.get(overlayZiel);
+            if (overlay != null) {
+                g.drawImage(overlay, 0, 0, getWidth(), getHeight(), null);
             }
         }
     }
 
-
-
-    public Land getLandAt(int x, int y){
+    public Land getLandAt(int x, int y) {
         if (bgImg == null) return null;
 
         double scaleX = bgImg.getWidth() / (double) getWidth();
         double scaleY = bgImg.getHeight() / (double) getHeight();
-        int realX = (int)(x * scaleX);
-        int realY = (int)(y * scaleY);
-        if(realX < 0 || realY < 0 || realX >= bgImg.getWidth() || realY >= bgImg.getHeight()){
+        int realX = (int) (x * scaleX);
+        int realY = (int) (y * scaleY);
+        if (realX < 0 || realY < 0 || realX >= bgImg.getWidth() || realY >= bgImg.getHeight()) {
             return null;
         }
         int rgb = bgImg.getRGB(realX, realY) & 0xFFFFFF;
         return farbwertZuLand.get(rgb);
     }
 
-    public void setLandKlickListener(LandKlickListener listener){
+    public void setLandKlickListener(LandKlickListener listener) {
         this.klickListener = listener;
     }
 
-    private void ladeKoordinaten(){
-        try (BufferedReader br = new BufferedReader(new FileReader("Risiko/Txt-dateien/LaenderKoordinaten.txt"))){
+    private void ladeKoordinaten() {
+        try (BufferedReader br = new BufferedReader(new FileReader("Risiko/Txt-dateien/LaenderKoordinaten.txt"))) {
             String zeile;
-            while ((zeile = br.readLine()) != null){
+            while ((zeile = br.readLine()) != null) {
                 String[] parts = zeile.split(":");
                 String name = parts[0].trim();
                 String[] xy = parts[1].split(",");
                 int x = Integer.parseInt(xy[0].trim());
                 int y = Integer.parseInt(xy[1].trim());
-                landKoordinaten.put(name, new Point(x,y));
+                landKoordinaten.put(name, new Point(x, y));
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public void zeigeOverlayHerkunft(String landName) {
+        overlayHerkunft = landName;
+        repaint();
+    }
+
+    public void zeigeOverlayZiel(String landName) {
+        overlayZiel = landName;
+        repaint();
+    }
+
+    public void versteckeOverlay() {
+        overlayHerkunft = null;
+        overlayZiel = null;
+        repaint();
+    }
 }
