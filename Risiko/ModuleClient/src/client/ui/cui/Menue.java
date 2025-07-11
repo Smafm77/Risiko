@@ -2,9 +2,7 @@ package client.ui.cui;
 
 import common.exceptions.*;
 import common.valueobjects.*;
-import server.domain.Spiel;
 import common.enums.Spielphase;
-import server.persistence.NeuesSpielEinlesen;
 
 import java.io.IOException;
 import java.util.*;
@@ -13,9 +11,8 @@ import java.util.*;
 public class Menue {
     Scanner scanner = new Scanner(System.in);
     private Spieler aktuellerSpieler;
-    private Spiel spiel;
+    private ISpiel spiel;
     private Welt welt;
-    NeuesSpielEinlesen einlesen = new NeuesSpielEinlesen();
     MenuePrint mPrint = new MenuePrint(this);
     MenueEingabe mEingabe = new MenueEingabe(this);
     MenueLogik mLogik = new MenueLogik(this, mPrint, mEingabe);
@@ -24,7 +21,7 @@ public class Menue {
         this.aktuellerSpieler = spieler;
     }
 
-    public void setSpiel(Spiel spiel) {
+    public void setSpiel(ISpiel spiel) {
         this.spiel = spiel;
         this.welt = spiel.getWelt();
     }
@@ -37,7 +34,7 @@ public class Menue {
         return welt;
     }
 
-    public Spiel getSpiel() {
+    public ISpiel getSpiel() {
         return spiel;
     }
 
@@ -75,8 +72,8 @@ public class Menue {
                     System.out.println("6: Zug beenden");
                 }
                 return mLogik.hauptAuswahl(spieler, spiel.getPhase());
-            }catch (EinheitenAnzahlException | FalscherBesitzerException | UngueltigeBewegungException |
-                    UngueltigeAuswahlException | SpielPhaseException e) {
+            } catch (EinheitenAnzahlException | FalscherBesitzerException | UngueltigeBewegungException |
+                     UngueltigeAuswahlException | SpielPhaseException e) {
                 System.out.println("Fehler: " + e.getMessage());
                 System.out.println("Noch einmal: \n");
             }

@@ -1,7 +1,5 @@
 package server.net;
 
-
-import common.valueobjects.ISpiel;
 import server.domain.Spiel;
 import server.persistence.SpielSpeichern;
 

@@ -1,11 +1,7 @@
 package client.ui.gui;
 
-
 import client.net.RisikoClient;
 import common.valueobjects.ISpiel;
-/*import server.domain.AktiverSpielerListener;
-import server.domain.Spiel;*/
-import common.enums.Spielphase;
 import common.valueobjects.Spieler;
 
 import javax.swing.*;
@@ -27,8 +23,7 @@ public class StartGameListener implements ActionListener {
             spiel.setSpielerliste(gui.getGuiSpieler());
             spiel.weiseMissionenZu();
             spiel.init();
-            //AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
-            for (Spieler s : spiel.getSpielerListe()){
+            for (Spieler s : spiel.getSpielerListe()) {
                 new SpielerFenster(spiel, s);
             }
             gui.dispose();
