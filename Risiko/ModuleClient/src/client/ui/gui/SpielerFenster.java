@@ -1,7 +1,9 @@
 package client.ui.gui;
 
+import common.exceptions.FalscherBesitzerException;
+import common.exceptions.UngueltigeBewegungException;
+import common.exceptions.UngueltigeKarteException;
 import common.valueobjects.*;
-//import server.domain.AktiverSpielerListener;
 import common.enums.AuswahlModus;
 import common.enums.Spielphase;
 
@@ -100,29 +102,27 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     break;
 
                 case ANGRIFF_ZIEL:
-                    if (land.getBesitzer().equals(spieler) && land.getEinheiten() > 1) {
+                    try {
                         ausgewaehlt1 = land;
-                        mapPanel.zeigeOverlayHerkunft(land.getName());;
-                        break;
-                    } else if (!ausgewaehlt1.getFeindlicheNachbarn().contains(land)) {
-                        JOptionPane.showMessageDialog(SpielerFenster.this, "Nur feindliche Nachbarländer angreifen!");
-                        return;
+                        mapPanel.zeigeOverlayHerkunft(land.getName());
+                        ausgewaehlt2 = land;
+                        mapPanel.zeigeOverlayZiel(land.getName());
+                        int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(ausgewaehlt1.getEinheiten() - 1, 3) + ")?", 1, Math.min(ausgewaehlt1.getEinheiten() - 1, 3));
+                        SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(ausgewaehlt2.getBesitzer())).findFirst().orElseThrow();
+                        int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(ausgewaehlt2.getEinheiten(), 2) + ")?", 1, Math.min(ausgewaehlt2.getEinheiten(), 2));
+                        boolean ergebnis = spiel.kampf(ausgewaehlt1, ausgewaehlt2, truppenA, truppenV);
+                        String sieger = ergebnis ? spieler.getName() : land.getBesitzer().getName();
+                        String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
+                        JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
+                        JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
+                        updateMissionStatus();
+                        updateAllMaps();
+                        ausgewaehlt1 = null;
+                        ausgewaehlt2 = null;
+                        mapPanel.versteckeOverlay();
+                    } catch (FalscherBesitzerException | UngueltigeBewegungException e) {
+                        JOptionPane.showMessageDialog(SpielerFenster.this, "Fehler: " +e.getMessage(), "Ungültiger Angriff", JOptionPane.ERROR_MESSAGE);
                     }
-                    ausgewaehlt2 = land;
-                    mapPanel.zeigeOverlayZiel(land.getName());
-                    int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(ausgewaehlt1.getEinheiten() - 1, 3) + ")?", 1, Math.min(ausgewaehlt1.getEinheiten() - 1, 3));
-                    SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(ausgewaehlt2.getBesitzer())).findFirst().orElseThrow();
-                    int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(ausgewaehlt2.getEinheiten(), 2) + ")?", 1, Math.min(ausgewaehlt2.getEinheiten(), 2));
-                    boolean ergebnis = spiel.kampf(ausgewaehlt1, ausgewaehlt2, truppenA, truppenV);
-                    String sieger = ergebnis ? spieler.getName() : land.getBesitzer().getName();
-                    String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
-                    JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
-                    JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
-                    updateMissionStatus();
-                    updateAllMaps();
-                    ausgewaehlt1 = null;
-                    ausgewaehlt2 = null;
-                    mapPanel.versteckeOverlay();
                     auswahlModus = AuswahlModus.ANGRIFF_HERKUNFT;
                     lblInfo.setText("Für nächsten Angriff: Herkunft wählen.");
                     break;
@@ -139,22 +139,22 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     break;
 
                 case VERSCHIEBEN_ZIEL:
-                    if (!ausgewaehlt1.connectionPossible(land)) {
-                        JOptionPane.showMessageDialog(SpielerFenster.this, "Nur eigene Nachbarländer als Ziel!");
-                        return;
+                    try{
+                        ausgewaehlt2 = land;
+                        mapPanel.zeigeOverlayZiel(land.getName());
+                        int max = ausgewaehlt1.getEinheiten() - 1;
+                        int anzahl = frageAnzahl("Wie viele Einheiten verschieben? (max " + max + ")", 1, max);
+                        spiel.bewegeEinheiten(spieler.getId(), anzahl, ausgewaehlt1, ausgewaehlt2);
+                        JOptionPane.showMessageDialog(SpielerFenster.this, "Einheiten verschoben!");
+                        updateAllMaps();
+                        ausgewaehlt1 = null;
+                        ausgewaehlt2 = null;
+                        mapPanel.versteckeOverlay();
+                        auswahlModus = AuswahlModus.VERSCHIEBEN_HERKUNFT;
+                        break;
+                    }catch(UngueltigeBewegungException | FalscherBesitzerException e){
+                        JOptionPane.showMessageDialog(SpielerFenster.this, "Fehler: " +e.getMessage(), "Ungültige Truppenverschiebung", JOptionPane.ERROR_MESSAGE);
                     }
-                    ausgewaehlt2 = land;
-                    mapPanel.zeigeOverlayZiel(land.getName());
-                    int max = ausgewaehlt1.getEinheiten() - 1;
-                    int anzahl = frageAnzahl("Wie viele Einheiten verschieben? (max " + max + ")", 1, max);
-                    spiel.bewegeEinheiten(spieler.getId(), anzahl, ausgewaehlt1, ausgewaehlt2);
-                    JOptionPane.showMessageDialog(SpielerFenster.this, "Einheiten verschoben!");
-                    updateAllMaps();
-                    ausgewaehlt1 = null;
-                    ausgewaehlt2 = null;
-                    mapPanel.versteckeOverlay();
-                    auswahlModus = AuswahlModus.VERSCHIEBEN_HERKUNFT;
-                    break;
 
                 default:
                     // Kein Modus → Nichts tun
@@ -181,10 +181,10 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
     }
 
     private void openCardsSelectionDialog() {
-        Set<Karte> karteSet = spiel.getSpielerKarten(spieler.getId());
+        try{
+            Set<Karte> karteSet = spiel.getSpielerKarten(spieler.getId());
         if (karteSet.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Du hast keine Karten zum spielen!");
-            return;
+            throw new UngueltigeKarteException("Du besitzt keine Karten");
         }
         ArrayList<Karte> karten = new ArrayList<>(karteSet);
         DefaultListModel<String> model = new DefaultListModel<>();
@@ -204,9 +204,10 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                 auswahlModus = AuswahlModus.VERTEILEN;
                 lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten. Klicke auf deine Länder.");
                 mapPanel.repaint();
-            } else {
-                JOptionPane.showMessageDialog(this, "Karte konnte nicht gespielt werden.", "Fehler", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }catch (UngueltigeKarteException e){
+            JOptionPane.showMessageDialog(SpielerFenster.this, "Fehler: " +e.getMessage(), "Ungültige Karte", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -228,13 +229,6 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
         menuBar.add(fileMenu);
         return menuBar;
     }
-
-    /*@Override
-    public void onAktiverSpielerGeaendert(Spieler neu) {
-        SwingUtilities.invokeLater(() -> {
-            updateView(spiel);
-        });
-    }*/
 
     public void updateView(ISpiel spiel) {
         lblInfo.setText(spieler.getName());

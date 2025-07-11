@@ -6,5 +6,5 @@ module ModuleClient {
 
     requires java.datatransfer; //??? bin bisschen lost
     requires ModuleCommon;
-    requires java.desktop; requires ModuleServer;
+    requires java.desktop;
 }

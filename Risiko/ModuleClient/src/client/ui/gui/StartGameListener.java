@@ -1,11 +1,7 @@
 package client.ui.gui;
 
-
 import client.net.RisikoClient;
 import common.valueobjects.ISpiel;
-/*import server.domain.AktiverSpielerListener;
-import server.domain.Spiel;*/
-import common.enums.Spielphase;
 import common.valueobjects.Spieler;
 import common.valueobjects.SpielerDTO;
 
