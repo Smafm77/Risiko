@@ -61,9 +61,9 @@ public class MapPanel extends JPanel {
                 if (land != null && klickListener != null) {
                     try {
                         klickListener.landAngeklickt(land);
-                    } catch (FalscherBesitzerException | UngueltigeBewegungException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    }    catch (RuntimeException | FalscherBesitzerException | UngueltigeBewegungException  ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
                 }
             }
         });
