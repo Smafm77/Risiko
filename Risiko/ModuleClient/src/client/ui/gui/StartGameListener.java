@@ -1,6 +1,8 @@
 package client.ui.gui;
 
 
+import common.exceptions.FalscherBesitzerException;
+import common.exceptions.UngueltigeBewegungException;
 import server.domain.AktiverSpielerListener;
 import server.domain.Spiel;
 import common.enums.Spielphase;
@@ -31,11 +33,9 @@ public class StartGameListener implements ActionListener {
             }
             gui.dispose();
 
-        } catch (IllegalStateException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        } catch (RuntimeException | FalscherBesitzerException | UngueltigeBewegungException | IOException ex) {
+        JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
+    }
 
     }
 }

@@ -1,5 +1,8 @@
 package client.ui.gui;
 
+import common.exceptions.EinheitenAnzahlException;
+import common.exceptions.FalscherBesitzerException;
+import common.exceptions.UngueltigeBewegungException;
 import common.valueobjects.Karte;
 import server.domain.AktiverSpielerListener;
 import server.domain.Spiel;
@@ -25,15 +28,13 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private Land ausgewaehlt2;
 
     private static final java.util.List<SpielerFenster> ALLE = new java.util.ArrayList<>();
-    NeuesSpielEinlesen einlesen = new NeuesSpielEinlesen();
-    private JLabel lblInfo;
-    private JLabel lblPhase;
-    private JPanel pnlActions;
-    private MapPanel mapPanel;
-    private JProgressBar progress;
+    private final JLabel lblInfo;
+    private final JPanel pnlActions;
+    private final MapPanel mapPanel;
+    private final JProgressBar progress;
 
 
-    public SpielerFenster(Spiel spiel, Spieler spieler) throws IOException {
+    public SpielerFenster(Spiel spiel, Spieler spieler) throws IOException, EinheitenAnzahlException, FalscherBesitzerException, UngueltigeBewegungException {
         this.spieler = spieler;
         setTitle("Risiko - " + spieler.getName() + " (" + spieler.getFarbe() + ")");
 
@@ -46,7 +47,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setLayout(new BorderLayout());
 
         lblInfo = new JLabel();
-        lblPhase = new JLabel();
+        JLabel lblPhase = new JLabel();
         JPanel pnlNorth = new JPanel(new GridLayout(2, 1));
         pnlNorth.add(lblInfo);
         pnlNorth.add(lblPhase);
@@ -80,24 +81,25 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
             switch (auswahlModus) {
                 case VERTEILEN:
-                    if (verbleibendeTruppen > 0) {
+                    if(verbleibendeTruppen>0) {
                         if (!land.getBesitzer().equals(spieler)) {
-                            JOptionPane.showMessageDialog(SpielerFenster.this, "Dieses Land gehört dir nicht!");
-                            return;
+                            throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
                         }
                         land.einheitenHinzufuegen(1);
                         verbleibendeTruppen--;
                         lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
                         updateAllMaps();
-                    } else {
-                        JOptionPane.showMessageDialog(SpielerFenster.this, "Alle Einheiten verteilt!");
+                    }else{
+                        throw new EinheitenAnzahlException("Du hast keine Einheiten mehr zum verteilen");
                     }
                     break;
 
                 case ANGRIFF_HERKUNFT:
-                    if (!land.getBesitzer().equals(spieler) || land.getEinheiten() <= 1) {
-                        JOptionPane.showMessageDialog(SpielerFenster.this, "Wähle ein eigenes Land mit mehr als 1 Einheit!");
-                        return;
+                    if (!land.getBesitzer().equals(spieler)) {
+                        throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
+                    }
+                    if (land.getEinheiten() <= 1) {
+                        throw new EinheitenAnzahlException("Wähle ein eigenes Land mit mehr als 1 Einheit!");
                     }
                     ausgewaehlt1 = land;
                     mapPanel.zeigeOverlayHerkunft(land.getName());
@@ -108,11 +110,10 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                 case ANGRIFF_ZIEL:
                     if (land.getBesitzer().equals(spieler) && land.getEinheiten() > 1) {
                         ausgewaehlt1 = land;
-                        mapPanel.zeigeOverlayHerkunft(land.getName());;
+                        mapPanel.zeigeOverlayHerkunft(land.getName());
                         break;
                     } else if (!ausgewaehlt1.getFeindlicheNachbarn().contains(land)) {
-                        JOptionPane.showMessageDialog(SpielerFenster.this, "Nur feindliche Nachbarländer angreifen!");
-                        return;
+                        throw new FalscherBesitzerException("Nur feindliche Nachbarländer angreifen!");
                     }
                     ausgewaehlt2 = land;
                     mapPanel.zeigeOverlayZiel(land.getName());
@@ -134,9 +135,11 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     break;
 
                 case VERSCHIEBEN_HERKUNFT:
-                    if (!land.getBesitzer().equals(spieler) || land.getEinheiten() <= 1) {
-                        JOptionPane.showMessageDialog(SpielerFenster.this, "Nur eigene Länder mit mehr als 1 Einheit wählen!");
-                        return;
+                    if (!land.getBesitzer().equals(spieler)) {
+                        throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
+                    }
+                    if (land.getEinheiten() <= 1) {
+                        throw new EinheitenAnzahlException("Wähle ein eigenes Land mit mehr als 1 Einheit!");
                     }
                     ausgewaehlt1 = land;
                     mapPanel.zeigeOverlayHerkunft(land.getName());
@@ -146,8 +149,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
                 case VERSCHIEBEN_ZIEL:
                     if (!ausgewaehlt1.connectionPossible(land)) {
-                        JOptionPane.showMessageDialog(SpielerFenster.this, "Nur eigene Nachbarländer als Ziel!");
-                        return;
+                        throw new UngueltigeBewegungException("Kein gültiger weg gefunden!");
                     }
                     ausgewaehlt2 = land;
                     mapPanel.zeigeOverlayZiel(land.getName());
@@ -166,6 +168,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     // Kein Modus → Nichts tun
             }
         });
+
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, missionsPanel, mapPanel);
         split.setDividerLocation(250);
         split.setResizeWeight(0.0);
@@ -182,8 +185,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         AktiverSpielerListener.add(this);
         updateView(this.spiel);
         setVisible(true);
-
-
     }
 
     private void openCardsSelectionDialog() {
@@ -231,12 +232,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     JOptionPane.showMessageDialog(SpielerFenster.this, "Schließe erst verteilen ab");
                 }
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Fehler beim Speichern:\n" + ex.getMessage(),
-                        "Speicherfehler",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                JOptionPane.showMessageDialog(this, "Fehler beim Speichern:\n" + ex.getMessage(), "Speicherfehler", JOptionPane.ERROR_MESSAGE);
             }
         });
         fileMenu.add(miSaveExit);
@@ -317,7 +313,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         }
         pnlActions.revalidate();
         mapPanel.repaint();
-        mapPanel.repaint();
     }
 
     private void updateViewInAllFenster() {
@@ -358,7 +353,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
 
     private int frageAnzahl(String frage, int min, int max) {
         while (true) {

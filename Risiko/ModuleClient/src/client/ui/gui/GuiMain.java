@@ -1,9 +1,12 @@
 package client.ui.gui;
 
+import common.exceptions.FalscherBesitzerException;
+import common.exceptions.UngueltigeBewegungException;
 import common.valueobjects.Spieler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
@@ -92,8 +95,7 @@ public class GuiMain extends JFrame {
     }
 
     public static void main(String[] args) {
-
-        SwingUtilities.invokeLater(GuiMain::new);
+            SwingUtilities.invokeLater(GuiMain::new);
     }
 }
 
