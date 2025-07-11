@@ -120,7 +120,7 @@ public class Spieler implements Serializable {
 
     @Override
     public boolean equals(Object spieler) {
-        return (spieler instanceof Spieler) && ((Spieler) spieler).id == this.id;
+        return ((spieler instanceof Spieler) && ((Spieler) spieler).id == this.id) || (spieler instanceof SpielerDTO) && ((SpielerDTO) spieler).getId() == this.id;
     }
 
     public void zeigeSpieler() { //UI

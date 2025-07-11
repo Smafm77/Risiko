@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ClientRequestHandler implements Runnable {
     private final InputStream socketIn;
@@ -76,6 +77,8 @@ public class ClientRequestHandler implements Runnable {
             case CMD_GET_AKTUELLER_SPIELER -> handleAktuellerSpieler();
             case CMD_GET_WELT -> handleGetWeltObject();
             case CMD_GET_SPIELPHASE -> handleGetPhase();
+            case CMD_GET_SPIELER_EINHEITEN -> handleSpielerEinheiten(Integer.parseInt(data[1]));
+            case CMD_GET_KARTEN -> handleGetKarten(Integer.parseInt(data[1]));
             case CMD_SPIELE_KARTE -> handleSpieleKarte(data);
             case CMD_GET_MISS_BESCHREIBUNG -> handleBeschreibung(Integer.parseInt(data[1]));
             case CMD_GET_MISS_ERFUELLT -> handleErfuellt(Integer.parseInt(data[1]));
@@ -84,10 +87,12 @@ public class ClientRequestHandler implements Runnable {
             case CMD_SET_SPIELERLISTE -> handleSetSpielerliste();
             case CMD_SET_PHASE -> handleSetPhase(data[1]);
             case CMD_WEISE_MISS_ZU -> handleMissionsZuweisung();
+            case CMD_STATIONIEREN -> handleStationieren(data);
 
             case CMD_SPIEL_INIT -> handleInit();
             case CMD_NAECHSTE_PHASE -> handleNextPhase();
             case CMD_KAMPF -> handleKampf(data);
+            case CMD_BEWEGE_EINHEITEN -> handleBewegeEinheiten(data);
             case CMD_SPIEL_SPEICHERN -> handleSpeichern();
 
             default -> System.err.println("Ungueltige Anfrage empfangen: " + data[0]);
@@ -144,32 +149,37 @@ public class ClientRequestHandler implements Runnable {
         String resp = Commands.CMD_GET_SPIELPHASE_RESP.name() + separator + spiel.getPhase().name();
         writeString(resp);
     }
-    private void handleSpieleKarte(String[] info) throws IOException {
-        int id = Integer.parseInt(info[1]);
-        Spieler spieler = spiel.getWelt().findeSpieler(id);
+    private void handleSpielerEinheiten(int spielerId){
+        String resp = Commands.CMD_GET_SPIELER_EINHEITEN_RESP.name() + separator + spiel.berechneSpielerEinheiten(spielerId);
+        writeString(resp);
+    }
+    private void handleGetKarten(int spielerId){
+        HashSet<Karte> karten = spiel.getSpielerKarten(spielerId);
+        writeObject(karten);
+    }
+    private void handleSpieleKarte(String[] info) {
+        int spielerId = Integer.parseInt(info[1]);
+        Spieler spieler = spiel.getWelt().findeSpieler(spielerId);
         Karte karte = spieler.getKarten().stream().filter(karte1 -> karte1.getLand().getName().equals(info[2])).findAny().orElseThrow();
-        int strength = spiel.spieleKarte(spieler, karte);
+        int strength = spiel.spieleKarte(spielerId, karte);
 
         String resp = Commands.CMD_SPIELE_KARTE_RESP.name() + separator + strength;
         writeString(resp);
     }
-    private void handleBeschreibung(int spielerId) throws IOException {
-        Spieler spieler = spiel.getWelt().findeSpieler(spielerId);
-        String beschreibung = spiel.getMissionBeschreibung(spieler);
+    private void handleBeschreibung(int spielerId) {
+        String beschreibung = spiel.getMissionBeschreibung(spielerId);
 
         String resp = Commands.CMD_GET_MISS_BESCHREIBUNG_RESP.name() + separator + beschreibung;
         writeString(resp);
     }
-    private void handleErfuellt(int spielerId) throws IOException {
-        Spieler spieler = spiel.getWelt().findeSpieler(spielerId);
-        boolean erfuellt = spiel.hatMissionErfuellt(spieler);
+    private void handleErfuellt(int spielerId) {
+        boolean erfuellt = spiel.hatMissionErfuellt(spielerId);
 
         String resp = Commands.CMD_GET_MISS_ERFUELLT_RESP.name() + separator + erfuellt;
         writeString(resp);
     }
-    private void handleProgress(int spielerId) throws IOException {
-        Spieler spieler = spiel.getWelt().findeSpieler(spielerId);
-        int fortschritt = spiel.getMissionProgress(spieler);
+    private void handleProgress(int spielerId) {
+        int fortschritt = spiel.getMissionProgress(spielerId);
 
         String resp = Commands.CMD_GET_MISS_PROGRESS_RESP.name() + separator + fortschritt;
         writeString(resp);
@@ -189,6 +199,12 @@ public class ClientRequestHandler implements Runnable {
         spiel.weiseMissionenZu();
         writeString(Commands.CMD_WEISE_MISS_ZU_RESP.name());
     }
+    private void handleStationieren(String[] info){
+        Land station = spiel.getWelt().findeLand(Integer.parseInt(info[1]));
+        int truppen = Integer.parseInt(info[2]);
+        spiel.einheitenStationieren(station, truppen);
+        writeString(Commands.CMD_STATIONIEREN_RESP.name());
+    }
 
     private void handleInit(){
         spiel.init();
@@ -207,6 +223,17 @@ public class ClientRequestHandler implements Runnable {
         String resp = Commands.CMD_KAMPF_RESP.name() + separator + erfolg;
         writeString(resp);
     }
+
+    private void handleBewegeEinheiten(String[] infos) throws FalscherBesitzerException, UngueltigeBewegungException {
+        int spielerId = Integer.parseInt(infos[1]);
+        int truppen = Integer.parseInt(infos[2]);
+        Land herkunft = spiel.getWelt().findeLand(Integer.parseInt(infos[3]));
+        Land ziel = spiel.getWelt().findeLand(Integer.parseInt(infos[4]));
+
+        spiel.bewegeEinheiten(spielerId, truppen, herkunft, ziel);
+        writeString(Commands.CMD_BEWEGE_EINHEITEN_RESP.name());
+    }
+
     private void handleSpeichern(){
         spiel.spielSpeichern();
     }

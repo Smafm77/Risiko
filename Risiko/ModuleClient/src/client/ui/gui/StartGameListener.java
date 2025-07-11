@@ -7,6 +7,7 @@ import common.valueobjects.ISpiel;
 import server.domain.Spiel;*/
 import common.enums.Spielphase;
 import common.valueobjects.Spieler;
+import common.valueobjects.SpielerDTO;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -29,7 +30,8 @@ public class StartGameListener implements ActionListener {
             spiel.init();
             //AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
             for (Spieler s : spiel.getSpielerListe()){
-                new SpielerFenster(spiel, s);
+                SpielerDTO dto = new SpielerDTO(s);
+                new SpielerFenster(spiel, dto);
             }
             gui.dispose();
 

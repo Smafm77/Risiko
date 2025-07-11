@@ -125,7 +125,6 @@ public class Risiko implements Serializable {
         spiel.setPhase(Spielphase.VERTEILEN);
         int neueEinheiten = spieler.berechneNeueEinheiten(spiel.getWelt().alleKontinente);
         menue.getmEingabe().zuweisungEinheiten(neueEinheiten, spieler);
-        spieler.setSchonErobert(false);
         spiel.naechstePhase();
         boolean weiterAngreifen = true;
         while (weiterAngreifen) {
@@ -139,8 +138,8 @@ public class Risiko implements Serializable {
 
         //ToDo Kontrolliere ob dies die richtige Stelle im Ablauf der Runde ist
         // Methode für Spiel zu Ende schreiben
-        if (spiel.hatMissionErfuellt(spieler)) {
-            System.out.println("Herzlichen Glückwunsch! Mission erfüllt: " + spiel.getMissionBeschreibung(spieler));
+        if (spiel.hatMissionErfuellt(spieler.getId())) {
+            System.out.println("Herzlichen Glückwunsch! Mission erfüllt: " + spiel.getMissionBeschreibung(spieler.getId()));
         }
 
         spiel.naechstePhase();

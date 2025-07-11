@@ -113,7 +113,7 @@ public class Menue {
                 Optional<Karte> optChosenCard = spieler.getKarten().stream().filter(c -> c.getLand().getName().equalsIgnoreCase(input.trim())).findFirst(); //finds the chosen Card by it's name and throws an Error if it doesn't exist
                 if (optChosenCard.isPresent()) {
                     Karte chosenCard = optChosenCard.orElseThrow();
-                    mEingabe.zuweisungEinheiten(spiel.spieleKarte(spieler, chosenCard), spieler);
+                    mEingabe.zuweisungEinheiten(spiel.spieleKarte(spieler.getId(), chosenCard), spieler);
                 }
             }
         } catch (NoSuchElementException | UngueltigeAuswahlException e) {

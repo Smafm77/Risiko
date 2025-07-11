@@ -79,7 +79,10 @@ public class Spiel implements Serializable, ISpiel {
     public void naechstePhase() {
         spielSpeichern();
         switch (phase) {
-            case VERTEILEN -> phase = Spielphase.ANGRIFF;
+            case VERTEILEN -> {
+                aktuellerSpieler.setSchonErobert(false);
+                phase = Spielphase.ANGRIFF;
+            }
             case ANGRIFF -> phase = Spielphase.VERSCHIEBEN;
             case VERSCHIEBEN -> {
                 naechsterSpieler();
@@ -110,7 +113,8 @@ public class Spiel implements Serializable, ISpiel {
         }
     }
 
-    public int spieleKarte(Spieler spieler, Karte karte) {
+    public int spieleKarte(int spielerId, Karte karte) {
+        Spieler spieler = findSpielerById(spielerId);
         if (spieler.getKarten().contains(karte)) {
             spieler.getKarten().remove(karte);
             kartenStapel.add(karte);
@@ -217,16 +221,41 @@ public class Spiel implements Serializable, ISpiel {
         }
     }
 
-    public String getMissionBeschreibung(Spieler spieler) {
+    public String getMissionBeschreibung(int spielerId) {
+        Spieler spieler = findSpielerById(spielerId);
         return missionen.get(spieler).getBeschreibung();
     }
 
-    public boolean hatMissionErfuellt(Spieler spieler) {
+    public boolean hatMissionErfuellt(int spielerId) {
+        Spieler spieler = findSpielerById(spielerId);
         return missionen.get(spieler).istErfuellt(this, spieler);
     }
 
-    public int getMissionProgress(Spieler spieler) {
+    public int getMissionProgress(int spielerId) {
+        Spieler spieler = findSpielerById(spielerId);
         return missionen.get(spieler).getFortschritt(this, spieler);
+    }
+    //endregion
+
+    private Spieler findSpielerById(int spielerId){
+        return spielerListe.stream().filter(spieler -> spieler.getId() == spielerId).findAny().orElseThrow();
+    }
+
+    //region CommonMethoden
+    public int berechneSpielerEinheiten(int spielerId){
+        Spieler spieler = findSpielerById(spielerId);
+        return spieler.berechneNeueEinheiten(welt.alleKontinente);
+    }
+    public HashSet<Karte> getSpielerKarten(int spielerId){
+        Spieler spieler = findSpielerById(spielerId);
+        return spieler.getKarten();
+    }
+    public void einheitenStationieren(Land land, int einheiten){
+        land.einheitenHinzufuegen(einheiten);
+    }
+    public void bewegeEinheiten(int spielerId, int truppen, Land herkunft, Land ziel) throws FalscherBesitzerException, UngueltigeBewegungException {
+        Spieler spieler = findSpielerById(spielerId);
+        spieler.bewegeEinheiten(truppen, herkunft, ziel);
     }
     //endregion
 }

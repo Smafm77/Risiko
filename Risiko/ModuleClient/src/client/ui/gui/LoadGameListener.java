@@ -3,6 +3,7 @@ package client.ui.gui;
 import client.net.RisikoClient;
 import common.valueobjects.ISpiel;
 import common.valueobjects.Spieler;
+import common.valueobjects.SpielerDTO;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,7 +25,8 @@ public class LoadGameListener implements ActionListener {
                 ISpiel geladen = new RisikoClient();
 
                 for (Spieler s : geladen.getSpielerListe()) {
-                    new SpielerFenster(geladen, s);
+                    SpielerDTO dto = new SpielerDTO(s);
+                    new SpielerFenster(geladen, dto);
                 }
                 gui.setVisible(false);
             } catch (Exception ex) {

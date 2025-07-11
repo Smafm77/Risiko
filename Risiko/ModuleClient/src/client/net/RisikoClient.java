@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class RisikoClient implements ISpiel {
@@ -90,7 +91,6 @@ public class RisikoClient implements ISpiel {
     public Welt getWelt() {
         String cmd = Commands.CMD_GET_WELT.name();
         writeString(cmd);
-
         return (Welt) readObjectResponse();
     }
 
@@ -186,8 +186,23 @@ public class RisikoClient implements ISpiel {
     }
 
     @Override
-    public int spieleKarte(Spieler spieler, Karte karte) {
-        String cmd = Commands.CMD_SPIELE_KARTE.name() + separator + spieler.getId() + separator + karte.getLand().getName();
+    public int berechneSpielerEinheiten(int spielerId){
+        String cmd = Commands.CMD_GET_SPIELER_EINHEITEN.name() + separator + spielerId;
+        writeString(cmd);
+        String[] einheiten = readStringResponse();
+        checkResponse(einheiten, Commands.CMD_GET_SPIELER_EINHEITEN_RESP);
+        return Integer.parseInt(einheiten[1]);
+    }
+    @Override
+    public HashSet<Karte> getSpielerKarten(int spielerId){
+        String cmd = Commands.CMD_GET_KARTEN.name() + separator + spielerId;
+        writeString(cmd);
+        return (HashSet<Karte>) readObjectResponse();
+    }
+
+    @Override
+    public int spieleKarte(int spielerId, Karte karte) {
+        String cmd = Commands.CMD_SPIELE_KARTE.name() + separator + spielerId + separator + karte.getLand().getName();
         writeString(cmd);
         String[] data = readStringResponse();
         checkResponse(data, Commands.CMD_SPIELE_KARTE_RESP);
@@ -195,8 +210,8 @@ public class RisikoClient implements ISpiel {
     }
 
     @Override
-    public String getMissionBeschreibung(Spieler spieler) {
-        String cmd = Commands.CMD_GET_MISS_BESCHREIBUNG.name() + separator + spieler.getId();
+    public String getMissionBeschreibung(int spielerId) {
+        String cmd = Commands.CMD_GET_MISS_BESCHREIBUNG.name() + separator + spielerId;
         writeString(cmd);
         String[] beschreibung = readStringResponse();
         checkResponse(beschreibung, Commands.CMD_GET_MISS_BESCHREIBUNG_RESP);
@@ -204,8 +219,8 @@ public class RisikoClient implements ISpiel {
     }
 
     @Override
-    public boolean hatMissionErfuellt(Spieler spieler) {
-        String cmd = Commands.CMD_GET_MISS_ERFUELLT.name() + separator + spieler.getId();
+    public boolean hatMissionErfuellt(int spielerId) {
+        String cmd = Commands.CMD_GET_MISS_ERFUELLT.name() + separator + spielerId;
         writeString(cmd);
         String[] erfolg = readStringResponse();
         checkResponse(erfolg, Commands.CMD_GET_MISS_ERFUELLT_RESP);
@@ -213,8 +228,8 @@ public class RisikoClient implements ISpiel {
     }
 
     @Override
-    public int getMissionProgress(Spieler spieler) {
-        String cmd = Commands.CMD_GET_MISS_PROGRESS.name() + separator + spieler.getId();
+    public int getMissionProgress(int spielerId) {
+        String cmd = Commands.CMD_GET_MISS_PROGRESS.name() + separator + spielerId;
         writeString(cmd);
         String[] prog = readStringResponse();
         checkResponse(prog, Commands.CMD_GET_MISS_PROGRESS_RESP);
@@ -248,6 +263,16 @@ public class RisikoClient implements ISpiel {
     }
 
     @Override
+    public void einheitenStationieren(Land land, int einheiten){
+        String cmd = Commands.CMD_STATIONIEREN.name() + separator + land.getId() + separator + einheiten;
+        writeString(cmd);
+        String[] report = readStringResponse();
+        checkResponse(report, Commands.CMD_STATIONIEREN_RESP);
+    }
+
+
+
+    @Override
     public void init() {
         writeString(Commands.CMD_SPIEL_INIT.name());
         String[] resp = readStringResponse();
@@ -268,6 +293,14 @@ public class RisikoClient implements ISpiel {
         String[] erfolg = readStringResponse();
         checkResponse(erfolg, Commands.CMD_KAMPF_RESP);
         return Boolean.parseBoolean(erfolg[1]);
+    }
+
+    @Override
+    public void bewegeEinheiten(int spielerId, int truppen, Land herkunft, Land ziel) throws FalscherBesitzerException, UngueltigeBewegungException {
+        String cmd = Commands.CMD_BEWEGE_EINHEITEN.name() + separator + spielerId + separator + truppen + separator + herkunft.getId() + separator + ziel.getId();
+        writeString(cmd);
+        String[] resp = readStringResponse();
+        checkResponse(resp, Commands.CMD_BEWEGE_EINHEITEN_RESP);
     }
 
     @Override

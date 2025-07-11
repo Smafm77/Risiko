@@ -1,10 +1,7 @@
 package client.ui.gui;
 
-import common.valueobjects.ISpiel;
-import common.valueobjects.Karte;
+import common.valueobjects.*;
 //import server.domain.AktiverSpielerListener;
-import common.valueobjects.Land;
-import common.valueobjects.Spieler;
 import common.enums.AuswahlModus;
 import common.enums.Spielphase;
 
@@ -16,7 +13,7 @@ import java.util.Set;
 
 public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/ {
     private final ISpiel spiel;
-    private final Spieler spieler;
+    private final SpielerDTO spieler;
     private AuswahlModus auswahlModus = AuswahlModus.KEINER;
     private int verbleibendeTruppen;
     private Land ausgewaehlt1;
@@ -30,7 +27,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
     private JProgressBar progress;
 
 
-    public SpielerFenster(ISpiel spiel, Spieler spieler) throws IOException {
+    public SpielerFenster(ISpiel spiel, SpielerDTO spieler) throws IOException {
         this.spieler = spieler;
         setTitle("Risiko - " + spieler.getName() + " (" + spieler.getFarbe() + ")");
 
@@ -54,7 +51,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
         missionsPanel.setPreferredSize(new Dimension(250, 0));
         missionsPanel.setMinimumSize(new Dimension(100, 0));
 
-        JTextArea txtMission = new JTextArea(spiel.getMissionBeschreibung(spieler));
+        JTextArea txtMission = new JTextArea(spiel.getMissionBeschreibung(spieler.getId()));
         txtMission.setWrapStyleWord(true);
         txtMission.setLineWrap(true);
         txtMission.setEditable(false);
@@ -64,7 +61,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
         missionsPanel.add(txtMission);
 
         progress = new JProgressBar(0, 100);
-        progress.setValue(spiel.getMissionProgress(spieler));
+        progress.setValue(spiel.getMissionProgress(spieler.getId()));
         progress.setStringPainted(true);
         progress.setAlignmentX(Component.CENTER_ALIGNMENT);
         missionsPanel.add(progress);
@@ -82,7 +79,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                             JOptionPane.showMessageDialog(SpielerFenster.this, "Dieses Land gehört dir nicht!");
                             return;
                         }
-                        land.einheitenHinzufuegen(1);
+                        spiel.einheitenStationieren( land, 1);
                         verbleibendeTruppen--;
                         lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
                         updateAllMaps();
@@ -150,7 +147,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     mapPanel.zeigeOverlayZiel(land.getName());
                     int max = ausgewaehlt1.getEinheiten() - 1;
                     int anzahl = frageAnzahl("Wie viele Einheiten verschieben? (max " + max + ")", 1, max);
-                    spieler.bewegeEinheiten(anzahl, ausgewaehlt1, ausgewaehlt2);
+                    spiel.bewegeEinheiten(spieler.getId(), anzahl, ausgewaehlt1, ausgewaehlt2);
                     JOptionPane.showMessageDialog(SpielerFenster.this, "Einheiten verschoben!");
                     updateAllMaps();
                     ausgewaehlt1 = null;
@@ -184,7 +181,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
     }
 
     private void openCardsSelectionDialog() {
-        Set<Karte> karteSet = spieler.getKarten();
+        Set<Karte> karteSet = spiel.getSpielerKarten(spieler.getId());
         if (karteSet.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Du hast keine Karten zum spielen!");
             return;
@@ -200,7 +197,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
         int res = JOptionPane.showConfirmDialog(this, new JScrollPane(list), "Karte spielen", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (res == JOptionPane.OK_OPTION && !list.isSelectionEmpty()) {
             Karte auswahl = karten.get(list.getSelectedIndex());
-            int bonus = spiel.spieleKarte(spieler, auswahl);
+            int bonus = spiel.spieleKarte(spieler.getId(), auswahl);
             if (bonus > 0) {
                 JOptionPane.showMessageDialog(this, "Karte gespielt! Du erhälst " + bonus + " Einheiten.", "Karte gespielt", JOptionPane.INFORMATION_MESSAGE);
                 verbleibendeTruppen += bonus;
@@ -251,8 +248,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
             pnlActions.add(btnKarteSpielen);
 
             updateMissionStatus();
-            verbleibendeTruppen = spieler.berechneNeueEinheiten(spiel.getWelt().alleKontinente);
-            spieler.setSchonErobert(false);
+            verbleibendeTruppen = spiel.berechneSpielerEinheiten(spieler.getId());
             auswahlModus = AuswahlModus.VERTEILEN;
             lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten. Klicke auf deine Länder.");
             JButton btnFertig = new JButton("Verteilen abschließen");
@@ -328,12 +324,12 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
 
     private void updateMissionProgressbar() {//Updated Progressbar auf Bildschirm
         if (progress != null) {
-            progress.setValue(spiel.getMissionProgress(spieler));
+            progress.setValue(spiel.getMissionProgress(spieler.getId()));
         }
     }
 
     private void checkMissionFulfilled() {
-        if (spiel.hatMissionErfuellt(spieler)) {
+        if (spiel.hatMissionErfuellt(spieler.getId())) {
             updateMissionProgressbar();
             benachrichtigeAlle(spieler.getName() + "'s Mission ist erfüllt. Damit hat " + spieler.getName() + " gewonnen!");
             //ToDo spielende einläuten
