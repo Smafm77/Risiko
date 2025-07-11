@@ -27,8 +27,7 @@ public class MapPanel extends JPanel {
     private final Map<String, Point> landKoordinaten = new HashMap<>();
     private final Map<String, Image> iconByColor = new HashMap<>();
     private final Map<String, Color> spielerFarbe = new HashMap<>();
-    private Map<String, BufferedImage> landOverlayImages = new HashMap<>();
-    private String sichtbarOverlayLandName = null;
+    private final Map<String, BufferedImage> landOverlayImages = new HashMap<>();
     private String overlayHerkunft = null;
     private String overlayZiel = null;
 
