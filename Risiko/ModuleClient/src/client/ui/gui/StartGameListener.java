@@ -1,8 +1,10 @@
 package client.ui.gui;
 
 
-import server.domain.AktiverSpielerListener;
-import server.domain.Spiel;
+import client.net.RisikoClient;
+import common.valueobjects.ISpiel;
+/*import server.domain.AktiverSpielerListener;
+import server.domain.Spiel;*/
 import common.enums.Spielphase;
 import common.valueobjects.Spieler;
 
@@ -21,12 +23,12 @@ public class StartGameListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            Spiel spiel = Spiel.getInstance();
-            spiel.getWelt().setSpielerListe(gui.getGuiSpieler());
+            ISpiel spiel = new RisikoClient();
+            spiel.setSpielerliste(gui.getGuiSpieler());
             spiel.weiseMissionenZu();
             spiel.init();
-            AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
-            for (Spieler s : gui.getGuiSpieler()){
+            //AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
+            for (Spieler s : spiel.getSpielerListe()){
                 new SpielerFenster(spiel, s);
             }
             gui.dispose();
@@ -34,6 +36,8 @@ public class StartGameListener implements ActionListener {
         } catch (IllegalStateException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
         } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(ex.getStackTrace());
             throw new RuntimeException(ex);
         }
 

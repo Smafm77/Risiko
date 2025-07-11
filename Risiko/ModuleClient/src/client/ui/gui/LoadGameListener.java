@@ -1,22 +1,17 @@
 package client.ui.gui;
 
-import server.domain.Spiel;
-import common.enums.Spielphase;
-import server.persistence.SpielSpeichern;
+import client.net.RisikoClient;
+import common.valueobjects.ISpiel;
 import common.valueobjects.Spieler;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class LoadGameListener implements ActionListener {
     private final GuiMain gui;
-    private ArrayList<Spieler> spielerListe;
-    private Spieler aktuellerSpieler;
-    private Spielphase phase;
+
 
     LoadGameListener(GuiMain gui) {
         this.gui = gui;
@@ -26,10 +21,7 @@ public class LoadGameListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
             try {
-                Spiel geladen = SpielSpeichern.laden("spielstand.risiko");
-                this.spielerListe = geladen.getSpielerListe();
-                this.aktuellerSpieler = geladen.getAktuellerSpieler();
-                this.phase = geladen.getPhase();
+                ISpiel geladen = new RisikoClient();
 
                 for (Spieler s : geladen.getSpielerListe()) {
                     new SpielerFenster(geladen, s);

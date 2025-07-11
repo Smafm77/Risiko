@@ -56,6 +56,10 @@ public class Spiel implements Serializable, ISpiel {
         return spielerListe;
     }
 
+    public void setSpielerliste (ArrayList<Spieler> spielerListe){
+        welt.setSpielerListe(spielerListe);
+    }
+
     public void init() {
         if (spielerListe.isEmpty()) {
             throw new IllegalStateException("Keine Spieler angelegt");

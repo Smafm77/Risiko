@@ -15,28 +15,25 @@ import java.util.Objects;
 
 public class RisikoClient implements ISpiel {
     private Socket socket;
-    private final PrintStream socketOut;
-    private final BufferedReader socketIn;
-    private Welt welt;
+    private final InputStream socketIn;
+    private final OutputStream socketOut;
 
     private final String separator = "%";
 
     public RisikoClient() throws IOException{
         socket = new Socket("127.0.0.1", 1399);
         socket.setSoTimeout(1000);
-        InputStream inputStream = socket.getInputStream();
-        socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        socketOut = new PrintStream(socket.getOutputStream());
-        //ToDo konstruktor Bücherei 6 nachempfunden schreiben
-        // initiiere Welt nach spiel init über setWelt()
-
+        socketIn = socket.getInputStream();
+        socketOut = socket.getOutputStream();
     }
 
     //region convenience
     private String[] readStringResponse(){
+        BufferedReader socketInPrint = new BufferedReader(new InputStreamReader(socketIn));
         String[] data = null;
         try{
-            String received = socketIn.readLine();
+            String received = socketInPrint.readLine();
+            System.out.println("Empfangene Daten: "+ received);
             data = received.split(separator);
         } catch(SocketTimeoutException e) {
             System.out.println("Server hat nicht geantwortet.");
@@ -46,7 +43,28 @@ public class RisikoClient implements ISpiel {
         return data;
     }
     private void writeString(String cmd){
-        socketOut.println(cmd);
+        System.out.println("Gesendete Daten: " + cmd);
+        PrintStream socketOutPrint = new PrintStream(socketOut);
+        socketOutPrint.println(cmd);
+    }
+    private Object readObjectResponse(){
+        Object resp;
+        try{
+            ObjectInputStream socketInObject = new ObjectInputStream(socketIn);
+            resp = socketInObject.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return resp;
+    }
+    private void writeObject(Object obj){
+        try {
+            ObjectOutputStream socketOutObject = new ObjectOutputStream(socketOut);
+            socketOutObject.reset();
+            socketOutObject.writeObject(obj);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     private void checkResponse(String[] data, Commands command){
         if(Commands.valueOf(data[0]) != command){
@@ -65,18 +83,18 @@ public class RisikoClient implements ISpiel {
         checkResponse(data, Commands.CMD_GET_AKTUELLER_SPIELER_RESP);
 
         int spielerId = Integer.parseInt(data[1]);
-        return welt.findeSpieler(spielerId);
+        return getWelt().findeSpieler(spielerId);
     }
 
     @Override
-    public Welt getWelt() throws IOException {
-        if (welt == null){
-            setWelt();
-        }
-        return welt;
+    public Welt getWelt() {
+        String cmd = Commands.CMD_GET_WELT.name();
+        writeString(cmd);
+
+        return (Welt) readObjectResponse();
     }
 
-    private Welt setWelt() throws IOException {
+    private Welt setWelt() {
         String cmd = Commands.CMD_GET_WELT.name();
         writeString(cmd);
         String[] data = readStringResponse();
@@ -148,7 +166,7 @@ public class RisikoClient implements ISpiel {
             kontinentListe.set(i,k);
         }
 
-        welt = new Welt(laenderListe, kontinentListe);
+        Welt welt = new Welt(laenderListe, kontinentListe);
         welt.setSpielerListe(spielerListe);
         return welt;
     }
@@ -164,7 +182,7 @@ public class RisikoClient implements ISpiel {
 
     @Override
     public ArrayList<Spieler> getSpielerListe() {
-        return welt.spielerListe;
+        return getWelt().spielerListe;
     }
 
     @Override
@@ -203,25 +221,44 @@ public class RisikoClient implements ISpiel {
         return Integer.parseInt(prog[1]);
     }
 
+
+    @Override
+    public void setSpielerliste (ArrayList<Spieler> spielerListe){
+        String cmd = Commands.CMD_SET_SPIELERLISTE.name();
+        writeString(cmd);
+        String[] resp = readStringResponse();
+        checkResponse(resp, Commands.CMD_SET_SPIELERLISTE_RESP);
+
+        writeObject(spielerListe);
+    }
+
     @Override
     public void setPhase(Spielphase spielphase) {
         String cmd = Commands.CMD_SET_PHASE.name() + separator + spielphase.name();
         writeString(cmd);
+        String[] resp = readStringResponse();
+        checkResponse(resp, Commands.CMD_SET_PHASE_RESP);
     }
 
     @Override
     public void weiseMissionenZu() {
         writeString(Commands.CMD_WEISE_MISS_ZU.name());
+        String[] resp = readStringResponse();
+        checkResponse(resp, Commands.CMD_WEISE_MISS_ZU_RESP);
     }
 
     @Override
     public void init() {
         writeString(Commands.CMD_SPIEL_INIT.name());
+        String[] resp = readStringResponse();
+        checkResponse(resp, Commands.CMD_SPIEL_INIT_RESP);
     }
 
     @Override
     public void naechstePhase() {
         writeString(Commands.CMD_NAECHSTE_PHASE.name());
+        String[] resp = readStringResponse();
+        checkResponse(resp, Commands.CMD_NAECHSTE_PHASE_RESP);
     }
 
     @Override

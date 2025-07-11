@@ -1,10 +1,8 @@
 package client.ui.gui;
 
+import common.valueobjects.ISpiel;
 import common.valueobjects.Karte;
-import server.domain.AktiverSpielerListener;
-import server.domain.Spiel;
-import server.persistence.NeuesSpielEinlesen;
-import server.persistence.SpielSpeichern;
+//import server.domain.AktiverSpielerListener;
 import common.valueobjects.Land;
 import common.valueobjects.Spieler;
 import common.enums.AuswahlModus;
@@ -16,8 +14,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class SpielerFenster extends JFrame implements AktiverSpielerListener {
-    private final Spiel spiel;
+public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/ {
+    private final ISpiel spiel;
     private final Spieler spieler;
     private AuswahlModus auswahlModus = AuswahlModus.KEINER;
     private int verbleibendeTruppen;
@@ -25,7 +23,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private Land ausgewaehlt2;
 
     private static final java.util.List<SpielerFenster> ALLE = new java.util.ArrayList<>();
-    NeuesSpielEinlesen einlesen = new NeuesSpielEinlesen();
     private JLabel lblInfo;
     private JLabel lblPhase;
     private JPanel pnlActions;
@@ -33,7 +30,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private JProgressBar progress;
 
 
-    public SpielerFenster(Spiel spiel, Spieler spieler) throws IOException {
+    public SpielerFenster(ISpiel spiel, Spieler spieler) throws IOException {
         this.spieler = spieler;
         setTitle("Risiko - " + spieler.getName() + " (" + spieler.getFarbe() + ")");
 
@@ -179,7 +176,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
-        AktiverSpielerListener.add(this);
+        //AktiverSpielerListener.add(this);
         updateView(this.spiel);
         setVisible(true);
 
@@ -221,22 +218,13 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         JMenu fileMenu = new JMenu("Datei");
         JMenuItem miSaveExit = new JMenuItem("Speichern & Beenden");
         miSaveExit.addActionListener(e -> {
-            try {
-                if (spiel.getPhase() != Spielphase.VERTEILEN) {
-                    SpielSpeichern.speichern(spiel, "spielstand.risiko");
-                    for (SpielerFenster fenster : SpielerFenster.ALLE) {
-                        fenster.dispose();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(SpielerFenster.this, "Schließe erst verteilen ab");
+            if (spiel.getPhase() != Spielphase.VERTEILEN) {
+                spiel.spielSpeichern();
+                for (SpielerFenster fenster : SpielerFenster.ALLE) {
+                    fenster.dispose();
                 }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Fehler beim Speichern:\n" + ex.getMessage(),
-                        "Speicherfehler",
-                        JOptionPane.ERROR_MESSAGE
-                );
+            } else {
+                JOptionPane.showMessageDialog(SpielerFenster.this, "Schließe erst verteilen ab");
             }
         });
         fileMenu.add(miSaveExit);
@@ -244,14 +232,14 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         return menuBar;
     }
 
-    @Override
+    /*@Override
     public void onAktiverSpielerGeaendert(Spieler neu) {
         SwingUtilities.invokeLater(() -> {
             updateView(spiel);
         });
-    }
+    }*/
 
-    public void updateView(Spiel spiel) {
+    public void updateView(ISpiel spiel) {
         lblInfo.setText(spieler.getName());
         pnlActions.removeAll();
         updateMissionStatus();

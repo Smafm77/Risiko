@@ -13,7 +13,7 @@ public interface ISpiel {
      */
     //region getter
     Spieler getAktuellerSpieler();
-    Welt getWelt() throws IOException;
+    Welt getWelt();
     Spielphase getPhase();
     ArrayList<Spieler> getSpielerListe();
     int spieleKarte(Spieler spieler, Karte karte);
@@ -23,6 +23,7 @@ public interface ISpiel {
     //endregion
 
     //region setter
+    void setSpielerliste (ArrayList<Spieler> spielerListe);
     void setPhase(Spielphase spielphase);
     void weiseMissionenZu();
     //endregion
