@@ -20,14 +20,14 @@ public class ImageCache {
 
     static {
         try {
-            mapFront = ImageIO.read(new File("Risiko/Grafiken/map-front.png"));
-            mapBack = ImageIO.read(new File("Risiko/Grafiken/map-back.png"));
-            playerIcons = Map.of("Blau", ImageIO.read(new File("Risiko/Grafiken/playericon_blau.png")),
-                    "Gelb", ImageIO.read(new File("Risiko/Grafiken/playericon_gelb.png")),
-                    "Gruen", ImageIO.read(new File("Risiko/Grafiken/playericon_gruen.png")),
-                    "Orange", ImageIO.read(new File("Risiko/Grafiken/playericon_orange.png")),
-                    "Rot", ImageIO.read(new File("Risiko/Grafiken/playericon_rot.png")),
-                    "Violett", ImageIO.read(new File("Risiko/Grafiken/playericon_violett.png")));
+            mapFront = ImageIO.read(new File("Risiko/Grafiken/Weltkarte/map-front.png"));
+            mapBack = ImageIO.read(new File("Risiko/Grafiken/Weltkarte/map-back.png"));
+            playerIcons = Map.of("Blau", ImageIO.read(new File("Risiko/Grafiken/playericon_neu/playericon_blau.png")),
+                    "Gelb", ImageIO.read(new File("Risiko/Grafiken/playericon_neu/playericon_gelb.png")),
+                    "Gruen", ImageIO.read(new File("Risiko/Grafiken/playericon_neu/playericon_gruen.png")),
+                    "Orange", ImageIO.read(new File("Risiko/Grafiken/playericon_neu/playericon_orange.png")),
+                    "Rot", ImageIO.read(new File("Risiko/Grafiken/playericon_neu/playericon_rot.png")),
+                    "Violett", ImageIO.read(new File("Risiko/Grafiken/playericon_neu/playericon_violett.png")));
 
         } catch (IOException e) {
             throw new RuntimeException("Grafiken konnten nicht geladen werden.", e);
@@ -37,7 +37,7 @@ public class ImageCache {
     public static void ladeOverlays(ArrayList<Land> laenderliste) {
         for (Land land : laenderliste) {
             try {
-                String path = "Risiko/Grafiken/overlays/overlay-" + land.getName() + ".png";
+                String path = "Risiko/Grafiken/Weltkarte/overlays/overlay-" + land.getName() + ".png";
                 BufferedImage overlayImg = ImageIO.read(new File(path));
                 landOverlayImages.put(land.getName(), overlayImg);
             } catch (IOException e) {
