@@ -36,6 +36,7 @@ public class GuiMain extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
     }
+
     JTextField getTfPlayerName() {
         return tfPlayerName;
     }
@@ -87,7 +88,7 @@ public class GuiMain extends JFrame {
     }
 
     void updateStartButtonState() {
-        btnStartGame.setEnabled(listModel.getSize() >= 2);
+        btnStartGame.setEnabled(listModel.getSize() >= 3);
     }
 
     public static void main(String[] args) {

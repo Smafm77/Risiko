@@ -5,14 +5,12 @@ import common.exceptions.UngueltigeBewegungException;
 import common.valueobjects.Land;
 import common.valueobjects.Spieler;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,24 +25,9 @@ public class MapPanel extends JPanel {
     private final Map<String, Point> landKoordinaten = new HashMap<>();
     private final Map<String, Image> iconByColor = new HashMap<>();
     private final Map<String, Color> spielerFarbe = new HashMap<>();
-    private final Map<String, BufferedImage> landOverlayImages = new HashMap<>();
     private String overlayHerkunft = null;
     private String overlayZiel = null;
 
-
-    private void ladeIcons() {
-        try {
-            iconByColor.put("Blau", ImageIO.read(new File("Risiko/Grafiken/playericon_blau.png")));
-            iconByColor.put("Gelb", ImageIO.read(new File("Risiko/Grafiken/playericon_gelb.png")));
-            iconByColor.put("Gruen", ImageIO.read(new File("Risiko/Grafiken/playericon_gruen.png")));
-            iconByColor.put("Orange", ImageIO.read(new File("Risiko/Grafiken/playericon_orange.png")));
-            iconByColor.put("Rot", ImageIO.read(new File("Risiko/Grafiken/playericon_rot.png")));
-            iconByColor.put("Violett", ImageIO.read(new File("Risiko/Grafiken/playericon_violett.png")));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void ladeFarben() {
         spielerFarbe.put("Blau", Color.decode("#001dff"));
@@ -55,30 +38,19 @@ public class MapPanel extends JPanel {
         spielerFarbe.put("Violett", Color.decode("#740ece"));
     }
 
-    private void ladeOverlays(ArrayList<Land> laenderliste) {
-        for (Land land : laenderliste) {
-            try {
-                String path = "Risiko/Grafiken/overlays/overlay-" + land.getName() + ".png";
-                BufferedImage overlayImg = ImageIO.read(new File(path));
-                landOverlayImages.put(land.getName(), overlayImg);
-            } catch (IOException e) {
-                landOverlayImages.put(land.getName(), null);
-            }
-        }
+    private void ladeIcons() {
+        iconByColor.putAll(ImageCache.playerIcons);
     }
 
     public MapPanel(ArrayList<Land> laenderListe) {
-        try {
-            img = ImageIO.read(new File("Risiko/Grafiken/map-front.png"));
-            bgImg = ImageIO.read(new File("Risiko/Grafiken/map-back.png"));
-        } catch (IOException e) {
-            img = null;
-            bgImg = null;
-        }
+
+        img = ImageCache.mapFront;
+        bgImg = ImageCache.mapBack;
+
         ladeFarben();
         ladeKoordinaten();
         ladeIcons();
-        ladeOverlays(laenderListe);
+        ImageCache.ladeOverlays(laenderListe);
         for (Land land : laenderListe) {
             farbwertZuLand.put(land.getFarbe(), land);
         }
@@ -124,13 +96,13 @@ public class MapPanel extends JPanel {
             }
         }
         if (overlayHerkunft != null) {
-            BufferedImage overlay = landOverlayImages.get(overlayHerkunft);
+            BufferedImage overlay = ImageCache.landOverlayImages.get(overlayHerkunft);
             if (overlay != null) {
                 g.drawImage(overlay, 0, 0, getWidth(), getHeight(), null);
             }
         }
         if (overlayZiel != null) {
-            BufferedImage overlay = landOverlayImages.get(overlayZiel);
+            BufferedImage overlay = ImageCache.landOverlayImages.get(overlayZiel);
             if (overlay != null) {
                 g.drawImage(overlay, 0, 0, getWidth(), getHeight(), null);
             }
