@@ -12,14 +12,15 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/ {
     private final ISpiel spiel;
     private final SpielerDTO spieler;
     private AuswahlModus auswahlModus = AuswahlModus.KEINER;
     private int verbleibendeTruppen;
-    private Land ausgewaehlt1;
-    private Land ausgewaehlt2;
+    private LandDTO ausgewaehlt1;
+    private LandDTO ausgewaehlt2;
 
     private static final java.util.List<SpielerFenster> ALLE = new java.util.ArrayList<>();
     private JLabel lblInfo;
@@ -70,18 +71,18 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
 
         missionsPanel.add(Box.createVerticalStrut(20));
 
-        mapPanel = new MapPanel(spiel.getWelt().getAlleLaender());
+        mapPanel = new MapPanel((ArrayList<LandDTO>) spiel.getWelt().getAlleLaender().stream().map(Land::toDTO).collect(Collectors.toList()), spiel);
         mapPanel.setLandKlickListener(land -> {
             if (!spiel.getAktuellerSpieler().equals(spieler)) return;
 
             switch (auswahlModus) {
                 case VERTEILEN:
                     if (verbleibendeTruppen > 0) {
-                        if (!land.getBesitzer().equals(spieler)) {
+                        if (!spiel.getLandbesitzer(land.getId()).equals(spieler)) {
                             JOptionPane.showMessageDialog(SpielerFenster.this, "Dieses Land gehört dir nicht!");
                             return;
                         }
-                        spiel.einheitenStationieren( land, 1);
+                        spiel.einheitenStationieren( land.getId(), 1);
                         verbleibendeTruppen--;
                         lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
                         updateAllMaps();
@@ -91,7 +92,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     break;
 
                 case ANGRIFF_HERKUNFT:
-                    if (!land.getBesitzer().equals(spieler) || land.getEinheiten() <= 1) {
+                    if (!spiel.getLandbesitzer(land.getId()).equals(spieler) || spiel.getLandTruppen(land.getId()) <= 1) {
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Wähle ein eigenes Land mit mehr als 1 Einheit!");
                         return;
                     }
@@ -103,15 +104,17 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
 
                 case ANGRIFF_ZIEL:
                     try {
-                        ausgewaehlt1 = land;
-                        mapPanel.zeigeOverlayHerkunft(land.getName());
+                        if (spiel.getLandbesitzer(land.getId()).equals(spieler) && spiel.getLandTruppen(land.getId()) > 0){
+                            ausgewaehlt1 = land;
+                            mapPanel.zeigeOverlayHerkunft(land.getName());
+                        }
                         ausgewaehlt2 = land;
                         mapPanel.zeigeOverlayZiel(land.getName());
-                        int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(ausgewaehlt1.getEinheiten() - 1, 3) + ")?", 1, Math.min(ausgewaehlt1.getEinheiten() - 1, 3));
-                        SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(ausgewaehlt2.getBesitzer())).findFirst().orElseThrow();
-                        int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(ausgewaehlt2.getEinheiten(), 2) + ")?", 1, Math.min(ausgewaehlt2.getEinheiten(), 2));
-                        boolean ergebnis = spiel.kampf(ausgewaehlt1, ausgewaehlt2, truppenA, truppenV);
-                        String sieger = ergebnis ? spieler.getName() : land.getBesitzer().getName();
+                        int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3));
+                        SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(spiel.getLandbesitzer(ausgewaehlt2.getId()))).findFirst().orElseThrow();
+                        int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2));
+                        boolean ergebnis = spiel.kampf(ausgewaehlt1.getId(), ausgewaehlt2.getId(), truppenA, truppenV);
+                        String sieger = ergebnis ? spieler.getName() : spiel.getLandbesitzer(land.getId()).getName();
                         String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
                         JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
                         JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
@@ -128,7 +131,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     break;
 
                 case VERSCHIEBEN_HERKUNFT:
-                    if (!land.getBesitzer().equals(spieler) || land.getEinheiten() <= 1) {
+                    if (!spiel.getLandbesitzer(land.getId()).equals(spieler) || spiel.getLandTruppen(land.getId()) <= 1) {
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Nur eigene Länder mit mehr als 1 Einheit wählen!");
                         return;
                     }
@@ -142,9 +145,9 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     try{
                         ausgewaehlt2 = land;
                         mapPanel.zeigeOverlayZiel(land.getName());
-                        int max = ausgewaehlt1.getEinheiten() - 1;
+                        int max = spiel.getLandTruppen(ausgewaehlt1.getId()) - 1;
                         int anzahl = frageAnzahl("Wie viele Einheiten verschieben? (max " + max + ")", 1, max);
-                        spiel.bewegeEinheiten(spieler.getId(), anzahl, ausgewaehlt1, ausgewaehlt2);
+                        spiel.bewegeEinheiten(spieler.getId(), anzahl, ausgewaehlt1.getId(), ausgewaehlt2.getId());
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Einheiten verschoben!");
                         updateAllMaps();
                         ausgewaehlt1 = null;

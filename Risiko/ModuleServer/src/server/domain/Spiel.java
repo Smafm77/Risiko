@@ -144,7 +144,9 @@ public class Spiel implements Serializable, ISpiel {
         }
     }
 
-    public boolean kampf(Land herkunft, Land ziel, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
+    public boolean kampf(int herkunftId, int zielId, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
+        Land herkunft = welt.findeLand(herkunftId);
+        Land ziel = welt.findeLand(zielId);
         kampfMoeglich(herkunft, ziel, truppenA, truppenV);
         int ueberlebende = schlacht(herkunft, ziel, truppenA, truppenV);
         if (ueberlebende == -1) {
@@ -250,12 +252,20 @@ public class Spiel implements Serializable, ISpiel {
         Spieler spieler = findSpielerById(spielerId);
         return spieler.getKarten();
     }
-    public void einheitenStationieren(Land land, int einheiten){
-        land.einheitenHinzufuegen(einheiten);
+    public void einheitenStationieren(int landId, int einheiten){
+        welt.findeLand(landId).einheitenHinzufuegen(einheiten);
     }
-    public void bewegeEinheiten(int spielerId, int truppen, Land herkunft, Land ziel) throws FalscherBesitzerException, UngueltigeBewegungException {
+    public void bewegeEinheiten(int spielerId, int truppen, int herkunftId, int zielId) throws FalscherBesitzerException, UngueltigeBewegungException {
         Spieler spieler = findSpielerById(spielerId);
+        Land herkunft = welt.findeLand(herkunftId);
+        Land ziel = welt.findeLand(zielId);
         spieler.bewegeEinheiten(truppen, herkunft, ziel);
+    }
+    public Spieler getLandbesitzer (int landId){
+        return welt.findeLand(landId).getBesitzer();
+    }
+    public int getLandTruppen (int landId){
+        return welt.findeLand(landId).getEinheiten();
     }
     //endregion
 }

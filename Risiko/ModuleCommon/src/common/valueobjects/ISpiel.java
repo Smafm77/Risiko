@@ -23,20 +23,22 @@ public interface ISpiel {
     String getMissionBeschreibung(int spielerId);
     boolean hatMissionErfuellt(int spielerId);
     int getMissionProgress(int spielerId);
+    Spieler getLandbesitzer (int landId);
+    int getLandTruppen (int landId);
     //endregion
 
     //region setter
     void setSpielerliste (ArrayList<Spieler> spielerListe);
     void setPhase(Spielphase spielphase);
     void weiseMissionenZu();
-    void einheitenStationieren(Land ziel, int einheiten);
+    void einheitenStationieren(int landId, int einheiten);
     //endregion
 
     //region other
     void init();
     void naechstePhase();
-    boolean kampf(Land herkunft, Land ziel, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException;
-    void bewegeEinheiten(int spielerId, int truppen, Land herkunft, Land ziel) throws FalscherBesitzerException, UngueltigeBewegungException;
+    boolean kampf(int herkunftId, int zielId, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException;
+    void bewegeEinheiten(int spielerId, int truppen, int herkunftId, int zielId) throws FalscherBesitzerException, UngueltigeBewegungException;
     void spielSpeichern ();
     //endregion
 }

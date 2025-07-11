@@ -22,4 +22,8 @@ public class SpielerDTO {
     public int getId() {
         return id;
     }
+    @Override
+    public boolean equals(Object spieler) {
+        return ((spieler instanceof Spieler) && ((Spieler) spieler).getId() == this.id) || ((spieler instanceof SpielerDTO) && ((SpielerDTO) spieler).id == this.id);
+    }
 }

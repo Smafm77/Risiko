@@ -26,8 +26,7 @@ public class StartGameListener implements ActionListener {
             spiel.init();
             //AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
             for (Spieler s : spiel.getSpielerListe()){
-                SpielerDTO dto = new SpielerDTO(s);
-                new SpielerFenster(spiel, dto);
+                new SpielerFenster(spiel, s.toDTO());
             }
             gui.dispose();
 

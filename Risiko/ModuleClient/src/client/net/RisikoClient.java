@@ -235,6 +235,20 @@ public class RisikoClient implements ISpiel {
         checkResponse(prog, Commands.CMD_GET_MISS_PROGRESS_RESP);
         return Integer.parseInt(prog[1]);
     }
+    @Override
+    public Spieler getLandbesitzer (int landId){
+        String cmd = Commands.CMD_GET_LANDBESITZER.name() + separator + landId;
+        writeString(cmd);
+        return (Spieler) readObjectResponse();
+    }
+    @Override
+    public int getLandTruppen (int landId){
+        String cmd = Commands.CMD_GET_LANDTRUPPEN.name() + separator + landId;
+        writeString(cmd);
+        String[] truppen = readStringResponse();
+        checkResponse(truppen, Commands.CMD_GET_LANDTRUPPEN_RESP);
+        return Integer.parseInt(truppen[1]);
+    }
 
 
     @Override
@@ -263,8 +277,8 @@ public class RisikoClient implements ISpiel {
     }
 
     @Override
-    public void einheitenStationieren(Land land, int einheiten){
-        String cmd = Commands.CMD_STATIONIEREN.name() + separator + land.getId() + separator + einheiten;
+    public void einheitenStationieren(int landId, int einheiten){
+        String cmd = Commands.CMD_STATIONIEREN.name() + separator + landId + separator + einheiten;
         writeString(cmd);
         String[] report = readStringResponse();
         checkResponse(report, Commands.CMD_STATIONIEREN_RESP);
@@ -287,8 +301,8 @@ public class RisikoClient implements ISpiel {
     }
 
     @Override
-    public boolean kampf(Land herkunft, Land ziel, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
-        String cmd = Commands.CMD_KAMPF.name() + separator + herkunft.getId() + separator + ziel.getId() + separator + truppenA + separator + truppenV;
+    public boolean kampf(int herkunftId, int zielId, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
+        String cmd = Commands.CMD_KAMPF.name() + separator + herkunftId + separator + zielId + separator + truppenA + separator + truppenV;
         writeString(cmd);
         String[] erfolg = readStringResponse();
         checkResponse(erfolg, Commands.CMD_KAMPF_RESP);
@@ -296,8 +310,8 @@ public class RisikoClient implements ISpiel {
     }
 
     @Override
-    public void bewegeEinheiten(int spielerId, int truppen, Land herkunft, Land ziel) throws FalscherBesitzerException, UngueltigeBewegungException {
-        String cmd = Commands.CMD_BEWEGE_EINHEITEN.name() + separator + spielerId + separator + truppen + separator + herkunft.getId() + separator + ziel.getId();
+    public void bewegeEinheiten(int spielerId, int truppen, int herkunftId, int zielId) throws FalscherBesitzerException, UngueltigeBewegungException {
+        String cmd = Commands.CMD_BEWEGE_EINHEITEN.name() + separator + spielerId + separator + truppen + separator + herkunftId + separator + zielId;
         writeString(cmd);
         String[] resp = readStringResponse();
         checkResponse(resp, Commands.CMD_BEWEGE_EINHEITEN_RESP);

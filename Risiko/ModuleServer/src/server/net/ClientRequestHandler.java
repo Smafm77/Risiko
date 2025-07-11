@@ -83,6 +83,8 @@ public class ClientRequestHandler implements Runnable {
             case CMD_GET_MISS_BESCHREIBUNG -> handleBeschreibung(Integer.parseInt(data[1]));
             case CMD_GET_MISS_ERFUELLT -> handleErfuellt(Integer.parseInt(data[1]));
             case CMD_GET_MISS_PROGRESS -> handleProgress(Integer.parseInt(data[1]));
+            case CMD_GET_LANDBESITZER -> handleLandbesitzer(Integer.parseInt(data[1]));
+            case CMD_GET_LANDTRUPPEN -> handleLandTruppen(Integer.parseInt(data[1]));
 
             case CMD_SET_SPIELERLISTE -> handleSetSpielerliste();
             case CMD_SET_PHASE -> handleSetPhase(data[1]);
@@ -184,6 +186,14 @@ public class ClientRequestHandler implements Runnable {
         String resp = Commands.CMD_GET_MISS_PROGRESS_RESP.name() + separator + fortschritt;
         writeString(resp);
     }
+    public void handleLandbesitzer(int landId){
+        Spieler spieler= spiel.getLandbesitzer(landId);
+        writeObject(spieler);
+    }
+    public void handleLandTruppen(int landId){
+        String resp = Commands.CMD_GET_LANDTRUPPEN_RESP.name() + separator + spiel.getLandTruppen(landId);
+        writeString(resp);
+    }
 
     private void handleSetSpielerliste() {
         writeString(Commands.CMD_SET_SPIELERLISTE_RESP.name());
@@ -200,10 +210,10 @@ public class ClientRequestHandler implements Runnable {
         writeString(Commands.CMD_WEISE_MISS_ZU_RESP.name());
     }
     private void handleStationieren(String[] info){
-        Land station = spiel.getWelt().findeLand(Integer.parseInt(info[1]));
+        int stationId = Integer.parseInt(info[1]);
         int truppen = Integer.parseInt(info[2]);
-        spiel.einheitenStationieren(station, truppen);
-        writeString(Commands.CMD_STATIONIEREN_RESP.name());
+        spiel.einheitenStationieren(stationId, truppen);
+        writeString(Commands.CMD_STATIONIEREN_RESP.name() + separator + spiel.getWelt().findeLand(stationId).getEinheiten());
     }
 
     private void handleInit(){
@@ -215,11 +225,11 @@ public class ClientRequestHandler implements Runnable {
         writeString(Commands.CMD_NAECHSTE_PHASE_RESP.name());
     }
     private void handleKampf(String[] infos) throws FalscherBesitzerException, UngueltigeBewegungException, IOException {
-        Land herkunft = spiel.getWelt().findeLand(Integer.parseInt(infos[1]));
-        Land ziel = spiel.getWelt().findeLand(Integer.parseInt(infos[2]));
+        int herkunftId = Integer.parseInt(infos[1]);
+        int zielId = Integer.parseInt(infos[2]);
         int angreifendeTruppe = Integer.parseInt(infos[3]);
         int verteidigendeTruppe = Integer.parseInt(infos[4]);
-        boolean erfolg = spiel.kampf(herkunft, ziel, angreifendeTruppe, verteidigendeTruppe);
+        boolean erfolg = spiel.kampf(herkunftId, zielId, angreifendeTruppe, verteidigendeTruppe);
         String resp = Commands.CMD_KAMPF_RESP.name() + separator + erfolg;
         writeString(resp);
     }
@@ -227,10 +237,10 @@ public class ClientRequestHandler implements Runnable {
     private void handleBewegeEinheiten(String[] infos) throws FalscherBesitzerException, UngueltigeBewegungException {
         int spielerId = Integer.parseInt(infos[1]);
         int truppen = Integer.parseInt(infos[2]);
-        Land herkunft = spiel.getWelt().findeLand(Integer.parseInt(infos[3]));
-        Land ziel = spiel.getWelt().findeLand(Integer.parseInt(infos[4]));
+        int herkunftId = Integer.parseInt(infos[3]);
+        int zielId = Integer.parseInt(infos[4]);
 
-        spiel.bewegeEinheiten(spielerId, truppen, herkunft, ziel);
+        spiel.bewegeEinheiten(spielerId, truppen, herkunftId, zielId);
         writeString(Commands.CMD_BEWEGE_EINHEITEN_RESP.name());
     }
 

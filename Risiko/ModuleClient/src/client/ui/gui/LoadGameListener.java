@@ -25,8 +25,7 @@ public class LoadGameListener implements ActionListener {
                 ISpiel geladen = new RisikoClient();
 
                 for (Spieler s : geladen.getSpielerListe()) {
-                    SpielerDTO dto = new SpielerDTO(s);
-                    new SpielerFenster(geladen, dto);
+                    new SpielerFenster(geladen, s.toDTO());
                 }
                 gui.setVisible(false);
             } catch (Exception ex) {
