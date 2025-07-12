@@ -1,9 +1,9 @@
 package client.ui.gui;
 
+import client.net.RisikoClient;
 import common.exceptions.FalscherBesitzerException;
 import common.exceptions.UngueltigeBewegungException;
-import server.domain.Spiel;
-import server.persistence.SpielSpeichern;
+import common.valueobjects.ISpiel;
 import common.valueobjects.Spieler;
 
 import javax.swing.*;
@@ -23,7 +23,7 @@ public class LoadGameListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         try {
-            Spiel geladen = SpielSpeichern.laden("spielstand.risiko");
+            ISpiel geladen = new RisikoClient();
             for (Spieler s : geladen.getSpielerListe()) {
                 try {
                     new SpielerFenster(geladen, s);

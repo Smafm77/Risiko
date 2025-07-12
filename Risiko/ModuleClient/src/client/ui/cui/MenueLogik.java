@@ -131,7 +131,7 @@ public class MenueLogik {
             System.out.println(verteidiger.getName() + " mit wie vielen Truppen möchtest du dich verteidigen (1 - " + Math.min((ziel.getEinheiten()), 2) + ")?");
             truppenV = mEingabe.eingabeTruppen();
             System.out.println();
-            ergebnis = menue.getSpiel().kampf(herkunft, ziel, truppenA, truppenV);
+            ergebnis = menue.getSpiel().kampf(herkunft.getId(), ziel.getId(), truppenA, truppenV);
             String sieger = ergebnis ? angreifer.getName() : verteidiger.getName();
             System.out.println(sieger + " hat gewonnen:");
             mPrint.printTheseLaender(relevanteLaender);

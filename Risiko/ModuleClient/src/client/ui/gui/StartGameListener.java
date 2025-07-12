@@ -1,12 +1,11 @@
 package client.ui.gui;
 
 
-import common.exceptions.FalscherBesitzerException;
-import common.exceptions.UngueltigeBewegungException;
 import server.domain.AktiverSpielerListener;
 import server.domain.Spiel;
 import common.enums.Spielphase;
 import common.valueobjects.Spieler;
+import common.valueobjects.SpielerDTO;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -23,19 +22,23 @@ public class StartGameListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            Spiel spiel = Spiel.getInstance();
-            spiel.getWelt().setSpielerListe(gui.getGuiSpieler());
+            ISpiel spiel = new RisikoClient();
+            spiel.setSpielerliste(gui.getGuiSpieler());
             spiel.weiseMissionenZu();
             spiel.init();
-            AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
-            for (Spieler s : gui.getGuiSpieler()){
-                new SpielerFenster(spiel, s);
+            //AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
+            for (Spieler s : spiel.getSpielerListe()){
+                new SpielerFenster(spiel, s.toDTO());
             }
             gui.dispose();
 
-        } catch (RuntimeException | FalscherBesitzerException | UngueltigeBewegungException | IOException ex) {
-        JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
-    }
+        } catch (IllegalStateException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(ex.getStackTrace());
+            throw new RuntimeException(ex);
+        }
 
     }
 }

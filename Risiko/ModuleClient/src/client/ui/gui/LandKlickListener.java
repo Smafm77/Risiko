@@ -2,8 +2,8 @@ package client.ui.gui;
 
 import common.exceptions.FalscherBesitzerException;
 import common.exceptions.UngueltigeBewegungException;
-import common.valueobjects.Land;
+import common.valueobjects.LandDTO;
 
 public interface LandKlickListener {
-    void landAngeklickt(Land land) throws FalscherBesitzerException, UngueltigeBewegungException;
+    void landAngeklickt(LandDTO land) throws FalscherBesitzerException, UngueltigeBewegungException;
 }

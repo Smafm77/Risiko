@@ -2,7 +2,9 @@ package client.ui.gui;
 
 import common.exceptions.FalscherBesitzerException;
 import common.exceptions.UngueltigeBewegungException;
+import common.valueobjects.ISpiel;
 import common.valueobjects.Land;
+import common.valueobjects.LandDTO;
 import common.valueobjects.Spieler;
 
 import javax.swing.*;
@@ -18,9 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapPanel extends JPanel {
+    private final ISpiel spiel;
     private BufferedImage img;
     private BufferedImage bgImg;
-    private final Map<Integer, Land> farbwertZuLand = new HashMap<>();
+    private final Map<Integer, LandDTO> farbwertZuLand = new HashMap<>();
     private LandKlickListener klickListener;
     private final Map<String, Point> landKoordinaten = new HashMap<>();
     private final Map<String, Image> iconByColor = new HashMap<>();
@@ -42,8 +45,8 @@ public class MapPanel extends JPanel {
         iconByColor.putAll(ImageCache.playerIcons);
     }
 
-    public MapPanel(ArrayList<Land> laenderListe) {
-
+    public MapPanel(ArrayList<LandDTO> laenderListe, ISpiel spiel) {
+        this.spiel = spiel;
         img = ImageCache.mapFront;
         bgImg = ImageCache.mapBack;
 
@@ -51,13 +54,13 @@ public class MapPanel extends JPanel {
         ladeKoordinaten();
         ladeIcons();
         ImageCache.ladeOverlays(laenderListe);
-        for (Land land : laenderListe) {
+        for (LandDTO land : laenderListe) {
             farbwertZuLand.put(land.getFarbe(), land);
         }
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Land land = getLandAt(e.getX(), e.getY());
+                LandDTO land = getLandAt(e.getX(), e.getY());
                 if (land != null && klickListener != null) {
                     try {
                         klickListener.landAngeklickt(land);
@@ -78,7 +81,8 @@ public class MapPanel extends JPanel {
         int h = getHeight();
         g.drawImage(bgImg, 0, 0, w, h, null);
         g.drawImage(img, 0, 0, w, h, null);
-        for (Land land : farbwertZuLand.values()) {
+
+        for (Land land : spiel.getWelt().getAlleLaender()) {
             Spieler spieler = land.getBesitzer();
             g.setColor(spielerFarbe.get(spieler.getFarbe()));
             Point p = landKoordinaten.get(land.getName());
@@ -109,7 +113,7 @@ public class MapPanel extends JPanel {
         }
     }
 
-    public Land getLandAt(int x, int y) {
+    public LandDTO getLandAt(int x, int y) {
         if (bgImg == null) return null;
 
         double scaleX = bgImg.getWidth() / (double) getWidth();

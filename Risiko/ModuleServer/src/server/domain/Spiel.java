@@ -56,6 +56,10 @@ public class Spiel implements Serializable, ISpiel {
         return spielerListe;
     }
 
+    public void setSpielerliste (ArrayList<Spieler> spielerListe){
+        welt.setSpielerListe(spielerListe);
+    }
+
     public void init() {
         if (spielerListe.isEmpty()) {
             throw new IllegalStateException("Keine Spieler angelegt");
@@ -75,7 +79,10 @@ public class Spiel implements Serializable, ISpiel {
     public void naechstePhase() {
         spielSpeichern();
         switch (phase) {
-            case VERTEILEN -> phase = Spielphase.ANGRIFF;
+            case VERTEILEN -> {
+                aktuellerSpieler.setSchonErobert(false);
+                phase = Spielphase.ANGRIFF;
+            }
             case ANGRIFF -> phase = Spielphase.VERSCHIEBEN;
             case VERSCHIEBEN -> {
                 naechsterSpieler();
@@ -106,7 +113,8 @@ public class Spiel implements Serializable, ISpiel {
         }
     }
 
-    public int spieleKarte(Spieler spieler, Karte karte) {
+    public int spieleKarte(int spielerId, Karte karte) {
+        Spieler spieler = findSpielerById(spielerId);
         if (spieler.getKarten().contains(karte)) {
             spieler.getKarten().remove(karte);
             kartenStapel.add(karte);
@@ -136,7 +144,9 @@ public class Spiel implements Serializable, ISpiel {
         }
     }
 
-    public boolean kampf(Land herkunft, Land ziel, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
+    public boolean kampf(int herkunftId, int zielId, int truppenA, int truppenV) throws FalscherBesitzerException, UngueltigeBewegungException {
+        Land herkunft = welt.findeLand(herkunftId);
+        Land ziel = welt.findeLand(zielId);
         kampfMoeglich(herkunft, ziel, truppenA, truppenV);
         int ueberlebende = schlacht(herkunft, ziel, truppenA, truppenV);
         if (ueberlebende == -1) {
@@ -213,16 +223,49 @@ public class Spiel implements Serializable, ISpiel {
         }
     }
 
-    public String getMissionBeschreibung(Spieler spieler) {
+    public String getMissionBeschreibung(int spielerId) {
+        Spieler spieler = findSpielerById(spielerId);
         return missionen.get(spieler).getBeschreibung();
     }
 
-    public boolean hatMissionErfuellt(Spieler spieler) {
+    public boolean hatMissionErfuellt(int spielerId) {
+        Spieler spieler = findSpielerById(spielerId);
         return missionen.get(spieler).istErfuellt(this, spieler);
     }
 
-    public int getMissionProgress(Spieler spieler) {
+    public int getMissionProgress(int spielerId) {
+        Spieler spieler = findSpielerById(spielerId);
         return missionen.get(spieler).getFortschritt(this, spieler);
+    }
+    //endregion
+
+    private Spieler findSpielerById(int spielerId){
+        return spielerListe.stream().filter(spieler -> spieler.getId() == spielerId).findAny().orElseThrow();
+    }
+
+    //region CommonMethoden
+    public int berechneSpielerEinheiten(int spielerId){
+        Spieler spieler = findSpielerById(spielerId);
+        return spieler.berechneNeueEinheiten(welt.alleKontinente);
+    }
+    public HashSet<Karte> getSpielerKarten(int spielerId){
+        Spieler spieler = findSpielerById(spielerId);
+        return spieler.getKarten();
+    }
+    public void einheitenStationieren(int landId, int einheiten){
+        welt.findeLand(landId).einheitenHinzufuegen(einheiten);
+    }
+    public void bewegeEinheiten(int spielerId, int truppen, int herkunftId, int zielId) throws FalscherBesitzerException, UngueltigeBewegungException {
+        Spieler spieler = findSpielerById(spielerId);
+        Land herkunft = welt.findeLand(herkunftId);
+        Land ziel = welt.findeLand(zielId);
+        spieler.bewegeEinheiten(truppen, herkunft, ziel);
+    }
+    public Spieler getLandbesitzer (int landId){
+        return welt.findeLand(landId).getBesitzer();
+    }
+    public int getLandTruppen (int landId){
+        return welt.findeLand(landId).getEinheiten();
     }
     //endregion
 }

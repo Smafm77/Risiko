@@ -1,19 +1,25 @@
 package server.net;
 
-
-import common.valueobjects.ISpiel;
 import server.domain.Spiel;
+import server.persistence.SpielSpeichern;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SpielServer {
-    public static void main(String[] args) throws IOException {
-        Spiel spiel = Spiel.getInstance();
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        Spiel spiel;
+        boolean neu = true;
+        if(neu){//Neues Spiel
+            spiel = Spiel.getInstance();
+        } else {//Altes Spiel laden
+            spiel = SpielSpeichern.laden("spielstand.risiko");
+        }
+
 
         ServerSocket serverSocket = new ServerSocket(1399);
-        System.out.println("Server laeuft und wartet auf eingehende Verbindungen!");
+        System.out.println("Server läuft und wartet auf eingehende Verbindungen!");
 
         while (true) {
             Socket s = serverSocket.accept();

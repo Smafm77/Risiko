@@ -27,7 +27,7 @@ public class Welt implements Serializable {
         verteileLaender();
     }
 
-    public Welt(ArrayList<Land> laender, ArrayList<Kontinent> kontinente) throws IOException {
+    public Welt(ArrayList<Land> laender, ArrayList<Kontinent> kontinente) {
         alleLaender = laender;
         alleKontinente = kontinente;
     }

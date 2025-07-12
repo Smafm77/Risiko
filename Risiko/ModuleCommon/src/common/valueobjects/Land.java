@@ -122,6 +122,7 @@ public class Land implements Serializable {
 
     @Override
     public boolean equals(Object land) {
-        return (land instanceof Land) && (((Land) land).name.equals(this.name));
+        return ((land instanceof Land) && (((Land) land).getId() == (this.id))) || ((land instanceof LandDTO) && (((LandDTO) land).getId() == (this.id)));
     }
+    public LandDTO toDTO(){return new LandDTO(this);}
 }
