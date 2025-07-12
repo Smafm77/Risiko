@@ -107,6 +107,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                         if (spiel.getLandbesitzer(land.getId()).equals(spieler) && spiel.getLandTruppen(land.getId()) > 0){
                             ausgewaehlt1 = land;
                             mapPanel.zeigeOverlayHerkunft(land.getName());
+                            break;
                         }
                         ausgewaehlt2 = land;
                         mapPanel.zeigeOverlayZiel(land.getName());
@@ -138,7 +139,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     ausgewaehlt1 = land;
                     mapPanel.zeigeOverlayHerkunft(land.getName());
                     auswahlModus = AuswahlModus.VERSCHIEBEN_ZIEL;
-                    lblInfo.setText("Wähle Ziel-Land (eigenes Nachbarland).");
+                    lblInfo.setText("Wähle Ziel-Land (eigenes Nachbarland von "+ ausgewaehlt1.getName() +").");
                     break;
 
                 case VERSCHIEBEN_ZIEL:
@@ -154,6 +155,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                         ausgewaehlt2 = null;
                         mapPanel.versteckeOverlay();
                         auswahlModus = AuswahlModus.VERSCHIEBEN_HERKUNFT;
+                        lblInfo.setText("Wähle ein eigenes Land, von dem du Einheiten verschieben willst.");
                         break;
                     }catch(UngueltigeBewegungException | FalscherBesitzerException e){
                         JOptionPane.showMessageDialog(SpielerFenster.this, "Fehler: " +e.getMessage(), "Ungültige Truppenverschiebung", JOptionPane.ERROR_MESSAGE);

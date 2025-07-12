@@ -72,6 +72,14 @@ public class RisikoClient implements ISpiel {
             throw new RuntimeException("Ungueltige Antwort auf Anfrage erhalten!");
         }
     }
+    private void checkExceptions(String[] data) throws FalscherBesitzerException, UngueltigeBewegungException {
+        if(Commands.valueOf(data[0]) == Commands.EX_FALSCHER_BESITZER){
+            throw new FalscherBesitzerException(data[1]);
+        }
+        if(Commands.valueOf(data[0]) == Commands.EX_FALSCHE_BEWEGUNG){
+            throw new UngueltigeBewegungException(data[1]);
+        }
+    }
     //endregion
 
     @Override
@@ -305,6 +313,7 @@ public class RisikoClient implements ISpiel {
         String cmd = Commands.CMD_KAMPF.name() + separator + herkunftId + separator + zielId + separator + truppenA + separator + truppenV;
         writeString(cmd);
         String[] erfolg = readStringResponse();
+        checkExceptions(erfolg);
         checkResponse(erfolg, Commands.CMD_KAMPF_RESP);
         return Boolean.parseBoolean(erfolg[1]);
     }
@@ -314,6 +323,7 @@ public class RisikoClient implements ISpiel {
         String cmd = Commands.CMD_BEWEGE_EINHEITEN.name() + separator + spielerId + separator + truppen + separator + herkunftId + separator + zielId;
         writeString(cmd);
         String[] resp = readStringResponse();
+        checkExceptions(resp);
         checkResponse(resp, Commands.CMD_BEWEGE_EINHEITEN_RESP);
     }
 

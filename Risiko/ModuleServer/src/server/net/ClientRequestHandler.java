@@ -63,13 +63,11 @@ public class ClientRequestHandler implements Runnable {
                 break;
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
-            } catch (FalscherBesitzerException | UngueltigeBewegungException  e) {
-                throw new RuntimeException(e);
             }
         }
     }
 
-    private void decipherRequest(String message) throws FalscherBesitzerException, UngueltigeBewegungException, IOException, ClassNotFoundException {
+    private void decipherRequest(String message) throws IOException, ClassNotFoundException {
         System.out.println("Empfangene Daten: "+ message);
         String[] data = message.split(separator);
 
@@ -224,23 +222,40 @@ public class ClientRequestHandler implements Runnable {
         spiel.naechstePhase();
         writeString(Commands.CMD_NAECHSTE_PHASE_RESP.name());
     }
-    private void handleKampf(String[] infos) throws FalscherBesitzerException, UngueltigeBewegungException, IOException {
+    private void handleKampf(String[] infos) {
         int herkunftId = Integer.parseInt(infos[1]);
         int zielId = Integer.parseInt(infos[2]);
         int angreifendeTruppe = Integer.parseInt(infos[3]);
         int verteidigendeTruppe = Integer.parseInt(infos[4]);
-        boolean erfolg = spiel.kampf(herkunftId, zielId, angreifendeTruppe, verteidigendeTruppe);
+        boolean erfolg = false;
+        try{
+            erfolg = spiel.kampf(herkunftId, zielId, angreifendeTruppe, verteidigendeTruppe);
+        } catch (UngueltigeBewegungException e){
+            writeString(Commands.EX_FALSCHE_BEWEGUNG.name() + separator + e.getMessage());
+            return;
+        } catch (FalscherBesitzerException e){
+            writeString(Commands.EX_FALSCHER_BESITZER.name() + separator + e.getMessage());
+            return;
+        }
         String resp = Commands.CMD_KAMPF_RESP.name() + separator + erfolg;
         writeString(resp);
     }
 
-    private void handleBewegeEinheiten(String[] infos) throws FalscherBesitzerException, UngueltigeBewegungException {
+    private void handleBewegeEinheiten(String[] infos) {
         int spielerId = Integer.parseInt(infos[1]);
         int truppen = Integer.parseInt(infos[2]);
         int herkunftId = Integer.parseInt(infos[3]);
         int zielId = Integer.parseInt(infos[4]);
 
-        spiel.bewegeEinheiten(spielerId, truppen, herkunftId, zielId);
+        try{
+            spiel.bewegeEinheiten(spielerId, truppen, herkunftId, zielId);
+        } catch (UngueltigeBewegungException e){
+            writeString(Commands.EX_FALSCHE_BEWEGUNG.name() + separator + e.getMessage());
+            return;
+        } catch (FalscherBesitzerException e){
+            writeString(Commands.EX_FALSCHER_BESITZER.name() + separator + e.getMessage());
+            return;
+        }
         writeString(Commands.CMD_BEWEGE_EINHEITEN_RESP.name());
     }
 
