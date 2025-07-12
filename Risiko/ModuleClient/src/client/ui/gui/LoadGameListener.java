@@ -26,9 +26,8 @@ public class LoadGameListener implements ActionListener {
             ISpiel geladen = new RisikoClient();
             for (Spieler s : geladen.getSpielerListe()) {
                 try {
-                    new SpielerFenster(geladen, s);
-                } catch (RuntimeException | FalscherBesitzerException | UngueltigeBewegungException | IOException
-                        ex) {
+                    new SpielerFenster(geladen, s.toDTO());
+                } catch (RuntimeException | IOException ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
                 }
             }

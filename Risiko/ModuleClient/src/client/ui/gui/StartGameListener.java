@@ -1,16 +1,15 @@
 package client.ui.gui;
 
 
-import server.domain.AktiverSpielerListener;
-import server.domain.Spiel;
-import common.enums.Spielphase;
+import client.net.RisikoClient;
+import common.valueobjects.ISpiel;
 import common.valueobjects.Spieler;
-import common.valueobjects.SpielerDTO;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class StartGameListener implements ActionListener {
     private final GuiMain gui;
@@ -36,7 +35,7 @@ public class StartGameListener implements ActionListener {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
-            System.out.println(ex.getStackTrace());
+            System.out.println(Arrays.toString(ex.getStackTrace()));
             throw new RuntimeException(ex);
         }
 

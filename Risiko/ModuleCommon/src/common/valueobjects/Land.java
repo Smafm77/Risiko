@@ -101,6 +101,7 @@ public class Land implements Serializable {
 
     private HashSet<Land> connectionOptions() {
         HashSet<Land> neighborhood = new HashSet<>();
+        neighborhood.add(this);
         directNeighbors(this, neighborhood);
         return neighborhood;
     }
