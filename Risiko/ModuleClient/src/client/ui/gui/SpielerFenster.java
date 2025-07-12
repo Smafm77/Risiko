@@ -12,10 +12,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/ {
+public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private final ISpiel spiel;
     private final SpielerDTO spieler;
     private AuswahlModus auswahlModus = AuswahlModus.KEINER;
@@ -356,5 +358,12 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
             }
             JOptionPane.showMessageDialog(this, "Bitte Zahl zwischen " + min + " und " + max + " eingeben!");
         }
+    }
+
+    @Override
+    public void onAktiverSpielerGeaendert(Spieler neu) {
+
+        List<AktiverSpielerListener> LIST = new CopyOnWriteArrayList<>();
+
     }
 }

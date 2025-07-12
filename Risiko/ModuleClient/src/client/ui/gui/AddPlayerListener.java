@@ -15,7 +15,7 @@ public class AddPlayerListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String name = gui.getTfPlayerName().getText().trim();
+        /*String name = gui.getTfPlayerName().getText().trim();
         if (name.isEmpty()) {
             JOptionPane.showMessageDialog(gui,
                     "Bitte einen Spielernamen angeben!",
@@ -46,5 +46,5 @@ public class AddPlayerListener implements ActionListener {
             case "Violett" -> 6;
             default -> 0;
         };
-    }
+    */}
 }

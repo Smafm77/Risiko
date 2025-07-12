@@ -53,18 +53,46 @@ public class ClientRequestHandler implements Runnable {
 
     @Override
     public void run() {
-        while(true) {
-            try {
-                BufferedReader socketInString = new BufferedReader(new InputStreamReader(socketIn));
-                String receivedData = socketInString.readLine();
-                decipherRequest(receivedData);
-            } catch (SocketException e) {
-                System.err.println("Client hat Verbindung geschlossen");
-                break;
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+        Spieler clientSpieler = null;
+        try{
+            BufferedReader socketInString = new BufferedReader(new InputStreamReader(socketIn));
+            String spielerDaten = socketInString.readLine();
+            if(spielerDaten == null || !spielerDaten.contains(",")){
+                System.err.println("Ungültige Login-Daten empfangen: "+ spielerDaten);
+                return;
             }
+            String[] spielerParts = spielerDaten.split(",");
+            String name = spielerParts[0].trim();
+            String color = spielerParts[1].trim();
+
+            for(Spieler s : spiel.getSpielerListe()){
+                if(s.getName().equalsIgnoreCase(name) && s.getFarbe().equalsIgnoreCase(color)){
+                    clientSpieler = s;
+                    break;
+                }
+            }
+            if(clientSpieler == null){
+                System.err.println("Spieler nicht gefunden für: " + name + "/" + color);
+                PrintStream socketOutPrint = new PrintStream(socketOut);
+                socketOutPrint.println("Fehler: Spieler nicht gefunden!");
+                return;
+            }
+            PrintStream socketOutPrint = new PrintStream(socketOut);
+            socketOutPrint.println("OK");
+
+            while (true){
+                String receivedData = socketInString.readLine();
+                if(receivedData == null){
+                    break;
+                }
+                decipherRequest(receivedData);
+            }
+        }catch (SocketException e){
+            System.err.println("Client hat Verbindung geschlossen");
+        }catch (IOException | ClassNotFoundException e){
+            e.printStackTrace();
         }
+
     }
 
     private void decipherRequest(String message) throws IOException, ClassNotFoundException {

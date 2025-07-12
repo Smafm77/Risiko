@@ -22,10 +22,10 @@ public class StartGameListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         try {
             ISpiel spiel = new RisikoClient();
-            spiel.setSpielerliste(gui.getGuiSpieler());
+
             spiel.weiseMissionenZu();
             spiel.init();
-            //AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
+            AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
             for (Spieler s : spiel.getSpielerListe()){
                 new SpielerFenster(spiel, s.toDTO());
             }

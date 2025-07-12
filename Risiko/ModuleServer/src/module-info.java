@@ -5,4 +5,5 @@ module ModuleServer {
     exports server.domain.missionen;
 
     requires ModuleCommon;
+    requires java.desktop;
 }
