@@ -273,6 +273,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
             btnBeenden.addActionListener(e -> {
                 updateMissionStatus();
                 spiel.naechstePhase();
+                mapPanel.versteckeOverlay();
                 updateViewInAllFenster();
             });
             pnlActions.add(btnBeenden);
@@ -285,6 +286,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
             btnFertig.addActionListener(e -> {
                 updateMissionStatus();
                 spiel.naechstePhase();
+                mapPanel.versteckeOverlay();
                 updateViewInAllFenster();
             });
             pnlActions.add(btnFertig);

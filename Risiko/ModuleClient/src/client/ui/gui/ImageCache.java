@@ -1,6 +1,6 @@
 package client.ui.gui;
 
-import common.valueobjects.Land;
+import common.valueobjects.LandDTO;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -34,8 +34,8 @@ public class ImageCache {
         }
     }
 
-    public static void ladeOverlays(ArrayList<Land> laenderliste) {
-        for (Land land : laenderliste) {
+    public static void ladeOverlays(ArrayList<LandDTO> laenderliste) {
+        for (LandDTO land : laenderliste) {
             try {
                 String path = "Risiko/Grafiken/Weltkarte/overlays/overlay-" + land.getName() + ".png";
                 BufferedImage overlayImg = ImageIO.read(new File(path));
