@@ -2,7 +2,6 @@ package client.ui.gui;
 
 import common.exceptions.EinheitenAnzahlException;
 import common.exceptions.FalscherBesitzerException;
-import common.exceptions.UngueltigeBewegungException;
 import common.exceptions.UngueltigeKarteException;
 import common.valueobjects.*;
 import common.enums.AuswahlModus;
@@ -79,15 +78,15 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
             switch (auswahlModus) {
                 case VERTEILEN:
-                    if(verbleibendeTruppen>0) {
+                    if (verbleibendeTruppen > 0) {
                         if (!spiel.getLandbesitzer(land.getId()).equals(spieler)) {
                             throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
                         }
-                        spiel.einheitenStationieren( land.getId(), 1);
+                        spiel.einheitenStationieren(land.getId(), 1);
                         verbleibendeTruppen--;
                         lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
                         updateAllMaps();
-                    }else{
+                    } else {
                         throw new EinheitenAnzahlException("Du hast keine Einheiten mehr zum verteilen");
                     }
                     break;
@@ -141,7 +140,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     ausgewaehlt1 = land;
                     mapPanel.zeigeOverlayHerkunft(land.getName());
                     auswahlModus = AuswahlModus.VERSCHIEBEN_ZIEL;
-                    lblInfo.setText("Wähle Ziel-Land (eigenes Nachbarland von "+ ausgewaehlt1.getName() +").");
+                    lblInfo.setText("Wähle Ziel-Land (eigenes Nachbarland von " + ausgewaehlt1.getName() + ").");
                     break;
 
                 case VERSCHIEBEN_ZIEL:
@@ -183,7 +182,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     }
 
     private void openCardsSelectionDialog() {
-        try{
+        try {
             Set<Karte> karteSet = spiel.getSpielerKarten(spieler.getId());
             if (karteSet.isEmpty()) {
                 throw new UngueltigeKarteException("Du besitzt keine Karten");
@@ -208,8 +207,8 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     mapPanel.repaint();
                 }
             }
-        }catch (UngueltigeKarteException e){
-                JOptionPane.showMessageDialog(SpielerFenster.this, "Fehler: " +e.getMessage(), "Ungültige Karte", JOptionPane.ERROR_MESSAGE);
+        } catch (UngueltigeKarteException e) {
+            JOptionPane.showMessageDialog(SpielerFenster.this, "Fehler: " + e.getMessage(), "Ungültige Karte", JOptionPane.ERROR_MESSAGE);
         }
     }
 

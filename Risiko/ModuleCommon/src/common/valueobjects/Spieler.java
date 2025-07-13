@@ -25,10 +25,10 @@ public class Spieler implements Serializable {
         alive = true;
     }
 
-    public Spieler(String name, String farbe, int id) {
+    public Spieler(String name, String farbe) {
         this.name = name.trim();
         this.farbe = farbe;
-        this.id = id;
+        this.id = farbeZuId(farbe);
         alive = true;
     }
 
@@ -140,5 +140,17 @@ public class Spieler implements Serializable {
     }
     public SpielerDTO toDTO(){
         return new SpielerDTO(this);
+    }
+
+    private int farbeZuId(String color) {
+        return switch (color) {
+            case "Rot" -> 1;
+            case "Blau" -> 2;
+            case "Gruen" -> 3;
+            case "Gelb" -> 4;
+            case "Orange" -> 5;
+            case "Violett" -> 6;
+            default -> 0;
+        };
     }
 }

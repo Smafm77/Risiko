@@ -20,7 +20,7 @@ public class RisikoClient implements ISpiel {
     private final OutputStream socketOut;
     private final String spielerName;
     private final String spielerColor;
-
+private final BufferedReader reader;
     private final String separator = "%";
 
     //region convenience
@@ -118,7 +118,7 @@ public class RisikoClient implements ISpiel {
             String name = s[1];
             String farbe = s[2];
             boolean alive = Boolean.parseBoolean(s[3]);
-            Spieler spieler = (farbe == null || farbe.isEmpty()) ? new Spieler(name, id) : new Spieler(name, farbe, id); //CUI ohne farbe, GUI mit
+            Spieler spieler = (farbe == null || farbe.isEmpty()) ? new Spieler(name, id) : new Spieler(name, farbe); //CUI ohne farbe, GUI mit farbe, ohne id
             spielerListe.add(spieler);
         }
         int kontinentCount = Integer.parseInt(data[idx++]);
@@ -334,6 +334,7 @@ public class RisikoClient implements ISpiel {
         this.socketOut = socket.getOutputStream();
         this.spielerName = spielerName;
         this.spielerColor = spielerColor;
+        this.reader = new BufferedReader(new InputStreamReader(this.socketIn));
     }
     public String getSpielerName(){
         return spielerName;
@@ -342,4 +343,15 @@ public class RisikoClient implements ISpiel {
     public String getSpielerColor(){
         return spielerColor;
     }
+
+    public void awaitStart() throws IOException{
+        String line;
+        while ((line = reader.readLine()) != null){
+            if("CMD_START".equals(line.trim())){
+                return;
+            }
+        }
+        throw new IOException("Verbindung beendet, kein Startsignal erhalten.");
+    }
+
 }

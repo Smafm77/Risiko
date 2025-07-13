@@ -1,7 +1,6 @@
 package client.ui.gui;
 
 import client.net.RisikoClient;
-import common.valueobjects.Spieler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,10 +9,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+
 
 public class ClientLoginDialog extends JFrame {
     public ClientLoginDialog() {

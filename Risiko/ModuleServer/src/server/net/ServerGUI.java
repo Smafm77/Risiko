@@ -12,11 +12,16 @@ public class ServerGUI extends JFrame{
     private final JSpinner spinnerSpieler = new JSpinner(new SpinnerNumberModel(3,3,6,1));
     private final JButton btnStartServer = new JButton("Server starten");
     private final JLabel lblStatus = new JLabel("Wähle Spieleranzahl");
+    private final JCheckBox cbSpielLaden = new JCheckBox("Bestehendes Spiel laden");
 
     public ServerGUI() {
         super(TITLE);
         setPreferredSize(WINDOW_SIZE);
         setLayout(new BorderLayout());
+
+        JPanel pnNorth = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pnNorth.add(cbSpielLaden);
+        add(pnNorth, BorderLayout.NORTH);
 
         JPanel pnCenter = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pnCenter.add(lblPrompt);
@@ -38,12 +43,13 @@ public class ServerGUI extends JFrame{
     private void initListeners() {
 
         btnStartServer.addActionListener(e -> {
-           int spielerAnzahl = (Integer) spinnerSpieler.getValue();
+           boolean spielLaden = cbSpielLaden.isSelected();
+            int spielerAnzahl = (Integer) spinnerSpieler.getValue();
            btnStartServer.setEnabled(false);
-            lblStatus.setText("Server startet für " + spielerAnzahl + " Spieler...");
+            lblStatus.setText((spielLaden ? "Lade Spiel für " : "Server startet für ") + spielerAnzahl + " Spieler...");
 
             new Thread(()-> {
-                SpielServer.startServer(spielerAnzahl, lblStatus);
+                SpielServer.startServer(spielLaden, spielerAnzahl, lblStatus);
             }).start();
         });
     }

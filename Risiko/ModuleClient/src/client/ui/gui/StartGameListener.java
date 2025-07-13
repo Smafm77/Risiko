@@ -23,22 +23,24 @@ public class StartGameListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
+
+            client.awaitStart();
             ISpiel spiel = this.client;
 
-            spiel.weiseMissionenZu();
-            spiel.init();
-
             Spieler dieserSpieler = spiel.getSpielerListe().stream().filter(s -> s.getName().equals(client.getSpielerName())).findFirst().orElseGet(spiel::getAktuellerSpieler);
-            new SpielerFenster(spiel, dieserSpieler.toDTO());
-
-            gui.dispose();
-
+            SwingUtilities.invokeLater(()-> {
+                try {
+                    new SpielerFenster(spiel, dieserSpieler.toDTO());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                gui.dispose();
+            });
         } catch (IllegalStateException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             System.out.println(Arrays.toString(ex.getStackTrace()));
-            throw new RuntimeException(ex);
         }
 
     }
