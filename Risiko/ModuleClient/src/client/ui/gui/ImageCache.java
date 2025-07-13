@@ -17,6 +17,7 @@ public class ImageCache {
     public static final BufferedImage mapBack;
     public static final Map<String, BufferedImage> playerIcons;
     public static final Map<String, BufferedImage> landOverlayImages = new HashMap<>();
+    public static final Map<String, BufferedImage> kampfOverlayImages = new HashMap<>();
 
     static {
         try {
@@ -42,6 +43,17 @@ public class ImageCache {
                 landOverlayImages.put(land.getName(), overlayImg);
             } catch (IOException e) {
                 landOverlayImages.put(land.getName(), null);
+            }
+        }
+    }
+    public static void ladeKampfOverlays(ArrayList<LandDTO> laenderliste) {
+        for (LandDTO land : laenderliste) {
+            try {
+                String path = "Risiko/Grafiken/Weltkarte/kampf/kampf_" + land.getName() + ".png";
+                BufferedImage kampfImg = ImageIO.read(new File(path));
+                kampfOverlayImages.put(land.getName(), kampfImg);
+            } catch (IOException e) {
+                kampfOverlayImages.put(land.getName(), null);
             }
         }
     }

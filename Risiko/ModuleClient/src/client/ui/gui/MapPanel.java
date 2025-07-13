@@ -30,6 +30,7 @@ public class MapPanel extends JPanel {
     private final Map<String, Color> spielerFarbe = new HashMap<>();
     private String overlayHerkunft = null;
     private String overlayZiel = null;
+    private String kampfLand = null;
 
 
     private void ladeFarben() {
@@ -54,6 +55,7 @@ public class MapPanel extends JPanel {
         ladeKoordinaten();
         ladeIcons();
         ImageCache.ladeOverlays(laenderListe);
+        ImageCache.ladeKampfOverlays(laenderListe);
         for (LandDTO land : laenderListe) {
             farbwertZuLand.put(land.getFarbe(), land);
         }
@@ -111,6 +113,12 @@ public class MapPanel extends JPanel {
                 g.drawImage(overlay, 0, 0, getWidth(), getHeight(), null);
             }
         }
+        if (kampfLand != null) {
+            BufferedImage overlay = ImageCache.kampfOverlayImages.get(kampfLand);
+            if (overlay != null) {
+                g.drawImage(overlay, 0, 0, getWidth(), getHeight(), null);
+            }
+        }
     }
 
     public LandDTO getLandAt(int x, int y) {
@@ -145,6 +153,16 @@ public class MapPanel extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void zeigeKampfLand(String landName){
+        kampfLand = landName;
+        repaint();
+    }
+
+    public void beendeKampfLand(){
+        kampfLand = null;
+        repaint();
     }
 
     public void zeigeOverlayHerkunft(String landName) {
