@@ -11,9 +11,12 @@ public class GuiMain extends JFrame {
 
 
     public  GuiMain(RisikoClient client) {
-        super("Risiko - Client");
+        super("Risiko - Client" + client.getSpielerName() + " [" + client.getSpielerColor() + "]");
         this.client = client;
         setLayout(new BorderLayout());
+        JLabel lblInfo = new JLabel("Spieler: " + client.getSpielerName() + " [" + client.getSpielerColor() + "]");
+        lblInfo.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        add(lblInfo, BorderLayout.NORTH);
         add(btnStartGame, BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(null);

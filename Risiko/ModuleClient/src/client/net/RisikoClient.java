@@ -18,15 +18,10 @@ public class RisikoClient implements ISpiel {
     private Socket socket;
     private final InputStream socketIn;
     private final OutputStream socketOut;
+    private final String spielerName;
+    private final String spielerColor;
 
     private final String separator = "%";
-
-    public RisikoClient() throws IOException{
-        socket = new Socket("127.0.0.1", 1399);
-        socket.setSoTimeout(1000);
-        socketIn = socket.getInputStream();
-        socketOut = socket.getOutputStream();
-    }
 
     //region convenience
     private String[] readStringResponse(){
@@ -332,10 +327,19 @@ public class RisikoClient implements ISpiel {
         writeString(Commands.CMD_SPIEL_SPEICHERN.name());
     }
 
-    public RisikoClient(Socket existingSocket) throws IOException{
-        this.socket = existingSocket;
+    public RisikoClient(Socket socket, String spielerName, String spielerColor) throws IOException{
+        this.socket = socket;
         this.socket.setSoTimeout(1000);
         this.socketIn = socket.getInputStream();
         this.socketOut = socket.getOutputStream();
+        this.spielerName = spielerName;
+        this.spielerColor = spielerColor;
+    }
+    public String getSpielerName(){
+        return spielerName;
+    }
+
+    public String getSpielerColor(){
+        return spielerColor;
     }
 }

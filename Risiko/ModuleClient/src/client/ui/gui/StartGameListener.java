@@ -27,10 +27,10 @@ public class StartGameListener implements ActionListener {
 
             spiel.weiseMissionenZu();
             spiel.init();
-            AktiverSpielerListener.fire(spiel.getAktuellerSpieler());
-            for (Spieler s : spiel.getSpielerListe()){
-                new SpielerFenster(spiel, s.toDTO());
-            }
+
+            Spieler dieserSpieler = spiel.getSpielerListe().stream().filter(s -> s.getName().equals(client.getSpielerName())).findFirst().orElseGet(spiel::getAktuellerSpieler);
+            new SpielerFenster(spiel, dieserSpieler.toDTO());
+
             gui.dispose();
 
         } catch (IllegalStateException ex) {

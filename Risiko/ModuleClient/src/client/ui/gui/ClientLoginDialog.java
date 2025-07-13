@@ -22,39 +22,38 @@ public class ClientLoginDialog extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        ArrayList<String> farbenList = new ArrayList<>(Arrays.asList("Rot", "Blau", "Gruen", "Gelb", "Orange", "Violett"));
-        JComboBox<String> cboColor = new JComboBox<>(farbenList.toArray(new String[0]));
+
         JTextField tfName = new JTextField();
         JButton btnConnect = new JButton("Verbinden");
 
-        JPanel p = new JPanel(new GridLayout(2, 2));
+        JPanel p = new JPanel(new GridLayout(1, 2));
         p.add(new JLabel("Name:"));
         p.add(tfName);
-        p.add(new JLabel("Farbe:"));
-        p.add(cboColor);
+
         add(p, BorderLayout.CENTER);
         add(btnConnect, BorderLayout.SOUTH);
 
         btnConnect.addActionListener(e -> {
             String name = tfName.getText().trim();
-            String color = (String) cboColor.getSelectedItem();
-            if (name.isEmpty() || color == null) {
-                JOptionPane.showMessageDialog(this, "Bitte Name und Farbe angeben!");
+
+            if (name.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Bitte Namen angeben!");
                 return;
             }
             try {
                 Socket s = new Socket("localhost", 1399);
                 PrintWriter out = new PrintWriter(s.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                out.println(name + "," + color);
+                out.println(name);
                 String response = in.readLine();
                 if (!"OK".equals(response)) {
                     JOptionPane.showMessageDialog(this, "Server: " + response);
                     s.close();
                     return;
                 }
+                String spielerColor = response.split(":", 2)[1];
                 this.dispose();
-                RisikoClient client = new RisikoClient(s);
+                RisikoClient client = new RisikoClient(s, name, spielerColor);
                 SwingUtilities.invokeLater(() -> {
                     GuiMain main = new GuiMain(client);
                     main.showWithListener();
