@@ -331,4 +331,11 @@ public class RisikoClient implements ISpiel {
     public void spielSpeichern(){
         writeString(Commands.CMD_SPIEL_SPEICHERN.name());
     }
+
+    public RisikoClient(Socket existingSocket) throws IOException{
+        this.socket = existingSocket;
+        this.socket.setSoTimeout(1000);
+        this.socketIn = socket.getInputStream();
+        this.socketOut = socket.getOutputStream();
+    }
 }

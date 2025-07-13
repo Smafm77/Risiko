@@ -1,5 +1,6 @@
 package client.ui.gui;
 
+import client.net.RisikoClient;
 import common.valueobjects.Spieler;
 
 import javax.swing.*;
@@ -53,8 +54,9 @@ public class ClientLoginDialog extends JFrame {
                     return;
                 }
                 this.dispose();
+                RisikoClient client = new RisikoClient(s);
                 SwingUtilities.invokeLater(() -> {
-                    GuiMain main = new GuiMain();
+                    GuiMain main = new GuiMain(client);
                     main.showWithListener();
                 });
             } catch (Exception ex) {

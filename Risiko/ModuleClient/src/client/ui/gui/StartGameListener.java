@@ -13,15 +13,17 @@ import java.util.Arrays;
 
 public class StartGameListener implements ActionListener {
     private final GuiMain gui;
+    private final RisikoClient client;
 
-    public StartGameListener(GuiMain gui) {
+    public StartGameListener(GuiMain gui, RisikoClient client) {
         this.gui = gui;
+        this.client = client;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            ISpiel spiel = new RisikoClient();
+            ISpiel spiel = this.client;
 
             spiel.weiseMissionenZu();
             spiel.init();
