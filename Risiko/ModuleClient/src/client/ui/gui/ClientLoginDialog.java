@@ -42,7 +42,7 @@ public class ClientLoginDialog extends JFrame {
                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 out.println(name);
                 String response = in.readLine();
-                if (!"OK".equals(response)) {
+                if (!response.startsWith("OK")) {
                     JOptionPane.showMessageDialog(this, "Server: " + response);
                     s.close();
                     return;

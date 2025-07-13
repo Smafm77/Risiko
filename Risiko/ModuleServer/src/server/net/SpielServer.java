@@ -13,30 +13,23 @@ import java.util.*;
 public class SpielServer {
     private static final List<String> Farben = Arrays.asList("Rot", "Blau", "Gruen", "Gelb", "Orange", "Violett");
 
-    public static void startServer(boolean spielLaden, int spielerListe, JLabel lblStatus) {
+    public static void startServer(boolean spielLaden, int anzahlGewaehlt, JLabel lblStatus) {
 
-        int spielerAnzahl = spielerListe;
+        int spielerAnzahl = anzahlGewaehlt;
         try (ServerSocket serverSocket = new ServerSocket(1399)) {
             Spiel spiel;
-            if (spielLaden) {//Neues Spiel
+            if (!spielLaden) {//Neues Spiel
                 spiel = Spiel.getInstance();
 
             } else {//Altes Spiel laden
                 spiel = SpielSpeichern.laden("spielstand.risiko");
             }
+
             ArrayList<Socket> clientSockets = new ArrayList<>();
             ArrayList<String> spielerNamen = new ArrayList<>();
             ArrayList<String> spielerColor = new ArrayList<>();
-            updateLabel(lblStatus, "Warte auf " + spielerListe + " Clients...");
-
-            if (spielLaden) {
-                ArrayList <Spieler> domainSpieler = spiel.getSpielerListe();
-                for (Spieler sp : domainSpieler) {
-                    spielerNamen.add(sp.getName());
-                    spielerColor.add(sp.getFarbe());
-                }
-                spielerAnzahl = spielerNamen.size();
-            }
+            ArrayList<Spieler> spielerListe = new ArrayList<>();
+            updateLabel(lblStatus, "Warte auf " + anzahlGewaehlt + " Clients...");
 
             int verbunden = 0;
 
@@ -55,10 +48,11 @@ public class SpielServer {
                     s.close();
                     continue;
                 }
-                String color = spielLaden ? spielerColor.get(spielerNamen.indexOf(name)) : Farben.get(spielerNamen.size());
+                String color = Farben.get(spielerNamen.size());
                 spielerNamen.add(name);
                 spielerColor.add(color);
-
+                Spieler spieler = new Spieler(name, color);
+                spielerListe.add(spieler);
                 out.println("OK:" + color);
 
                 clientSockets.add(s);
@@ -67,23 +61,12 @@ public class SpielServer {
             }
 
             updateLabel(lblStatus, "Alle Clients verbunden. Spiel wird gestartet...");
-
-            if(!spielLaden){
-                ArrayList <Spieler> domainSpieler = spiel.getSpielerListe();
-                for (int i = 0; i< spielerNamen.size(); i++) {
-                    String name = spielerNamen.get(i);
-                    String color = spielerColor.get(i);
-                    domainSpieler.add(new Spieler(name, color));
-                }
-                spiel.setSpielerliste(domainSpieler);
-            }
-            spiel.weiseMissionenZu();
-            spiel.init();
+            spiel.getWelt().setSpielerListe(spielerListe);
 
             for(Socket s : clientSockets){
                 try{
                     PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-                    out.println("CMD_START");
+                    out.println("CMD_SPIEL_INIT_RESP");
                 }catch(IOException e){
                     e.printStackTrace();
                 }

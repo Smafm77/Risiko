@@ -23,10 +23,8 @@ public class StartGameListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-
-            client.awaitStart();
             ISpiel spiel = this.client;
-
+            spiel.init();
             Spieler dieserSpieler = spiel.getSpielerListe().stream().filter(s -> s.getName().equals(client.getSpielerName())).findFirst().orElseGet(spiel::getAktuellerSpieler);
             SwingUtilities.invokeLater(()-> {
                 try {
@@ -38,9 +36,6 @@ public class StartGameListener implements ActionListener {
             });
         } catch (IllegalStateException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-            System.out.println(Arrays.toString(ex.getStackTrace()));
         }
 
     }
