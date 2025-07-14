@@ -81,6 +81,13 @@ public class RisikoClient implements ISpiel {
     public void idleListening(){
         while (true){
             String[] info = readStringResponse();
+            if (Commands.EVENT_UPDATE_VIEW.name().equals(info[0])){
+                fenster.updateView();
+                //ToDo check ob Rückmeldung gesendet werden muss
+                if(Integer.parseInt(info[1]) == fenster.getSpielerId()){
+                    break;
+                }
+            }
             //Update view -> update View
             //Erfrage Verteidigung
             //aktueller Spielr you? -> break
@@ -336,6 +343,13 @@ public class RisikoClient implements ISpiel {
     @Override
     public void spielSpeichern(){
         writeString(Commands.CMD_SPIEL_SPEICHERN.name());
+    }
+
+
+    public void updateAllView(){
+        writeString(Commands.EVENT_UPDATE_ALL.name());
+        String[] update = readStringResponse();
+        checkResponse(update, Commands.EVENT_UPDATE_VIEW);
     }
 
     public RisikoClient(Socket socket, String spielerName, String spielerColor) throws IOException{

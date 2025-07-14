@@ -16,12 +16,12 @@ public class ClientRequestHandler implements Runnable {
     private final Spieler clientSpieler;
     private final InputStream socketIn;
     private final OutputStream socketOut;
-    private final ArrayList<Socket> allClientSockets;
+    private final ArrayList<ClientRequestHandler> allClientRHs;
 
     private final String separator = "%";
     ISpiel spiel;
 
-    private void writeString(String cmd) {
+    public void writeString(String cmd) {
         PrintStream socketOutPrint = new PrintStream(socketOut);
         System.out.println("Gesendete Daten: " + cmd);
         socketOutPrint.println(cmd);
@@ -48,12 +48,14 @@ public class ClientRequestHandler implements Runnable {
         }
     }
 
-    public ClientRequestHandler(Socket s, ISpiel spiel, Spieler spieler, ArrayList<Socket> otherSockets) throws IOException {
+    public ClientRequestHandler(Socket s, ISpiel spiel, Spieler spieler, ArrayList<ClientRequestHandler> otherClients) throws IOException {
         this.spiel = spiel;
         this.clientSpieler = spieler;
         socketIn = s.getInputStream();
         socketOut = s.getOutputStream();
-        allClientSockets = otherSockets;
+        allClientRHs = otherClients;
+        allClientRHs.add(this);
+        System.out.println(allClientRHs);
     }
 
     @Override
@@ -127,6 +129,8 @@ public class ClientRequestHandler implements Runnable {
             case CMD_KAMPF -> handleKampf(data);
             case CMD_BEWEGE_EINHEITEN -> handleBewegeEinheiten(data);
             case CMD_SPIEL_SPEICHERN -> handleSpeichern();
+
+            case EVENT_UPDATE_ALL -> handleUpdateAll();
 
             default -> System.err.println("Ungueltige Anfrage empfangen: " + data[0]);
         }
@@ -307,5 +311,11 @@ public class ClientRequestHandler implements Runnable {
 
     private void handleSpeichern() {
         spiel.spielSpeichern();
+    }
+
+    private void handleUpdateAll(){
+        for(ClientRequestHandler crh : allClientRHs){
+            crh.writeString(Commands.EVENT_UPDATE_VIEW.name()+separator+spiel.getAktuellerSpieler().getId());
+        }
     }
 }

@@ -186,8 +186,11 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setSize(800, 600);
         setLocationRelativeTo(null);
         //AktiverSpielerListener.add(this);
-        updateView(this.spiel);
+        updateView();
         setVisible(true);
+        if(!spiel.getAktuellerSpieler().equals(spieler) && spiel instanceof RisikoClient){
+            ((RisikoClient) spiel).idleListening();
+        }
     }
 
     private void openCardsSelectionDialog() {
@@ -240,7 +243,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         return menuBar;
     }
 
-    public void updateView(ISpiel spiel) {
+    public void updateView() {
         if (spielBeendet) {
             pnlActions.removeAll();
             pnlActions.revalidate();
@@ -299,6 +302,9 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                 spiel.naechstePhase();
                 mapPanel.versteckeOverlay();
                 updateViewInAllFenster();
+                if(spiel instanceof RisikoClient){
+                    ((RisikoClient) spiel).idleListening();
+                }
             });
             pnlActions.add(btnFertig);
         }
@@ -316,10 +322,15 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     }
 
     private void updateViewInAllFenster() {
-        for (SpielerFenster fenster : SpielerFenster.ALLE) {
-            fenster.updateView(spiel);
+        /*for (SpielerFenster fenster : SpielerFenster.ALLE) {
+            fenster.updateView();
             updateMissionProgressbar();
+        }*/
+        if(spiel instanceof RisikoClient){
+            ((RisikoClient) spiel).updateAllView();
         }
+        updateView();
+        updateMissionProgressbar();
     }
 
     private void updateAllMaps() {
@@ -393,6 +404,10 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             }
             JOptionPane.showMessageDialog(this, "Bitte Zahl zwischen " + min + " und " + max + " eingeben!");
         }
+    }
+
+    public int getSpielerId(){
+        return spieler.getId();
     }
 
     @Override
