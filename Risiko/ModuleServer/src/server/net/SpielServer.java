@@ -63,14 +63,14 @@ public class SpielServer {
             updateLabel(lblStatus, "Alle Clients verbunden. Spiel wird gestartet...");
             spiel.getWelt().setSpielerListe(spielerListe);
 
-            for(Socket s : clientSockets){
+            /*for(Socket s : clientSockets){
                 try{
                     PrintWriter out = new PrintWriter(s.getOutputStream(), true);
                     out.println("CMD_SPIEL_INIT_RESP" + "%FromSpielServer");
                 }catch(IOException e){
                     e.printStackTrace();
                 }
-            }
+            }*/
             updateLabel(lblStatus, "Startsignal gesendet - Spiel läuft");
 
 
