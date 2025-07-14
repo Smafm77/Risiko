@@ -10,7 +10,7 @@ import java.net.Socket;
 public class SpielServer {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Spiel spiel;
-        boolean neu = true;
+        boolean neu = false;
         if(neu){//Neues Spiel
             spiel = Spiel.getInstance();
         } else {//Altes Spiel laden

@@ -22,6 +22,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
     private int verbleibendeTruppen;
     private LandDTO ausgewaehlt1;
     private LandDTO ausgewaehlt2;
+    private boolean spielBeendet = false;
 
     private static final java.util.List<SpielerFenster> ALLE = new java.util.ArrayList<>();
     private final JLabel lblInfo;
@@ -77,15 +78,15 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
 
             switch (auswahlModus) {
                 case VERTEILEN:
-                    if(verbleibendeTruppen>0) {
+                    if (verbleibendeTruppen > 0) {
                         if (!spiel.getLandbesitzer(land.getId()).equals(spieler)) {
                             throw new FalscherBesitzerException("Dieses Land gehört dir nicht!");
                         }
-                        spiel.einheitenStationieren( land.getId(), 1);
+                        spiel.einheitenStationieren(land.getId(), 1);
                         verbleibendeTruppen--;
                         lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
                         updateAllMaps();
-                    }else{
+                    } else {
                         throw new EinheitenAnzahlException("Du hast keine Einheiten mehr zum verteilen");
                     }
                     break;
@@ -141,7 +142,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     ausgewaehlt1 = land;
                     mapPanel.zeigeOverlayHerkunft(land.getName());
                     auswahlModus = AuswahlModus.VERSCHIEBEN_ZIEL;
-                    lblInfo.setText("Wähle Ziel-Land (eigenes Nachbarland von "+ ausgewaehlt1.getName() +").");
+                    lblInfo.setText("Wähle Ziel-Land (eigenes Nachbarland von " + ausgewaehlt1.getName() + ").");
                     break;
 
                 case VERSCHIEBEN_ZIEL:
@@ -183,7 +184,7 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
     }
 
     private void openCardsSelectionDialog() {
-        try{
+        try {
             Set<Karte> karteSet = spiel.getSpielerKarten(spieler.getId());
             if (karteSet.isEmpty()) {
                 throw new UngueltigeKarteException("Du besitzt keine Karten");
@@ -208,8 +209,8 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     mapPanel.repaint();
                 }
             }
-        }catch (UngueltigeKarteException e){
-                JOptionPane.showMessageDialog(SpielerFenster.this, "Fehler: " +e.getMessage(), "Ungültige Karte", JOptionPane.ERROR_MESSAGE);
+        } catch (UngueltigeKarteException e) {
+            JOptionPane.showMessageDialog(SpielerFenster.this, "Fehler: " + e.getMessage(), "Ungültige Karte", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -232,14 +233,13 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
         return menuBar;
     }
 
-    /*@Override
-    public void onAktiverSpielerGeaendert(Spieler neu) {
-        SwingUtilities.invokeLater(() -> {
-            updateView(spiel);
-        });
-    }*/
-
     public void updateView(ISpiel spiel) {
+        if (spielBeendet) {
+            pnlActions.removeAll();
+            pnlActions.revalidate();
+            pnlActions.repaint();
+            return;
+        }
         lblInfo.setText(spieler.getName());
         pnlActions.removeAll();
         updateMissionStatus();
@@ -335,15 +335,43 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
     private void checkMissionFulfilled() {
         if (spiel.hatMissionErfuellt(spieler.getId())) {
             updateMissionProgressbar();
+            spielBeendet = true;
             benachrichtigeAlle(spieler.getName() + "'s Mission ist erfüllt. Damit hat " + spieler.getName() + " gewonnen!");
-            //ToDo spielende einläuten
+            for (SpielerFenster fenster : ALLE) {
+                if (fenster.spieler.equals(this.spieler)) {
+                    fenster.mapPanel.gewinnerAnimation();
+                }
+                for (Component c : fenster.pnlActions.getComponents()) {
+                    if (c instanceof JButton) {
+                        c.setEnabled(false);
+                    }
+                }
+                JMenuBar mb = fenster.getJMenuBar();
+                if (mb != null) {
+                    for (int i = 0; i < mb.getMenuCount(); i++) {
+                        JMenu m = mb.getMenu(i);
+                        if (m != null) {
+                            for (int j = 0; j < m.getItemCount(); j++) {
+                                JMenuItem mi = m.getItem(j);
+                                if (mi != null && !"Speichern & Beenden".equals(mi.getText())) {
+                                    mi.setEnabled(false);
+                                }
+                            }
+                        }
+                    }
+                }
+                fenster.pnlActions.revalidate();
+                fenster.pnlActions.repaint();
+            }
+
         }
+
     }
 
+
     private void benachrichtigeAlle(String nachricht) {
-        //make Asynchron? alle sollen die Nachricht zeitgleich, nicht nacheinander kriegen wenn möglich
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
-            JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE);
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE));
         }
     }
 
