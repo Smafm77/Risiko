@@ -81,11 +81,13 @@ public class RisikoClient implements ISpiel {
     public void idleListening(){
         while (true){
             String[] info = readStringResponse();
-            if (Commands.EVENT_UPDATE_VIEW.name().equals(info[0])){
-                fenster.updateView();
-                //ToDo check ob Rückmeldung gesendet werden muss
-                if(Integer.parseInt(info[1]) == fenster.getSpielerId()){
-                    break;
+            if (info != null) {
+                if (Commands.EVENT_UPDATE_VIEW.name().equals(info[0])) {
+                    fenster.updateView();
+                    writeString(Commands.EVENT_UPDATE_VIEW_RESP.name());
+                    if (Integer.parseInt(info[1]) == fenster.getSpielerId()) {
+                        break;
+                    }
                 }
             }
             //Update view -> update View
