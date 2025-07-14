@@ -16,25 +16,30 @@ public class SpielServer {
 
     public static void startServer(boolean spielLaden, int anzahlGewaehlt, JLabel lblStatus) {
 
-        int spielerAnzahl = anzahlGewaehlt;
+
         try (ServerSocket serverSocket = new ServerSocket(1399)) {
             Spiel spiel;
+            int spielerAnzahl;
+            Map<String, Spieler> gespeicherteSpieler = null;
             if (!spielLaden) {//Neues Spiel
                 spiel = Spiel.getInstance();
+                spielerAnzahl = anzahlGewaehlt;
 
             } else {//Altes Spiel laden
                 spiel = SpielSpeichern.laden("spielstand.risiko");
+                gespeicherteSpieler = new HashMap<>();
+                spielerAnzahl = spiel.getWelt().getSpielerListe().size();
+                for (Spieler sp : spiel.getWelt().getSpielerListe()) {
+                    gespeicherteSpieler.put(sp.getName(), sp);
+                }
             }
 
             ArrayList<Socket> clientSockets = new ArrayList<>();
             ArrayList<String> spielerNamen = new ArrayList<>();
-            ArrayList<String> spielerColor = new ArrayList<>();
             ArrayList<Spieler> spielerListe = new ArrayList<>();
             updateLabel(lblStatus, "Warte auf " + anzahlGewaehlt + " Clients...");
 
             int verbunden = 0;
-
-
             while (verbunden < spielerAnzahl) {
                 Socket s = serverSocket.accept();
                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -50,39 +55,38 @@ public class SpielServer {
                     s.close();
                     continue;
                 }
-                String color = Farben.get(spielerNamen.size());
-                spielerNamen.add(name);
-                spielerColor.add(color);
-                Spieler spieler = new Spieler(name, color);
-                spielerListe.add(spieler);
-                out.println("OK:" + color);
-
+                if (spielLaden) {
+                    if (!gespeicherteSpieler.containsKey(name)) {
+                        out.println("Error: Spieler unbekannt");
+                        s.close();
+                        continue;
+                    }
+                    Spieler spieler = gespeicherteSpieler.get(name);
+                    spielerNamen.add(name);
+                    spielerListe.add(spieler);
+                    out.println("OK:" + spieler.getFarbe());
+                } else {
+                    String color = Farben.get(spielerNamen.size());
+                    Spieler spieler = new Spieler(name, color);
+                    spielerNamen.add(name);
+                    spielerListe.add(spieler);
+                    out.println("OK:" + color);
+                }
                 clientSockets.add(s);
                 verbunden++;
-                updateLabel(lblStatus, verbunden + "/" + spielerAnzahl+ " Clients verbunden...");
+                updateLabel(lblStatus, verbunden + "/" + spielerAnzahl + " Clients verbunden...");
             }
 
             updateLabel(lblStatus, "Alle Clients verbunden. Spiel wird gestartet...");
-            spiel.getWelt().setSpielerListe(spielerListe);
-
-            /*for(Socket s : clientSockets){
-                try{
-                    PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-                    out.println("CMD_SPIEL_INIT_RESP" + "%FromSpielServer");
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-            }*/
+            if (!spielLaden) {
+                spiel.getWelt().setSpielerListe(spielerListe);
+            }
             updateLabel(lblStatus, "Startsignal gesendet - Spiel läuft");
 
-
             ArrayList<ClientRequestHandler> clientRequestHandlers = new ArrayList<>();
-            for (int i = 0; i < spielerAnzahl; i++){
+            for (int i = 0; i < spielerAnzahl; i++) {
                 new Thread(new ClientRequestHandler(clientSockets.get(i), spiel, spielerListe.get(i), clientRequestHandlers)).start();
             }
-            /*for(Socket s : clientSockets){
-                new Thread(new ClientRequestHandler(s, spiel)).start();
-            }*/
 
         } catch (IOException | ClassNotFoundException e) {
             if (lblStatus != null) {
@@ -97,7 +101,5 @@ public class SpielServer {
             SwingUtilities.invokeLater(() -> lbl.setText(text));
         }
     }
-
-
 
 }
