@@ -78,15 +78,25 @@ public class RisikoClient implements ISpiel {
     }
     //endregion
 
-    public void idleListening(){
+    /*public void idleListening(){
         while (true){
             String[] info = readStringResponse();
+            if (info != null) {
+                if (Commands.EVENT_UPDATE_VIEW.name().equals(info[0])) {
+                    fenster.updateView();
+                    writeString(Commands.EVENT_UPDATE_VIEW_RESP.name());
+                    if (Integer.parseInt(info[1]) == fenster.getSpielerId()) {
+                        System.out.println(spielerName + " ist am Zug");
+                        break;
+                    }
+                }
+            }
             //Update view -> update View
             //Erfrage Verteidigung
             //aktueller Spielr you? -> break
             //Schleife neu
         }
-    }
+    }*/
 
     @Override
     public Spieler getAktuellerSpieler() {
@@ -337,6 +347,14 @@ public class RisikoClient implements ISpiel {
     public void spielSpeichern(){
         writeString(Commands.CMD_SPIEL_SPEICHERN.name());
     }
+
+
+    /*public boolean updateAllView(){
+        writeString(Commands.EVENT_UPDATE_ALL.name());
+        String[] update = readStringResponse();
+        checkResponse(update, Commands.EVENT_UPDATE_VIEW);
+        return true;
+    }*/
 
     public RisikoClient(Socket socket, String spielerName, String spielerColor) throws IOException{
         this.socket = socket;

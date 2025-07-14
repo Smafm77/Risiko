@@ -25,6 +25,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private LandDTO ausgewaehlt1;
     private LandDTO ausgewaehlt2;
     private boolean spielBeendet = false;
+    javax.swing.Timer refresh;
 
     private static final java.util.List<SpielerFenster> ALLE = new java.util.ArrayList<>();
     private final JLabel lblInfo;
@@ -41,7 +42,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setJMenuBar(menuBar);
 
         this.spiel = spiel;
-        if (spiel instanceof RisikoClient){
+        if (spiel instanceof RisikoClient) {
             ((RisikoClient) spiel).setFenster(this);
         }
         ALLE.add(this);
@@ -120,9 +121,11 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     mapPanel.zeigeOverlayZiel(land.getName());
                     int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3));
 
+
                     /*SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(spiel.getLandbesitzer(ausgewaehlt2.getId()))).findFirst().orElseThrow();
                     int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2));*/
                     int truppenV = Math.min(2, spiel.getLandTruppen(ausgewaehlt2.getId()));
+
                     mapPanel.zeigeKampfLand(land.getName());
                     boolean ergebnis = spiel.kampf(ausgewaehlt1.getId(), ausgewaehlt2.getId(), truppenA, truppenV);
                     String sieger = ergebnis ? spieler.getName() : spiel.getLandbesitzer(land.getId()).getName();
@@ -185,9 +188,26 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
-        //AktiverSpielerListener.add(this);
-        updateView(this.spiel);
+        AktiverSpielerListener.add(this);
+        updateView();
         setVisible(true);
+    }
+
+    private void updateInaktiveSpieler() {
+        boolean inaktiv = (!spiel.getAktuellerSpieler().equals(spieler) && spiel instanceof RisikoClient);
+
+        if (inaktiv) {
+            if (refresh == null) {
+                refresh = new javax.swing.Timer(1000, e -> SwingUtilities.invokeLater(this::updateView));
+                refresh.start();
+            }
+        } else {
+            if (refresh != null) {
+                refresh.stop();
+                refresh = null;
+            }
+        }
+
     }
 
     private void openCardsSelectionDialog() {
@@ -240,7 +260,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         return menuBar;
     }
 
-    public void updateView(ISpiel spiel) {
+    public void updateView() {
         if (spielBeendet) {
             pnlActions.removeAll();
             pnlActions.revalidate();
@@ -313,11 +333,12 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         }
         pnlActions.revalidate();
         mapPanel.repaint();
+        updateInaktiveSpieler();
     }
 
     private void updateViewInAllFenster() {
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
-            fenster.updateView(spiel);
+            fenster.updateView();
             updateMissionProgressbar();
         }
     }
@@ -375,7 +396,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
     }
 
-
     private void benachrichtigeAlle(String nachricht) {
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE));
@@ -399,6 +419,8 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     public void onAktiverSpielerGeaendert(Spieler neu) {
 
         List<AktiverSpielerListener> LIST = new CopyOnWriteArrayList<>();
+        SwingUtilities.invokeLater(this::updateView);
+        updateInaktiveSpieler();
 
     }
 }

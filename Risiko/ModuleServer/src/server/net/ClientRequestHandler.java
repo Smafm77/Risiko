@@ -9,6 +9,7 @@ import common.valueobjects.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -16,12 +17,26 @@ public class ClientRequestHandler implements Runnable {
     private final Spieler clientSpieler;
     private final InputStream socketIn;
     private final OutputStream socketOut;
-    private final ArrayList<Socket> allClientSockets;
+    private final ArrayList<ClientRequestHandler> allClientRHs;
 
     private final String separator = "%";
     ISpiel spiel;
 
-    private void writeString(String cmd) {
+    private String[] readStringResponse(){
+        BufferedReader socketInPrint = new BufferedReader(new InputStreamReader(socketIn));
+        String[] data = null;
+        try{
+            String received = socketInPrint.readLine();
+            System.out.println("Empfangene Daten: "+ received);
+            data = received.split(separator);
+        } catch(SocketTimeoutException e) {
+            System.out.println("Client hat nicht geantwortet.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+    public void writeString(String cmd) {
         PrintStream socketOutPrint = new PrintStream(socketOut);
         System.out.println("Gesendete Daten: " + cmd);
         socketOutPrint.println(cmd);
@@ -48,18 +63,19 @@ public class ClientRequestHandler implements Runnable {
         }
     }
 
-    public ClientRequestHandler(Socket s, ISpiel spiel, Spieler spieler, ArrayList<Socket> otherSockets) throws IOException {
+    public ClientRequestHandler(Socket s, ISpiel spiel, Spieler spieler, ArrayList<ClientRequestHandler> otherClients) throws IOException {
         this.spiel = spiel;
         this.clientSpieler = spieler;
         socketIn = s.getInputStream();
         socketOut = s.getOutputStream();
-        allClientSockets = otherSockets;
+        allClientRHs = otherClients;
+        allClientRHs.add(this);
+        System.out.println(allClientRHs);
     }
 
     @Override
     public void run() {
         try {
-            BufferedReader socketInString = new BufferedReader(new InputStreamReader(socketIn));
             /*
             String spielerDaten = socketInString.readLine();
             if (spielerDaten == null || !spielerDaten.contains(",")) {
@@ -86,7 +102,7 @@ public class ClientRequestHandler implements Runnable {
             socketOutPrint.println("OK");*/
 
             while (true) {
-                String receivedData = socketInString.readLine();
+                String[] receivedData = readStringResponse();
                 if (receivedData == null) {
                     break;
                 }
@@ -100,9 +116,7 @@ public class ClientRequestHandler implements Runnable {
 
     }
 
-    private void decipherRequest(String message) throws IOException, ClassNotFoundException {
-        System.out.println("Empfangene Daten: " + message);
-        String[] data = message.split(separator);
+    private void decipherRequest(String[] data) throws IOException, ClassNotFoundException {
 
         switch (Commands.valueOf(data[0])) {
             case CMD_GET_AKTUELLER_SPIELER -> handleAktuellerSpieler();
@@ -127,6 +141,8 @@ public class ClientRequestHandler implements Runnable {
             case CMD_KAMPF -> handleKampf(data);
             case CMD_BEWEGE_EINHEITEN -> handleBewegeEinheiten(data);
             case CMD_SPIEL_SPEICHERN -> handleSpeichern();
+
+            case EVENT_UPDATE_ALL -> handleUpdateAll();
 
             default -> System.err.println("Ungueltige Anfrage empfangen: " + data[0]);
         }
@@ -307,5 +323,14 @@ public class ClientRequestHandler implements Runnable {
 
     private void handleSpeichern() {
         spiel.spielSpeichern();
+    }
+
+    private void handleUpdateAll(){
+        writeString(Commands.EVENT_UPDATE_VIEW.name());
+        ArrayList<ClientRequestHandler> otherClients = (ArrayList<ClientRequestHandler>) allClientRHs.stream().filter(clientRequestHandler -> !clientRequestHandler.equals(this)).toList();
+        for(ClientRequestHandler crh : otherClients){
+            crh.writeString(Commands.EVENT_UPDATE_VIEW.name()+separator+spiel.getAktuellerSpieler().getId());
+            readStringResponse();
+        }
     }
 }

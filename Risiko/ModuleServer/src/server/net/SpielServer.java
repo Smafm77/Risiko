@@ -76,8 +76,9 @@ public class SpielServer {
             updateLabel(lblStatus, "Startsignal gesendet - Spiel läuft");
 
 
+            ArrayList<ClientRequestHandler> clientRequestHandlers = new ArrayList<>();
             for (int i = 0; i < spielerAnzahl; i++){
-                new Thread(new ClientRequestHandler(clientSockets.get(i), spiel, spielerListe.get(i), clientSockets)).start();
+                new Thread(new ClientRequestHandler(clientSockets.get(i), spiel, spielerListe.get(i), clientRequestHandlers)).start();
             }
             /*for(Socket s : clientSockets){
                 new Thread(new ClientRequestHandler(s, spiel)).start();
