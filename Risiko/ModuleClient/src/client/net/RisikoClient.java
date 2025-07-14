@@ -1,5 +1,6 @@
 package client.net;
 
+import client.ui.gui.SpielerFenster;
 import common.enums.Commands;
 import common.enums.Spielphase;
 import common.exceptions.FalscherBesitzerException;
@@ -16,17 +17,12 @@ import java.util.Objects;
 
 public class RisikoClient implements ISpiel {
     private Socket socket;
+    private SpielerFenster fenster;
     private final InputStream socketIn;
     private final OutputStream socketOut;
-
+    private final String spielerName;
+    private final String spielerColor;
     private final String separator = "%";
-
-    public RisikoClient() throws IOException{
-        socket = new Socket("127.0.0.1", 1399);
-        socket.setSoTimeout(1000);
-        socketIn = socket.getInputStream();
-        socketOut = socket.getOutputStream();
-    }
 
     //region convenience
     private String[] readStringResponse(){
@@ -82,6 +78,16 @@ public class RisikoClient implements ISpiel {
     }
     //endregion
 
+    public void idleListening(){
+        while (true){
+            String[] info = readStringResponse();
+            //Update view -> update View
+            //Erfrage Verteidigung
+            //aktueller Spielr you? -> break
+            //Schleife neu
+        }
+    }
+
     @Override
     public Spieler getAktuellerSpieler() {
         String cmd = Commands.CMD_GET_AKTUELLER_SPIELER.name();
@@ -123,7 +129,7 @@ public class RisikoClient implements ISpiel {
             String name = s[1];
             String farbe = s[2];
             boolean alive = Boolean.parseBoolean(s[3]);
-            Spieler spieler = (farbe == null || farbe.isEmpty()) ? new Spieler(name, id) : new Spieler(name, farbe, id); //CUI ohne farbe, GUI mit
+            Spieler spieler = (farbe == null || farbe.isEmpty()) ? new Spieler(name, id) : new Spieler(name, farbe); //CUI ohne farbe, GUI mit farbe, ohne id
             spielerListe.add(spieler);
         }
         int kontinentCount = Integer.parseInt(data[idx++]);
@@ -330,5 +336,26 @@ public class RisikoClient implements ISpiel {
     @Override
     public void spielSpeichern(){
         writeString(Commands.CMD_SPIEL_SPEICHERN.name());
+    }
+
+    public RisikoClient(Socket socket, String spielerName, String spielerColor) throws IOException{
+        this.socket = socket;
+        this.socket.setSoTimeout(1000);
+        this.socketIn = socket.getInputStream();
+        this.socketOut = socket.getOutputStream();
+        this.spielerName = spielerName;
+        this.spielerColor = spielerColor;
+        //this.reader = new BufferedReader(new InputStreamReader(this.socketIn));
+    }
+    public String getSpielerName(){
+        return spielerName;
+    }
+
+    public String getSpielerColor(){
+        return spielerColor;
+    }
+
+    public void setFenster(SpielerFenster fenster) {
+        this.fenster = fenster;
     }
 }

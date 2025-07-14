@@ -214,12 +214,14 @@ public class Spiel implements Serializable, ISpiel {
 
     //region missionen
     public void weiseMissionenZu() {
-        NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
-        HashSet<Mission> alleMissionen = spielmaterial.missionenErstellen(welt.alleKontinente);
-        for (Spieler spieler : welt.getSpielerListe()) {
-            Mission mission = alleMissionen.stream().findFirst().orElseThrow();
-            alleMissionen.remove(mission);
-            missionen.put(spieler, mission);
+        if(missionen.isEmpty()) {
+            NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
+            HashSet<Mission> alleMissionen = spielmaterial.missionenErstellen(welt.alleKontinente);
+            for (Spieler spieler : welt.getSpielerListe()) {
+                Mission mission = alleMissionen.stream().findFirst().orElseThrow();
+                alleMissionen.remove(mission);
+                missionen.put(spieler, mission);
+            }
         }
     }
 

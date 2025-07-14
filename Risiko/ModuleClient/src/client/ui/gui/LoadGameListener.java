@@ -21,7 +21,7 @@ public class LoadGameListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+/*
         try {
             ISpiel geladen = new RisikoClient();
             for (Spieler s : geladen.getSpielerListe()) {
@@ -36,7 +36,7 @@ public class LoadGameListener implements ActionListener {
             JOptionPane.showMessageDialog(gui, "Fehler beim Laden!! Cause:" + ex.getCause() + ex.getMessage());
             System.out.println("Source: " + Arrays.toString(ex.getStackTrace()));
         }
-    }
+    */ }
 }
 
 

@@ -1,8 +1,8 @@
 package client.ui.gui;
 
+import client.net.RisikoClient;
 import common.exceptions.EinheitenAnzahlException;
 import common.exceptions.FalscherBesitzerException;
-import common.exceptions.UngueltigeBewegungException;
 import common.exceptions.UngueltigeKarteException;
 import common.valueobjects.*;
 import common.enums.AuswahlModus;
@@ -12,10 +12,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/ {
+public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private final ISpiel spiel;
     private final SpielerDTO spieler;
     private AuswahlModus auswahlModus = AuswahlModus.KEINER;
@@ -39,6 +41,9 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
         setJMenuBar(menuBar);
 
         this.spiel = spiel;
+        if (spiel instanceof RisikoClient){
+            ((RisikoClient) spiel).setFenster(this);
+        }
         ALLE.add(this);
 
         setLayout(new BorderLayout());
@@ -114,14 +119,16 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
                     ausgewaehlt2 = land;
                     mapPanel.zeigeOverlayZiel(land.getName());
                     int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3));
-                    SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(spiel.getLandbesitzer(ausgewaehlt2.getId()))).findFirst().orElseThrow();
-                    int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2));
-                    mapPanel.zeigeKampfLand(land.getName());
+
+                    /*SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(spiel.getLandbesitzer(ausgewaehlt2.getId()))).findFirst().orElseThrow();
+                    int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2));*/
+                    int truppenV = Math.min(2, spiel.getLandTruppen(ausgewaehlt2.getId()));
+
                     boolean ergebnis = spiel.kampf(ausgewaehlt1.getId(), ausgewaehlt2.getId(), truppenA, truppenV);
                     String sieger = ergebnis ? spieler.getName() : spiel.getLandbesitzer(land.getId()).getName();
                     String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
                     JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
-                    JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
+                    //JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
                     updateMissionStatus();
                     updateAllMaps();
                     ausgewaehlt1 = null;
@@ -386,5 +393,12 @@ public class SpielerFenster extends JFrame /*implements AktiverSpielerListener*/
             }
             JOptionPane.showMessageDialog(this, "Bitte Zahl zwischen " + min + " und " + max + " eingeben!");
         }
+    }
+
+    @Override
+    public void onAktiverSpielerGeaendert(Spieler neu) {
+
+        List<AktiverSpielerListener> LIST = new CopyOnWriteArrayList<>();
+
     }
 }
