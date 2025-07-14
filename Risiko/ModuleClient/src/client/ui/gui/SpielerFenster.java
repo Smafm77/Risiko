@@ -345,9 +345,8 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     }
 
     private void benachrichtigeAlle(String nachricht) {
-        //make Asynchron? alle sollen die Nachricht zeitgleich, nicht nacheinander kriegen wenn möglich
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
-            JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE);
+            SwingUtilities.invokeLater(()->JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE));
         }
     }
 
