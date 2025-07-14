@@ -314,9 +314,9 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                 spiel.naechstePhase();
                 mapPanel.versteckeOverlay();
                 updateViewInAllFenster();
-                if(spiel instanceof RisikoClient){
+                /*if(spiel instanceof RisikoClient && updated){
                     ((RisikoClient) spiel).idleListening();
-                }
+                }*/
             });
             pnlActions.add(btnFertig);
         }
@@ -334,15 +334,17 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     }
 
     private void updateViewInAllFenster() {
-        /*for (SpielerFenster fenster : SpielerFenster.ALLE) {
+        for (SpielerFenster fenster : SpielerFenster.ALLE) {
             fenster.updateView();
             updateMissionProgressbar();
-        }*/
+        }
+        /*boolean done = false;
         if(spiel instanceof RisikoClient){
-            ((RisikoClient) spiel).updateAllView();
+            done = ((RisikoClient) spiel).updateAllView();
         }
         updateView();
         updateMissionProgressbar();
+        return done;*/
     }
 
     private void updateAllMaps() {

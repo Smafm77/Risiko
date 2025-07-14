@@ -326,11 +326,11 @@ public class ClientRequestHandler implements Runnable {
     }
 
     private void handleUpdateAll(){
+        writeString(Commands.EVENT_UPDATE_VIEW.name());
         ArrayList<ClientRequestHandler> otherClients = (ArrayList<ClientRequestHandler>) allClientRHs.stream().filter(clientRequestHandler -> !clientRequestHandler.equals(this)).toList();
         for(ClientRequestHandler crh : otherClients){
             crh.writeString(Commands.EVENT_UPDATE_VIEW.name()+separator+spiel.getAktuellerSpieler().getId());
             readStringResponse();
         }
-        writeString(Commands.EVENT_UPDATE_VIEW.name());
     }
 }
