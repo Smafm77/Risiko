@@ -90,6 +90,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                         spiel.einheitenStationieren(land.getId(), 1);
                         verbleibendeTruppen--;
                         lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
+                        updateInaktiveSpieler();
                         updateAllMaps();
                     } else {
                         throw new EinheitenAnzahlException("Du hast keine Einheiten mehr zum verteilen");
@@ -123,12 +124,13 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     /*SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(spiel.getLandbesitzer(ausgewaehlt2.getId()))).findFirst().orElseThrow();
                     int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2));*/
                     int truppenV = Math.min(2, spiel.getLandTruppen(ausgewaehlt2.getId()));
-
+                    mapPanel.zeigeKampfLand(ausgewaehlt2.getName());
                     boolean ergebnis = spiel.kampf(ausgewaehlt1.getId(), ausgewaehlt2.getId(), truppenA, truppenV);
                     String sieger = ergebnis ? spieler.getName() : spiel.getLandbesitzer(land.getId()).getName();
                     String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
                     JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
                     //JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
+                    updateInaktiveSpieler();
                     updateMissionStatus();
                     updateAllMaps();
                     ausgewaehlt1 = null;
@@ -159,6 +161,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     int anzahl = frageAnzahl("Wie viele Einheiten verschieben? (max " + max + ")", 1, max);
                     spiel.bewegeEinheiten(spieler.getId(), anzahl, ausgewaehlt1.getId(), ausgewaehlt2.getId());
                     JOptionPane.showMessageDialog(SpielerFenster.this, "Einheiten verschoben!");
+                    updateInaktiveSpieler();
                     updateAllMaps();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
@@ -186,18 +189,21 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setSize(800, 600);
         setLocationRelativeTo(null);
         //AktiverSpielerListener.add(this);
+        updateInaktiveSpieler();
         updateView();
         setVisible(true);
-        javax.swing.Timer refresh = new javax.swing.Timer(1000, e -> {
-            SwingUtilities.invokeLater(this::updateView);
-        });
-        refresh.setRepeats(true);
-        refresh.start();
+
+
+    }
+    private void updateInaktiveSpieler(){
         if(!spiel.getAktuellerSpieler().equals(spieler) && spiel instanceof RisikoClient){
-            ((RisikoClient) spiel).idleListening();
+            javax.swing.Timer refresh = new javax.swing.Timer(1000, e -> {
+                SwingUtilities.invokeLater(this::updateView);
+            });
+            refresh.setRepeats(true);
+            refresh.start();
         }
     }
-
     private void openCardsSelectionDialog() {
         try {
             Set<Karte> karteSet = spiel.getSpielerKarten(spieler.getId());
