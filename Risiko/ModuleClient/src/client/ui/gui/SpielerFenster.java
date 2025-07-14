@@ -121,6 +121,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     mapPanel.zeigeOverlayZiel(land.getName());
                     int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3));
 
+
                     /*SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(spiel.getLandbesitzer(ausgewaehlt2.getId()))).findFirst().orElseThrow();
                     int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2));*/
                     int truppenV = Math.min(2, spiel.getLandTruppen(ausgewaehlt2.getId()));
