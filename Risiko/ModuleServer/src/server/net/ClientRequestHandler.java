@@ -16,6 +16,7 @@ public class ClientRequestHandler implements Runnable {
     private final Spieler clientSpieler;
     private final InputStream socketIn;
     private final OutputStream socketOut;
+    private final ArrayList<Socket> allClientSockets;
 
     private final String separator = "%";
     ISpiel spiel;
@@ -47,11 +48,12 @@ public class ClientRequestHandler implements Runnable {
         }
     }
 
-    public ClientRequestHandler(Socket s, ISpiel spiel, Spieler spieler) throws IOException {
+    public ClientRequestHandler(Socket s, ISpiel spiel, Spieler spieler, ArrayList<Socket> otherSockets) throws IOException {
         this.spiel = spiel;
         this.clientSpieler = spieler;
         socketIn = s.getInputStream();
         socketOut = s.getOutputStream();
+        allClientSockets = otherSockets;
     }
 
     @Override

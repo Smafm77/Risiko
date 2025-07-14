@@ -75,7 +75,7 @@ public class SpielServer {
 
 
             for (int i = 0; i < spielerAnzahl; i++){
-                new Thread(new ClientRequestHandler(clientSockets.get(i), spiel, spielerListe.get(i))).start();
+                new Thread(new ClientRequestHandler(clientSockets.get(i), spiel, spielerListe.get(i), clientSockets)).start();
             }
             /*for(Socket s : clientSockets){
                 new Thread(new ClientRequestHandler(s, spiel)).start();

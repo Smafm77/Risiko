@@ -1,5 +1,6 @@
 package client.net;
 
+import client.ui.gui.SpielerFenster;
 import common.enums.Commands;
 import common.enums.Spielphase;
 import common.exceptions.FalscherBesitzerException;
@@ -16,11 +17,11 @@ import java.util.Objects;
 
 public class RisikoClient implements ISpiel {
     private Socket socket;
+    private SpielerFenster fenster;
     private final InputStream socketIn;
     private final OutputStream socketOut;
     private final String spielerName;
     private final String spielerColor;
-    //private final BufferedReader reader;
     private final String separator = "%";
 
     //region convenience
@@ -76,6 +77,16 @@ public class RisikoClient implements ISpiel {
         }
     }
     //endregion
+
+    public void idleListening(){
+        while (true){
+            String[] info = readStringResponse();
+            //Update view -> update View
+            //Erfrage Verteidigung
+            //aktueller Spielr you? -> break
+            //Schleife neu
+        }
+    }
 
     @Override
     public Spieler getAktuellerSpieler() {
@@ -344,14 +355,7 @@ public class RisikoClient implements ISpiel {
         return spielerColor;
     }
 
-    /*public void awaitStart() throws IOException{
-        String line;
-        while ((line = reader.readLine()) != null){
-            if("CMD_START".equals(line.trim())){
-                return;
-            }
-        }
-        throw new IOException("Verbindung beendet, kein Startsignal erhalten.");
-    }*/
-
+    public void setFenster(SpielerFenster fenster) {
+        this.fenster = fenster;
+    }
 }

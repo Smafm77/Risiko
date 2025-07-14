@@ -1,5 +1,6 @@
 package client.ui.gui;
 
+import client.net.RisikoClient;
 import common.exceptions.EinheitenAnzahlException;
 import common.exceptions.FalscherBesitzerException;
 import common.exceptions.UngueltigeKarteException;
@@ -39,6 +40,9 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setJMenuBar(menuBar);
 
         this.spiel = spiel;
+        if (spiel instanceof RisikoClient){
+            ((RisikoClient) spiel).setFenster(this);
+        }
         ALLE.add(this);
 
         setLayout(new BorderLayout());
@@ -121,7 +125,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     String sieger = ergebnis ? spieler.getName() : spiel.getLandbesitzer(land.getId()).getName();
                     String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
                     JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
-                    JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
+                    //JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
                     updateMissionStatus();
                     updateAllMaps();
                     ausgewaehlt1 = null;
