@@ -24,6 +24,7 @@ public class StartGameListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         try {
             ISpiel spiel = this.client;
+            spiel.weiseMissionenZu();
             spiel.init();
             Spieler dieserSpieler = spiel.getSpielerListe().stream().filter(s -> s.getName().equals(client.getSpielerName())).findFirst().orElseGet(spiel::getAktuellerSpieler);
             SwingUtilities.invokeLater(()-> {
