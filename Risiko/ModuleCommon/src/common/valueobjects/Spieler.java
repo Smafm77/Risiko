@@ -13,11 +13,11 @@ public class Spieler implements Serializable {
     private static final long serialVersionUID = 1L;
     private final String name;
     private String farbe;
-    private int id;
+    private final int id;
     private boolean alive;
     private boolean schonErobert;
-    private ArrayList<Land> besetzteLaender = new ArrayList<>();
-    private HashSet<Karte> karten = new HashSet<>();
+    private final ArrayList<Land> besetzteLaender = new ArrayList<>();
+    private final HashSet<Karte> karten = new HashSet<>();
 
     public Spieler(String name, int id) {
         this.name = name.trim();
@@ -112,7 +112,7 @@ public class Spieler implements Serializable {
     }
 
     //endregion
-    public void sterben(Spieler moerder) {  //In Domain, da Aufruf eines anderen Spielers. Replace/Reduce hier mit alive=false
+    public void sterben(Spieler moerder) {
         moerder.getKarten().addAll(this.karten);
         karten.removeAll(karten);
         this.alive = false;
@@ -123,21 +123,7 @@ public class Spieler implements Serializable {
         return ((spieler instanceof Spieler) && ((Spieler) spieler).id == this.id) || ((spieler instanceof SpielerDTO) && ((SpielerDTO) spieler).getId() == this.id);
     }
 
-    public void zeigeSpieler() { //UI
-        System.out.println(id + " - " + name + " - " + besetzteLaender.size());
-        for (Land land : besetzteLaender) {
-            System.out.println(land.getBesitzer().getId() + ": " + land.getName() + " (" + land.getEinheiten() + ")");
-        }
-        System.out.println();
-    }
 
-    public String eigeneKartenToString() { //Print? UI? - sollte UI sein, muss nochmal gucken wofür das überhaupt aufgerufen wurde. Glaube Peruse Cards
-        StringBuilder kartenTxt = new StringBuilder();
-        for (Karte karte : karten) {
-            kartenTxt.append("[").append(karte.getStrength()).append(" - ").append(karte.getLand().getName()).append("]  ");
-        }
-        return kartenTxt.toString();
-    }
     public SpielerDTO toDTO(){
         return new SpielerDTO(this);
     }

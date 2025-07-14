@@ -6,10 +6,9 @@ import java.io.*;
 import java.util.*;
 
 public class Welt implements Serializable {
-    //Todo change auf private und erstelle getter
     @Serial
     private static final long serialVersionUID = 1L;
-    private ArrayList<Land> alleLaender;
+    private final ArrayList<Land> alleLaender;
     public ArrayList<Kontinent> alleKontinente;
     public ArrayList<Spieler> spielerListe = new ArrayList<>();
 
@@ -74,16 +73,16 @@ public class Welt implements Serializable {
         return null;
     }
 
-    public Kontinent findeKontinentenzugehoerigkeit(Land land) throws NullPointerException {
+    public Kontinent findeKontinentenzugehoerigkeit(Land land) {
         for (Kontinent kontinent : alleKontinente) {
             if (kontinent.beinhaltetLand(land)) {
                 return kontinent;
             }
         }
-        return null; //sollte nie vorkommen
+        return null;
     }
 
-    public Spieler findeSpieler(int id) { //No Such Element Exception
+    public Spieler findeSpieler(int id) {
         return spielerListe.stream().filter(spieler -> spieler.getId() == id).findAny().orElseThrow();
     }
 

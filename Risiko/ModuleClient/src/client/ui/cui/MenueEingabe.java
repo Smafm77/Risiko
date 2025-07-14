@@ -166,7 +166,7 @@ public class MenueEingabe {
             while (true) {
                 try {
                     System.out.println("(" + t + "/" + truppen + ")Wohin soll diese Einheit gesetzt werden ?");
-                    spieler.zeigeSpieler();
+                    menue.mPrint.zeigeSpieler(spieler);
 
                     basis = eingabeLand();
                     if (basis.getBesitzer() != spieler) {

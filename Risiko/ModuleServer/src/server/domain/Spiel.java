@@ -77,7 +77,6 @@ public class Spiel implements Serializable, ISpiel {
     }
 
     public void naechstePhase() {
-        spielSpeichern();
         switch (phase) {
             case VERTEILEN -> {
                 aktuellerSpieler.setSchonErobert(false);
@@ -89,6 +88,7 @@ public class Spiel implements Serializable, ISpiel {
                 phase = Spielphase.VERTEILEN;
             }
         }
+        spielSpeichern();
     }
     public void spielSpeichern (){
         try {

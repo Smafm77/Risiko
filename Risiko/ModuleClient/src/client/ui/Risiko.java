@@ -1,11 +1,11 @@
 package client.ui;
 
-import client.net.RisikoClient;
 import common.enums.Spielphase;
-import common.valueobjects.ISpiel;
 import common.valueobjects.Spieler;
 import common.exceptions.*;
 import client.ui.cui.Menue;
+import server.domain.Spiel;
+import server.persistence.SpielSpeichern;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -18,7 +18,7 @@ public class Risiko implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private final Scanner scanner = new Scanner(System.in);
-    private ISpiel spiel = null;
+    private Spiel spiel = null;
     private final Menue menue = new Menue();
 
     public void start() {
@@ -48,7 +48,7 @@ public class Risiko implements Serializable {
                 }
                 switch (auswahl) {
                     case 1:
-                        //spiel = new RisikoClient();
+                        spiel = Spiel.getInstance();
                         menue.setSpiel(spiel);
                         menue.buildWelt();
                         spiel.init();
@@ -56,12 +56,10 @@ public class Risiko implements Serializable {
 
                         break;
                     case 2:
-                        //spielSpeichern();
-                        System.out.println("Hier wird eigentlich gespeichert");
+                        spielSpeichern();
                         break;
                     case 3:
-                        //spielLaden();
-                        System.out.println("Hier wird eigentlich geladen");
+                        spielLaden();
                         break;
                     case 4:
                         System.out.println("Wird beendet");
@@ -70,7 +68,7 @@ public class Risiko implements Serializable {
 
             } catch (UngueltigeAuswahlException | FalscherBesitzerException | UngueltigeBewegungException e) {
                 System.out.println("Fehler: " + e.getMessage());
-            } catch (IOException /*| ClassNotFoundException*/ e) {
+            } catch (IOException | ClassNotFoundException e) {
                 System.out.println("Dateifehler: " + e.getMessage());
             }
         }
@@ -87,7 +85,7 @@ public class Risiko implements Serializable {
         }
     }
 
-    /*private void spielSpeichern() throws IOException {
+    private void spielSpeichern() throws IOException {
         if (spiel == null) {
             System.out.println("Kein Spiel zum Speichern gefunden!");
         } else {
@@ -106,7 +104,7 @@ public class Risiko implements Serializable {
         menue.setSpiel(spiel);
         continueSpiel(menue);
 
-    }*/
+    }
 
     public void continueSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
         boolean nochEinmal;
@@ -123,18 +121,24 @@ public class Risiko implements Serializable {
         }
 
         //Truppen erhalten
-        spiel.setPhase(Spielphase.VERTEILEN);
-        int neueEinheiten = spieler.berechneNeueEinheiten(spiel.getWelt().alleKontinente);
-        menue.getmEingabe().zuweisungEinheiten(neueEinheiten, spieler);
-        spiel.naechstePhase();
-        boolean weiterAngreifen = true;
-        while (weiterAngreifen) {
-            weiterAngreifen = menue.hauptMenue(spieler);
+        if(spiel.getPhase().equals(Spielphase.VERTEILEN)) {
+            System.out.println("Du bist dran " + spieler.getName() + " [" + spiel.getMissionBeschreibung(spieler.getId()) + "]");
+            int neueEinheiten = spieler.berechneNeueEinheiten(spiel.getWelt().alleKontinente);
+            menue.getmEingabe().zuweisungEinheiten(neueEinheiten, spieler);
+            spiel.naechstePhase();
         }
-        spiel.naechstePhase();
-        boolean weiterVerschieben = true;
-        while (weiterVerschieben) {
-            weiterVerschieben = menue.hauptMenue(spieler);
+        if(spiel.getPhase().equals(Spielphase.ANGRIFF)) {
+            boolean weiterAngreifen = true;
+            while (weiterAngreifen) {
+                weiterAngreifen = menue.hauptMenue(spieler);
+            }
+            spiel.naechstePhase();
+        }
+        if(spiel.getPhase().equals(Spielphase.VERSCHIEBEN)) {
+            boolean weiterVerschieben = true;
+            while (weiterVerschieben) {
+                weiterVerschieben = menue.hauptMenue(spieler);
+            }
         }
 
         if (spiel.hatMissionErfuellt(spieler.getId())) {
