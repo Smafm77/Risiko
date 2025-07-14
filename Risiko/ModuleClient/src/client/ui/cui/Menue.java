@@ -99,7 +99,7 @@ public class Menue {
                 mPrint.printTheseLaender(spieler.getBesetzteLaender());
                 System.out.println();
                 System.out.println("Karten:");
-                System.out.println(spieler.eigeneKartenToString());
+                System.out.println(spielerKartenToString(spieler));
                 System.out.println("Welche Karte willst du ausspielen?");
                 System.out.println("Zum Abbrechen wähle N");
 
@@ -117,6 +117,13 @@ public class Menue {
             System.out.println("Fehler: " + e.getMessage());
             System.out.println("Nocheinmal: \n");
         }
+    }
+    private String spielerKartenToString(Spieler spieler) { //Print? UI? - sollte UI sein, muss nochmal gucken wofür das überhaupt aufgerufen wurde. Glaube Peruse Cards
+        StringBuilder kartenTxt = new StringBuilder();
+        for (Karte karte : spieler.getKarten()) {
+            kartenTxt.append("[").append(karte.getStrength()).append(" - ").append(karte.getLand().getName()).append("]  ");
+        }
+        return kartenTxt.toString();
     }
 
 

@@ -30,9 +30,16 @@ public class MenuePrint{
 
     public void zeigeAlleSpieler(ArrayList<Spieler> spielerListe) {
         for (Spieler spieler : spielerListe) {
-            spieler.zeigeSpieler();
+            zeigeSpieler(spieler);
         }
         System.out.println();
+        System.out.println();
+    }
+    public void zeigeSpieler(Spieler spieler) {
+        System.out.println(spieler.getId() + " - " + spieler.getName() + " - " + spieler.getBesetzteLaender().size());
+        for (Land land : spieler.getBesetzteLaender()) {
+            System.out.println(land.getBesitzer().getId() + ": " + land.getName() + " (" + land.getEinheiten() + ")");
+        }
         System.out.println();
     }
 
