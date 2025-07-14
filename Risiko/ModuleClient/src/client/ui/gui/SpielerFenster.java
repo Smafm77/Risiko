@@ -188,6 +188,11 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         //AktiverSpielerListener.add(this);
         updateView();
         setVisible(true);
+        javax.swing.Timer refresh = new javax.swing.Timer(1000, e -> {
+            SwingUtilities.invokeLater(this::updateView);
+        });
+        refresh.setRepeats(true);
+        refresh.start();
         if(!spiel.getAktuellerSpieler().equals(spieler) && spiel instanceof RisikoClient){
             ((RisikoClient) spiel).idleListening();
         }
