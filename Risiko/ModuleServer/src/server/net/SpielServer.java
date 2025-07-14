@@ -66,16 +66,20 @@ public class SpielServer {
             for(Socket s : clientSockets){
                 try{
                     PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-                    out.println("CMD_SPIEL_INIT_RESP");
+                    out.println("CMD_SPIEL_INIT_RESP" + "%FromSpielServer");
                 }catch(IOException e){
                     e.printStackTrace();
                 }
             }
             updateLabel(lblStatus, "Startsignal gesendet - Spiel läuft");
 
-            for(Socket s : clientSockets){
-                new Thread(new ClientRequestHandler(s, spiel)).start();
+
+            for (int i = 0; i < spielerAnzahl; i++){
+                new Thread(new ClientRequestHandler(clientSockets.get(i), spiel, spielerListe.get(i)));
             }
+            /*for(Socket s : clientSockets){
+                new Thread(new ClientRequestHandler(s, spiel)).start();
+            }*/
 
         } catch (IOException | ClassNotFoundException e) {
             if (lblStatus != null) {

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class ClientRequestHandler implements Runnable {
+    private final Spieler clientSpieler;
     private final InputStream socketIn;
     private final OutputStream socketOut;
 
@@ -46,17 +47,18 @@ public class ClientRequestHandler implements Runnable {
         }
     }
 
-    public ClientRequestHandler(Socket s, ISpiel spiel) throws IOException {
+    public ClientRequestHandler(Socket s, ISpiel spiel, Spieler spieler) throws IOException {
         this.spiel = spiel;
+        this.clientSpieler = spieler;
         socketIn = s.getInputStream();
         socketOut = s.getOutputStream();
     }
 
     @Override
     public void run() {
-        Spieler clientSpieler = null;
         try {
             BufferedReader socketInString = new BufferedReader(new InputStreamReader(socketIn));
+            /*
             String spielerDaten = socketInString.readLine();
             if (spielerDaten == null || !spielerDaten.contains(",")) {
                 System.err.println("Ungültige Login-Daten empfangen: " + spielerDaten);
@@ -79,7 +81,7 @@ public class ClientRequestHandler implements Runnable {
                 return;
             }
             PrintStream socketOutPrint = new PrintStream(socketOut);
-            socketOutPrint.println("OK");
+            socketOutPrint.println("OK");*/
 
             while (true) {
                 String receivedData = socketInString.readLine();
@@ -256,7 +258,7 @@ public class ClientRequestHandler implements Runnable {
 
     private void handleInit() {
         spiel.init();
-        writeString(Commands.CMD_SPIEL_INIT_RESP.name());
+        writeString(Commands.CMD_SPIEL_INIT_RESP.name()+"%ClientRequestHandler");
     }
 
     private void handleNextPhase() {
