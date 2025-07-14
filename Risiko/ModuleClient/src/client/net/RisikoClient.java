@@ -1,6 +1,5 @@
 package client.net;
 
-import client.ui.gui.SpielerFenster;
 import common.enums.Commands;
 import common.enums.Spielphase;
 import common.exceptions.FalscherBesitzerException;
@@ -17,7 +16,6 @@ import java.util.Objects;
 
 public class RisikoClient implements ISpiel {
     private Socket socket;
-    private SpielerFenster fenster;
     private final InputStream socketIn;
     private final OutputStream socketOut;
     private final String spielerName;
@@ -78,26 +76,6 @@ public class RisikoClient implements ISpiel {
     }
     //endregion
 
-    /*public void idleListening(){
-        while (true){
-            String[] info = readStringResponse();
-            if (info != null) {
-                if (Commands.EVENT_UPDATE_VIEW.name().equals(info[0])) {
-                    fenster.updateView();
-                    writeString(Commands.EVENT_UPDATE_VIEW_RESP.name());
-                    if (Integer.parseInt(info[1]) == fenster.getSpielerId()) {
-                        System.out.println(spielerName + " ist am Zug");
-                        break;
-                    }
-                }
-            }
-            //Update view -> update View
-            //Erfrage Verteidigung
-            //aktueller Spielr you? -> break
-            //Schleife neu
-        }
-    }*/
-
     @Override
     public Spieler getAktuellerSpieler() {
         String cmd = Commands.CMD_GET_AKTUELLER_SPIELER.name();
@@ -118,82 +96,6 @@ public class RisikoClient implements ISpiel {
         return (Welt) readObjectResponse();
     }
 
-    private Welt setWelt() {
-        String cmd = Commands.CMD_GET_WELT.name();
-        writeString(cmd);
-        String[] data = readStringResponse();
-        if (data == null || data.length <2) {
-            return null;
-        }
-        if(!data[0].equals((Commands.CMD_GET_WELT_RESP.name()))){
-            throw new RuntimeException("Falsches Kommando: " + data[0]);
-        }
-
-        int idx = 1;
-
-        int spielerCount = Integer.parseInt(data[idx++]);
-        ArrayList<Spieler> spielerListe = new ArrayList<>();
-        for(int i = 0; i < spielerCount; i++){
-            String[] s = data[idx++].split(":");
-            int id = Integer.parseInt(s[0]);
-            String name = s[1];
-            String farbe = s[2];
-            boolean alive = Boolean.parseBoolean(s[3]);
-            Spieler spieler = (farbe == null || farbe.isEmpty()) ? new Spieler(name, id) : new Spieler(name, farbe); //CUI ohne farbe, GUI mit farbe, ohne id
-            spielerListe.add(spieler);
-        }
-        int kontinentCount = Integer.parseInt(data[idx++]);
-        ArrayList<Kontinent> kontinentListe = new ArrayList<>();
-        ArrayList<int[]> kontinentLandIds = new ArrayList<>();
-        for(int i = 0; i < kontinentCount; i++){
-            String[] k = data[idx++].split(":");
-            String kontinentName = k[0];
-            int buff = Integer.parseInt(k[1]);
-            String[] landIds = k.length > 2 && !k[2].isEmpty() ? k[2].split(",") : new String[0];
-            int[] ids = Arrays.stream(landIds).filter(str -> !str.isEmpty()).mapToInt(Integer::parseInt).toArray();
-            kontinentLandIds.add(ids);
-            kontinentListe.add(null);
-        }
-        int landCount = Integer.parseInt(data[idx++]);
-        ArrayList<Land> laenderListe = new ArrayList<>();
-        ArrayList<int[]> nachbarnIds = new ArrayList<>();
-        int startIdx = idx; //Merken für Nachbar-Verlinkung
-        for(int i = 0; i < landCount; i++){
-            String[] l = data[idx++].split(":");
-            int id = Integer.parseInt(l[0]);
-            String name = l[1];
-            int besitzerId = Integer.parseInt(l[2]);
-            int einheiten = Integer.parseInt(l[3]);
-            int farbe = Integer.parseInt(l[4]);
-            String[] nIds = l.length > 5 && !l[5].isEmpty() ? l[5].split(",") : new String[0];
-            Land land = new Land(einheiten, name, id);
-            land.setFarbe(farbe);
-            laenderListe.add(land);
-            nachbarnIds.add(Arrays.stream(nIds).filter(str -> !str.isEmpty()).mapToInt(Integer::parseInt).toArray());
-        }
-
-        for (int i = 0; i < landCount; i++) {
-            Land land = laenderListe.get(i);
-            String[] l = data[startIdx + i].split(":");
-            int besitzerId = Integer.parseInt(l[2]);
-            Spieler besitzer = spielerListe.stream().filter(s -> s.getId() == besitzerId).findFirst().orElse(null); land.setBesitzer(besitzer);
-            if (besitzer != null) besitzer.fuegeLandHinzu(land);
-            int[] nIds = nachbarnIds.get(i);
-            for (int nId : nIds) {
-                laenderListe.stream().filter(la -> la.getId() == nId).findFirst().ifPresent(land::addNachbar);
-            }
-        }
-        for (int i = 0; i < kontinentCount; i++) {
-            int[] ids = kontinentLandIds.get(i);
-            Land[] gebiete = Arrays.stream(ids).mapToObj(id -> laenderListe.stream().filter(l -> l.getId() == id).findFirst().orElse(null)).filter(Objects::nonNull).toArray(Land[]::new);
-            Kontinent k = new Kontinent(data[1 + spielerCount + 1 + i].split(":")[0], gebiete, Integer.parseInt(data[1 + spielerCount + 1 + i].split(":")[1]));
-            kontinentListe.set(i,k);
-        }
-
-        Welt welt = new Welt(laenderListe, kontinentListe);
-        welt.setSpielerListe(spielerListe);
-        return welt;
-    }
 
     @Override
     public Spielphase getPhase() {
@@ -348,14 +250,6 @@ public class RisikoClient implements ISpiel {
         writeString(Commands.CMD_SPIEL_SPEICHERN.name());
     }
 
-
-    /*public boolean updateAllView(){
-        writeString(Commands.EVENT_UPDATE_ALL.name());
-        String[] update = readStringResponse();
-        checkResponse(update, Commands.EVENT_UPDATE_VIEW);
-        return true;
-    }*/
-
     public RisikoClient(Socket socket, String spielerName, String spielerColor) throws IOException{
         this.socket = socket;
         this.socket.setSoTimeout(1000);
@@ -363,7 +257,6 @@ public class RisikoClient implements ISpiel {
         this.socketOut = socket.getOutputStream();
         this.spielerName = spielerName;
         this.spielerColor = spielerColor;
-        //this.reader = new BufferedReader(new InputStreamReader(this.socketIn));
     }
     public String getSpielerName(){
         return spielerName;
@@ -373,7 +266,4 @@ public class RisikoClient implements ISpiel {
         return spielerColor;
     }
 
-    public void setFenster(SpielerFenster fenster) {
-        this.fenster = fenster;
-    }
 }

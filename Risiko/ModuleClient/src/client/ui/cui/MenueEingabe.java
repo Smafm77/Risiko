@@ -104,7 +104,7 @@ public class MenueEingabe {
                 if (anzahlSpieler <= 2 || anzahlSpieler > 6) {
                     throw new UngueltigeAuswahlException("Spieleranzahl muss zwischen 3-6 liegen.");
                 }
-                scanner.nextLine(); //Weil scanner.nextInt immer mucken macht einfach nochmal nextLine "einlesen"
+                scanner.nextLine();
                 spielerAnlegen(anzahlSpieler);
                 break;
             } catch (UngueltigeAuswahlException e) {

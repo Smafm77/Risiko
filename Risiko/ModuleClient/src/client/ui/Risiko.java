@@ -1,6 +1,5 @@
 package client.ui;
 
-import client.net.RisikoClient;
 import common.enums.Spielphase;
 import common.valueobjects.ISpiel;
 import common.valueobjects.Spieler;
@@ -70,7 +69,7 @@ public class Risiko implements Serializable {
 
             } catch (UngueltigeAuswahlException | FalscherBesitzerException | UngueltigeBewegungException e) {
                 System.out.println("Fehler: " + e.getMessage());
-            } catch (IOException /*| ClassNotFoundException*/ e) {
+            } catch (IOException e) {
                 System.out.println("Dateifehler: " + e.getMessage());
             }
         }
@@ -86,27 +85,6 @@ public class Risiko implements Serializable {
             throw new UngueltigeAuswahlException("Eingabe muss eine Zahl sein!");
         }
     }
-
-    /*private void spielSpeichern() throws IOException {
-        if (spiel == null) {
-            System.out.println("Kein Spiel zum Speichern gefunden!");
-        } else {
-            try {
-                SpielSpeichern.speichern(spiel, "spielstand.risiko");
-                System.out.println("Spiel erfolgreich gespeichert!");
-            } catch (IOException e) {
-                throw new IOException("Speichern fehlgeschlagen: " + e.getMessage(), e);
-            }
-        }
-    }
-
-    private void spielLaden() throws IOException, ClassNotFoundException, FalscherBesitzerException, UngueltigeBewegungException, UngueltigeAuswahlException {
-        spiel = Spiel.laden("spielstand.risiko");
-        System.out.println("Spiel erfolgreich geladen!");
-        menue.setSpiel(spiel);
-        continueSpiel(menue);
-
-    }*/
 
     public void continueSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
         boolean nochEinmal;

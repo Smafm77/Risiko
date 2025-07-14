@@ -118,7 +118,7 @@ public class Menue {
             System.out.println("Nocheinmal: \n");
         }
     }
-    private String spielerKartenToString(Spieler spieler) { //Print? UI? - sollte UI sein, muss nochmal gucken wofür das überhaupt aufgerufen wurde. Glaube Peruse Cards
+    private String spielerKartenToString(Spieler spieler) {
         StringBuilder kartenTxt = new StringBuilder();
         for (Karte karte : spieler.getKarten()) {
             kartenTxt.append("[").append(karte.getStrength()).append(" - ").append(karte.getLand().getName()).append("]  ");
