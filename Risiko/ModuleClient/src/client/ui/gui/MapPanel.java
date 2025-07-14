@@ -58,7 +58,7 @@ public class MapPanel extends JPanel {
         ladeFarben();
         ladeKoordinaten();
         ladeIcons();
-        //ImageCache.ladeWinOverlay();
+        ImageCache.ladeWinOverlay();
         ImageCache.ladeOverlays(laenderListe);
         ImageCache.ladeKampfOverlays(laenderListe);
         for (LandDTO land : laenderListe) {
