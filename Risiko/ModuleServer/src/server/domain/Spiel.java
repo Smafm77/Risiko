@@ -151,7 +151,7 @@ public class Spiel implements Serializable, ISpiel {
         int ueberlebende = schlacht(herkunft, ziel, truppenA, truppenV);
         if (ueberlebende == -1) {
             return false;
-        } //Verteidiger hat gewonnen
+        }
         erobern(herkunft, ziel, truppenA);
         return true;
     }

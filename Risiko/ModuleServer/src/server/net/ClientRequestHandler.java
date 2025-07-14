@@ -76,31 +76,6 @@ public class ClientRequestHandler implements Runnable {
     @Override
     public void run() {
         try {
-            /*
-            String spielerDaten = socketInString.readLine();
-            if (spielerDaten == null || !spielerDaten.contains(",")) {
-                System.err.println("Ungültige Login-Daten empfangen: " + spielerDaten);
-                return;
-            }
-            String[] spielerParts = spielerDaten.split(",");
-            String name = spielerParts[0].trim();
-            String color = spielerParts[1].trim();
-
-            for (Spieler s : spiel.getSpielerListe()) {
-                if (s.getName().equalsIgnoreCase(name) && s.getFarbe().equalsIgnoreCase(color)) {
-                    clientSpieler = s;
-                    break;
-                }
-            }
-            if (clientSpieler == null) {
-                System.err.println("Spieler nicht gefunden für: " + name + "/" + color);
-                PrintStream socketOutPrint = new PrintStream(socketOut);
-                socketOutPrint.println("Fehler: Spieler nicht gefunden!");
-                return;
-            }
-            PrintStream socketOutPrint = new PrintStream(socketOut);
-            socketOutPrint.println("OK");*/
-
             while (true) {
                 String[] receivedData = readStringResponse();
                 if (receivedData == null) {
@@ -156,43 +131,6 @@ public class ClientRequestHandler implements Runnable {
     private void handleGetWeltObject() throws IOException {
         Welt welt = spiel.getWelt();
         writeObject(welt);
-    }
-
-    private void handleGetWeltPrint() {
-        Welt welt = spiel.getWelt();
-        StringBuilder sb = new StringBuilder();
-        sb.append(Commands.CMD_GET_WELT_RESP.name());
-
-        //Spieler serialisieren
-        sb.append(separator).append(welt.getSpielerListe().size());
-        for (Spieler s : welt.getSpielerListe()) {
-            sb.append(separator).append(s.getId()).append(":").append(s.getName()).append(":").append(s.getFarbe() != null ? s.getFarbe() : "").append(":").append(s.isAlive());
-        }
-
-        //Kontinente serialisieren
-        sb.append(separator).append(welt.alleKontinente.size());
-        for (Kontinent k : welt.alleKontinente) {
-            sb.append(separator).append(k.getName()).append(":").append(String.valueOf(k.getBuff())).append(":");
-            Land[] gebiete = k.gebiete;
-            for (int i = 0; i < gebiete.length; i++) {
-                sb.append(gebiete[i].getId());
-                if (i < gebiete.length - 1) sb.append(",");
-            }
-        }
-
-        //Länder serialisieren
-        sb.append(separator).append(welt.getAlleLaender().size());
-        for (Land l : welt.getAlleLaender()) {
-            sb.append(separator).append(l.getId()).append(":").append(l.getName()).append(":").append(l.getBesitzer() != null ? l.getBesitzer().getId() : -1).append(":").append(l.getEinheiten()).append(":").append(l.getFarbe()).append(":");
-            int i = 0;
-            for (Land n : l.getNachbarn()) {
-                sb.append(n.getId());
-                if (++i < l.getNachbarn().size()) sb.append(",");
-            }
-        }
-
-        writeString(String.valueOf(sb));
-        System.out.println("Gesendete Welt: " + sb); //Will das nur mal anzeigen lassen zum testen
     }
 
     private void handleGetPhase() {

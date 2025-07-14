@@ -44,9 +44,9 @@ public class NeuesSpielEinlesen implements Serializable {
         Map<String, Integer> farbMap = laenderFarbcodesEinlesen();
 
         while ((input = br.readLine()) != null) {
-            String[] values = input.trim().split(" "); //Array der Werte einer Zeile - müssen durch exakt ein Leerzeichen getrennt sein
+            String[] values = input.trim().split(" ");
             String landName = values[0].trim();
-            int staerke = Integer.parseInt(values[1]); //NumberFormatException
+            int staerke = Integer.parseInt(values[1]);
             int id = Integer.parseInt(values[2]);
             if (!input.isEmpty()) {
                 Land land = new Land(staerke, landName, id);
@@ -65,7 +65,7 @@ public class NeuesSpielEinlesen implements Serializable {
     }
 
     private void alleNachbarnEinlesen(ArrayList<Land> laender) throws IOException,
-            NumberFormatException {//FileReader, readLine, parseInt
+            NumberFormatException {
         BufferedReader br = new BufferedReader(new FileReader("Risiko/Txt-dateien/Nachbarliste.txt"));
         String input;
         int index = 0;
@@ -73,14 +73,14 @@ public class NeuesSpielEinlesen implements Serializable {
             String[] values = input.trim().split(" ");
             Land[] nachbarn = new Land[values.length - 1];
             for (int i = 0; i < nachbarn.length; i++) {
-                nachbarn[i] = laender.get(Integer.parseInt(values[i + 1])); //NumberFormatException
+                nachbarn[i] = laender.get(Integer.parseInt(values[i + 1]));
             }
             laender.get(index++).addNachbarn(nachbarn);
         }
     }
 
     public ArrayList<Kontinent> alleKontinenteEinlesen(ArrayList<Land> laender) throws IOException,
-            NumberFormatException { //FileReader, readLine, parseInt{
+            NumberFormatException {
         ArrayList<Kontinent> kontinente = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader("Risiko/Txt-dateien/Kontinentliste.txt"));
         String input;
@@ -97,7 +97,7 @@ public class NeuesSpielEinlesen implements Serializable {
         return kontinente;
     }
 
-    public HashSet<Karte> kartenstapelEinlesen(ArrayList<Land> laender) throws IOException, NumberFormatException {//FileReader, readLine, parseInt
+    public HashSet<Karte> kartenstapelEinlesen(ArrayList<Land> laender) throws IOException, NumberFormatException {
         HashSet<Karte> alleKarten = new HashSet<>();
         BufferedReader br = new BufferedReader(new FileReader("Risiko/Txt-dateien/Staatenliste.txt"));
         String input;

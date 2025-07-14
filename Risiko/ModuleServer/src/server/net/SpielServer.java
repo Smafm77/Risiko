@@ -21,11 +21,11 @@ public class SpielServer {
             Spiel spiel;
             int spielerAnzahl;
             Map<String, Spieler> gespeicherteSpieler = null;
-            if (!spielLaden) {//Neues Spiel
+            if (!spielLaden) {
                 spiel = Spiel.getInstance();
                 spielerAnzahl = anzahlGewaehlt;
 
-            } else {//Altes Spiel laden
+            } else {
                 spiel = SpielSpeichern.laden("spielstand.risiko");
                 gespeicherteSpieler = new HashMap<>();
                 spielerAnzahl = spiel.getWelt().getSpielerListe().size();

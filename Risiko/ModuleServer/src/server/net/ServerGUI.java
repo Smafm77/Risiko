@@ -58,4 +58,3 @@ public class ServerGUI extends JFrame{
         SwingUtilities.invokeLater(ServerGUI::new);
     }
 }
-
