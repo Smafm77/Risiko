@@ -1,8 +1,5 @@
 package common.enums;
 
-
-import common.exceptions.UngueltigeAuswahlException;
-
 public enum Befehl {
     ANGRIFF(1),
     BEWEGEN(2),

@@ -201,10 +201,6 @@ public class Spiel implements Serializable, ISpiel {
     }
     //endregion
 
-    public void setPhase(Spielphase spielphase) {
-        this.phase = spielphase;
-    }
-
     private Welt buildWelt() throws IOException {
         NeuesSpielEinlesen spielmaterial = new NeuesSpielEinlesen();
         ArrayList<Land> laender = spielmaterial.alleLaenderEinlesen();

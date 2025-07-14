@@ -27,7 +27,7 @@ public class Kontinent implements Serializable {
         return name;
     }
 
-    public Spieler getEinzigerBesitzer() throws NullPointerException { //Nicht sicher ob es das ist da es nicht fälschlich versucht auf null zuzugreifen, aber es gibt null zurück und damit sind alle Aufrufe hiervon von Nullpointerexceptions bedroht
+    public Spieler getEinzigerBesitzer() throws NullPointerException {
         boolean isSame = true;
         for (int i = 1; i < gebiete.length; i++) {
             if (!gebiete[i].getBesitzer().equals(gebiete[0].getBesitzer())) {

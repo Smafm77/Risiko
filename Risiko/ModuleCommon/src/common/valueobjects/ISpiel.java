@@ -29,7 +29,6 @@ public interface ISpiel {
 
     //region setter
     void setSpielerliste (ArrayList<Spieler> spielerListe);
-    void setPhase(Spielphase spielphase);
     void weiseMissionenZu();
     void einheitenStationieren(int landId, int einheiten);
     //endregion

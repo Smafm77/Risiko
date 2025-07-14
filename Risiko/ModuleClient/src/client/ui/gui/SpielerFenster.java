@@ -42,9 +42,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setJMenuBar(menuBar);
 
         this.spiel = spiel;
-        if (spiel instanceof RisikoClient) {
-            ((RisikoClient) spiel).setFenster(this);
-        }
         ALLE.add(this);
 
         setLayout(new BorderLayout());

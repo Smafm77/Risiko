@@ -1,7 +1,5 @@
 package common.enums;
 
-import common.exceptions.UngueltigeAuswahlException;
-
 public enum Infos { //Eigenes Enum
     BESITZER(1),
     EINHEITEN(2),

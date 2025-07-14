@@ -1,7 +1,6 @@
 package server.net;
 
 import common.enums.Commands;
-import common.enums.Spielphase;
 import common.exceptions.FalscherBesitzerException;
 import common.exceptions.UngueltigeBewegungException;
 import common.valueobjects.*;
@@ -107,7 +106,6 @@ public class ClientRequestHandler implements Runnable {
             case CMD_GET_LANDTRUPPEN -> handleLandTruppen(Integer.parseInt(data[1]));
 
             case CMD_SET_SPIELERLISTE -> handleSetSpielerliste();
-            case CMD_SET_PHASE -> handleSetPhase(data[1]);
             case CMD_WEISE_MISS_ZU -> handleMissionsZuweisung();
             case CMD_STATIONIEREN -> handleStationieren(data);
 
@@ -128,7 +126,7 @@ public class ClientRequestHandler implements Runnable {
         writeString(resp);
     }
 
-    private void handleGetWeltObject() throws IOException {
+    private void handleGetWeltObject(){
         Welt welt = spiel.getWelt();
         writeObject(welt);
     }
@@ -195,10 +193,6 @@ public class ClientRequestHandler implements Runnable {
         spiel.setSpielerliste(spielerListe);
     }
 
-    private void handleSetPhase(String phase) {
-        spiel.setPhase(Spielphase.valueOf(phase));
-        writeString(Commands.CMD_SET_PHASE_RESP.name());
-    }
 
     private void handleMissionsZuweisung() {
         spiel.weiseMissionenZu();
