@@ -25,6 +25,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private LandDTO ausgewaehlt1;
     private LandDTO ausgewaehlt2;
     private boolean spielBeendet = false;
+    javax.swing.Timer refresh;
 
     private static final java.util.List<SpielerFenster> ALLE = new java.util.ArrayList<>();
     private final JLabel lblInfo;
@@ -41,7 +42,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setJMenuBar(menuBar);
 
         this.spiel = spiel;
-        if (spiel instanceof RisikoClient){
+        if (spiel instanceof RisikoClient) {
             ((RisikoClient) spiel).setFenster(this);
         }
         ALLE.add(this);
@@ -90,7 +91,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                         spiel.einheitenStationieren(land.getId(), 1);
                         verbleibendeTruppen--;
                         lblInfo.setText("Verteile " + verbleibendeTruppen + " Einheiten.");
-                        updateInaktiveSpieler();
                         updateAllMaps();
                     } else {
                         throw new EinheitenAnzahlException("Du hast keine Einheiten mehr zum verteilen");
@@ -131,7 +131,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
                     JOptionPane.showMessageDialog(SpielerFenster.this, schlachtbericht);
                     //JOptionPane.showMessageDialog(verteidiger, schlachtbericht);
-                    updateInaktiveSpieler();
                     updateMissionStatus();
                     updateAllMaps();
                     ausgewaehlt1 = null;
@@ -162,7 +161,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     int anzahl = frageAnzahl("Wie viele Einheiten verschieben? (max " + max + ")", 1, max);
                     spiel.bewegeEinheiten(spieler.getId(), anzahl, ausgewaehlt1.getId(), ausgewaehlt2.getId());
                     JOptionPane.showMessageDialog(SpielerFenster.this, "Einheiten verschoben!");
-                    updateInaktiveSpieler();
                     updateAllMaps();
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
@@ -189,22 +187,28 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
-        //AktiverSpielerListener.add(this);
-        updateInaktiveSpieler();
+        AktiverSpielerListener.add(this);
         updateView();
         setVisible(true);
-
-
     }
-    private void updateInaktiveSpieler(){
-        if(!spiel.getAktuellerSpieler().equals(spieler) && spiel instanceof RisikoClient){
-            javax.swing.Timer refresh = new javax.swing.Timer(1000, e -> {
-                SwingUtilities.invokeLater(this::updateView);
-            });
-            refresh.setRepeats(true);
-            refresh.start();
+
+    private void updateInaktiveSpieler() {
+        boolean inaktiv = (!spiel.getAktuellerSpieler().equals(spieler) && spiel instanceof RisikoClient);
+
+        if (inaktiv) {
+            if (refresh == null) {
+                refresh = new javax.swing.Timer(1000, e -> SwingUtilities.invokeLater(this::updateView));
+                refresh.start();
+            }
+        } else {
+            if (refresh != null) {
+                refresh.stop();
+                refresh = null;
+            }
         }
+
     }
+
     private void openCardsSelectionDialog() {
         try {
             Set<Karte> karteSet = spiel.getSpielerKarten(spieler.getId());
@@ -314,9 +318,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                 spiel.naechstePhase();
                 mapPanel.versteckeOverlay();
                 updateViewInAllFenster();
-                /*if(spiel instanceof RisikoClient && updated){
-                    ((RisikoClient) spiel).idleListening();
-                }*/
             });
             pnlActions.add(btnFertig);
         }
@@ -331,6 +332,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         }
         pnlActions.revalidate();
         mapPanel.repaint();
+        updateInaktiveSpieler();
     }
 
     private void updateViewInAllFenster() {
@@ -338,13 +340,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
             fenster.updateView();
             updateMissionProgressbar();
         }
-        /*boolean done = false;
-        if(spiel instanceof RisikoClient){
-            done = ((RisikoClient) spiel).updateAllView();
-        }
-        updateView();
-        updateMissionProgressbar();
-        return done;*/
     }
 
     private void updateAllMaps() {
@@ -400,7 +395,6 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
 
     }
 
-
     private void benachrichtigeAlle(String nachricht) {
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE));
@@ -420,14 +414,12 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         }
     }
 
-    public int getSpielerId(){
-        return spieler.getId();
-    }
-
     @Override
     public void onAktiverSpielerGeaendert(Spieler neu) {
 
         List<AktiverSpielerListener> LIST = new CopyOnWriteArrayList<>();
+        SwingUtilities.invokeLater(this::updateView);
+        updateInaktiveSpieler();
 
     }
 }
