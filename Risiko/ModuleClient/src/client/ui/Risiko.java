@@ -1,11 +1,11 @@
 package client.ui;
 
+import client.net.RisikoClient;
 import common.enums.Spielphase;
+import common.valueobjects.ISpiel;
 import common.valueobjects.Spieler;
 import common.exceptions.*;
 import client.ui.cui.Menue;
-import server.domain.Spiel;
-import server.persistence.SpielSpeichern;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -18,7 +18,7 @@ public class Risiko implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private final Scanner scanner = new Scanner(System.in);
-    private Spiel spiel = null;
+    private ISpiel spiel = null;
     private final Menue menue = new Menue();
 
     public void start() {
@@ -48,7 +48,7 @@ public class Risiko implements Serializable {
                 }
                 switch (auswahl) {
                     case 1:
-                        spiel = Spiel.getInstance();
+                        //spiel = new RisikoClient();
                         menue.setSpiel(spiel);
                         menue.buildWelt();
                         spiel.init();
@@ -56,10 +56,12 @@ public class Risiko implements Serializable {
 
                         break;
                     case 2:
-                        spielSpeichern();
+                        //spielSpeichern();
+                        System.out.println("Hier wird eigentlich gespeichert");
                         break;
                     case 3:
-                        spielLaden();
+                        //spielLaden();
+                        System.out.println("Hier wird eigentlich geladen");
                         break;
                     case 4:
                         System.out.println("Wird beendet");
@@ -68,7 +70,7 @@ public class Risiko implements Serializable {
 
             } catch (UngueltigeAuswahlException | FalscherBesitzerException | UngueltigeBewegungException e) {
                 System.out.println("Fehler: " + e.getMessage());
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException /*| ClassNotFoundException*/ e) {
                 System.out.println("Dateifehler: " + e.getMessage());
             }
         }
@@ -85,7 +87,7 @@ public class Risiko implements Serializable {
         }
     }
 
-    private void spielSpeichern() throws IOException {
+    /*private void spielSpeichern() throws IOException {
         if (spiel == null) {
             System.out.println("Kein Spiel zum Speichern gefunden!");
         } else {
@@ -99,12 +101,12 @@ public class Risiko implements Serializable {
     }
 
     private void spielLaden() throws IOException, ClassNotFoundException, FalscherBesitzerException, UngueltigeBewegungException, UngueltigeAuswahlException {
-        spiel = SpielSpeichern.laden("spielstand.risiko");
+        spiel = Spiel.laden("spielstand.risiko");
         System.out.println("Spiel erfolgreich geladen!");
         menue.setSpiel(spiel);
         continueSpiel(menue);
 
-    }
+    }*/
 
     public void continueSpiel(Menue menue) throws IOException, UngueltigeAuswahlException, FalscherBesitzerException, UngueltigeBewegungException {
         boolean nochEinmal;
