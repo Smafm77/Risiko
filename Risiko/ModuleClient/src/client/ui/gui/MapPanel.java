@@ -84,6 +84,7 @@ public class MapPanel extends JPanel {
         super.paintComponent(g);
         Font font = new Font(Font.DIALOG, Font.BOLD, 15);
         g.setFont(font);
+        g.setColor(Color.WHITE);
         int w = getWidth();
         int h = getHeight();
         g.drawImage(bgImg, 0, 0, w, h, null);
@@ -91,7 +92,6 @@ public class MapPanel extends JPanel {
 
         for (Land land : spiel.getWelt().getAlleLaender()) {
             Spieler spieler = land.getBesitzer();
-            g.setColor(spielerFarbe.get(spieler.getFarbe()));
             Point p = landKoordinaten.get(land.getName());
 
             double sx = getWidth() / (double) bgImg.getWidth();
