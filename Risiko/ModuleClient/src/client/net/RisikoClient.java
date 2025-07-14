@@ -187,13 +187,6 @@ public class RisikoClient implements ISpiel {
         writeObject(spielerListe);
     }
 
-    @Override
-    public void setPhase(Spielphase spielphase) {
-        String cmd = Commands.CMD_SET_PHASE.name() + separator + spielphase.name();
-        writeString(cmd);
-        String[] resp = readStringResponse();
-        checkResponse(resp, Commands.CMD_SET_PHASE_RESP);
-    }
 
     @Override
     public void weiseMissionenZu() {
