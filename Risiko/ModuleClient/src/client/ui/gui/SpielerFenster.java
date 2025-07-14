@@ -24,6 +24,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private int verbleibendeTruppen;
     private LandDTO ausgewaehlt1;
     private LandDTO ausgewaehlt2;
+    private boolean spielBeendet = false;
 
     private static final java.util.List<SpielerFenster> ALLE = new java.util.ArrayList<>();
     private final JLabel lblInfo;
@@ -118,9 +119,11 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     ausgewaehlt2 = land;
                     mapPanel.zeigeOverlayZiel(land.getName());
                     int truppenA = frageAnzahl("Mit wie vielen Truppen angreifen (max " + Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt1.getId()) - 1, 3));
+
                     /*SpielerFenster verteidiger = ALLE.stream().filter(spielerFenster -> spielerFenster.spieler.equals(spiel.getLandbesitzer(ausgewaehlt2.getId()))).findFirst().orElseThrow();
                     int truppenV = verteidiger.frageAnzahl("Wie viele Einheiten sollen " + ausgewaehlt2.getName() + " vor " + spieler.getName() + "'s " + truppenA + " angreifenden Truppen verteidigen? (max " + Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2) + ")?", 1, Math.min(spiel.getLandTruppen(ausgewaehlt2.getId()), 2));*/
                     int truppenV = Math.min(2, spiel.getLandTruppen(ausgewaehlt2.getId()));
+
                     boolean ergebnis = spiel.kampf(ausgewaehlt1.getId(), ausgewaehlt2.getId(), truppenA, truppenV);
                     String sieger = ergebnis ? spieler.getName() : spiel.getLandbesitzer(land.getId()).getName();
                     String schlachtbericht = ergebnis ? (sieger + " hat " + ausgewaehlt2.getName() + " erobert") : (sieger + " konnte " + ausgewaehlt2.getName() + " verteidigen");
@@ -131,6 +134,7 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
                     ausgewaehlt1 = null;
                     ausgewaehlt2 = null;
                     mapPanel.versteckeOverlay();
+                    mapPanel.beendeKampfLand();
                     auswahlModus = AuswahlModus.ANGRIFF_HERKUNFT;
                     lblInfo.setText("Für nächsten Angriff: Herkunft wählen.");
                     break;
@@ -236,14 +240,13 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
         return menuBar;
     }
 
-    /*@Override
-    public void onAktiverSpielerGeaendert(Spieler neu) {
-        SwingUtilities.invokeLater(() -> {
-            updateView(spiel);
-        });
-    }*/
-
     public void updateView(ISpiel spiel) {
+        if (spielBeendet) {
+            pnlActions.removeAll();
+            pnlActions.revalidate();
+            pnlActions.repaint();
+            return;
+        }
         lblInfo.setText(spieler.getName());
         pnlActions.removeAll();
         updateMissionStatus();
@@ -339,14 +342,43 @@ public class SpielerFenster extends JFrame implements AktiverSpielerListener {
     private void checkMissionFulfilled() {
         if (spiel.hatMissionErfuellt(spieler.getId())) {
             updateMissionProgressbar();
+            spielBeendet = true;
             benachrichtigeAlle(spieler.getName() + "'s Mission ist erfüllt. Damit hat " + spieler.getName() + " gewonnen!");
-            //ToDo spielende einläuten
+            for (SpielerFenster fenster : ALLE) {
+                if (fenster.spieler.equals(this.spieler)) {
+                    fenster.mapPanel.gewinnerAnimation();
+                }
+                for (Component c : fenster.pnlActions.getComponents()) {
+                    if (c instanceof JButton) {
+                        c.setEnabled(false);
+                    }
+                }
+                JMenuBar mb = fenster.getJMenuBar();
+                if (mb != null) {
+                    for (int i = 0; i < mb.getMenuCount(); i++) {
+                        JMenu m = mb.getMenu(i);
+                        if (m != null) {
+                            for (int j = 0; j < m.getItemCount(); j++) {
+                                JMenuItem mi = m.getItem(j);
+                                if (mi != null && !"Speichern & Beenden".equals(mi.getText())) {
+                                    mi.setEnabled(false);
+                                }
+                            }
+                        }
+                    }
+                }
+                fenster.pnlActions.revalidate();
+                fenster.pnlActions.repaint();
+            }
+
         }
+
     }
+
 
     private void benachrichtigeAlle(String nachricht) {
         for (SpielerFenster fenster : SpielerFenster.ALLE) {
-            SwingUtilities.invokeLater(()->JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE));
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(fenster, nachricht, "To whom it may concern", JOptionPane.INFORMATION_MESSAGE));
         }
     }
 

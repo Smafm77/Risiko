@@ -5,6 +5,7 @@ import client.net.RisikoClient;
 import javax.swing.*;
 import java.awt.*;
 
+
 public class GuiMain extends JFrame {
     private final RisikoClient client;
     protected final JButton btnStartGame = new JButton("Spiel starten");

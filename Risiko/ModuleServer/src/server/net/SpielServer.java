@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.*;
 
 public class SpielServer {
+
     private static final List<String> Farben = Arrays.asList("Rot", "Blau", "Gruen", "Gelb", "Orange", "Violett");
 
     public static void startServer(boolean spielLaden, int anzahlGewaehlt, JLabel lblStatus) {
@@ -32,6 +33,7 @@ public class SpielServer {
             updateLabel(lblStatus, "Warte auf " + anzahlGewaehlt + " Clients...");
 
             int verbunden = 0;
+
 
             while (verbunden < spielerAnzahl) {
                 Socket s = serverSocket.accept();

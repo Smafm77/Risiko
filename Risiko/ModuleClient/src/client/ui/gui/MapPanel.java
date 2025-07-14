@@ -9,6 +9,8 @@ import common.valueobjects.Spieler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -30,6 +32,9 @@ public class MapPanel extends JPanel {
     private final Map<String, Color> spielerFarbe = new HashMap<>();
     private String overlayHerkunft = null;
     private String overlayZiel = null;
+    private String kampfLand = null;
+    public BufferedImage currentWinOverlay;
+    private Timer gewinnerTimer;
 
 
     private void ladeFarben() {
@@ -53,7 +58,9 @@ public class MapPanel extends JPanel {
         ladeFarben();
         ladeKoordinaten();
         ladeIcons();
+        ImageCache.ladeWinOverlay();
         ImageCache.ladeOverlays(laenderListe);
+        ImageCache.ladeKampfOverlays(laenderListe);
         for (LandDTO land : laenderListe) {
             farbwertZuLand.put(land.getFarbe(), land);
         }
@@ -111,6 +118,15 @@ public class MapPanel extends JPanel {
                 g.drawImage(overlay, 0, 0, getWidth(), getHeight(), null);
             }
         }
+        if (kampfLand != null) {
+            BufferedImage overlay = ImageCache.kampfOverlayImages.get(kampfLand);
+            if (overlay != null) {
+                g.drawImage(overlay, 0, 0, getWidth(), getHeight(), null);
+            }
+        }
+        if(currentWinOverlay !=null){
+            g.drawImage(currentWinOverlay, 0, 0, getWidth(),getHeight(),null);
+        }
     }
 
     public LandDTO getLandAt(int x, int y) {
@@ -147,6 +163,16 @@ public class MapPanel extends JPanel {
         }
     }
 
+    public void zeigeKampfLand(String landName){
+        kampfLand = landName;
+        repaint();
+    }
+
+    public void beendeKampfLand(){
+        kampfLand = null;
+        repaint();
+    }
+
     public void zeigeOverlayHerkunft(String landName) {
         overlayHerkunft = landName;
         repaint();
@@ -161,5 +187,22 @@ public class MapPanel extends JPanel {
         overlayHerkunft = null;
         overlayZiel = null;
         repaint();
+    }
+
+    public void gewinnerAnimation(){
+        if(gewinnerTimer != null  && gewinnerTimer.isRunning()){
+            return;
+        }
+        gewinnerTimer = new Timer(500, new ActionListener() {
+            int i = 0;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    currentWinOverlay = ImageCache.winOverlays[i% ImageCache.winOverlays.length];
+                    i++;
+                    repaint();
+            }
+        });
+        gewinnerTimer.setRepeats(true);
+        gewinnerTimer.start();
     }
 }
